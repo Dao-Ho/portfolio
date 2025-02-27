@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 
-const ParticleEffect = ({isLight}) => {
+const ParticleEffect = ({ isLight }) => {
   const canvasRef = useRef(null);
   //stores particle array so it doesn't need to re-render everytime the component updates
   const particlesArrayRef = useRef([]);
@@ -17,25 +17,25 @@ const ParticleEffect = ({isLight}) => {
 
     //resive canvas to fit current viewport
     const resizeCanvas = () => {
-        const oldWidth = canvas.width;
-        const oldHeight = canvas.height;
-  
-        //new sizes
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-  
-        //find ratio of new size relative to old
-        const widthRatio = canvas.width / oldWidth;
-        const heightRatio = canvas.height / oldHeight;
-  
-        //update the particles by increasing them by said factor
-        particlesArray.forEach((particle) => {
-          particle.x *= widthRatio;
-          particle.y *= heightRatio;
-          particle.baseX *= widthRatio;
-          particle.baseY *= heightRatio;
-        });
-      };
+      const oldWidth = canvas.width;
+      const oldHeight = canvas.height;
+
+      //new sizes
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      //find ratio of new size relative to old
+      const widthRatio = canvas.width / oldWidth;
+      const heightRatio = canvas.height / oldHeight;
+
+      //update the particles by increasing them by said factor
+      particlesArray.forEach((particle) => {
+        particle.x *= widthRatio;
+        particle.y *= heightRatio;
+        particle.baseX *= widthRatio;
+        particle.baseY *= heightRatio;
+      });
+    };
 
     //update coordinate to track mouse position
     const handleMouseMove = (e) => {
@@ -120,21 +120,21 @@ const ParticleEffect = ({isLight}) => {
     };
 
     const animate = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particlesArray.forEach((particle) => particle.update());
-        requestAnimationFrame(animate);
-      };
-  
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-      animate();
-  
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("resize", resizeCanvas);
-      };
-    }, []);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach((particle) => particle.update());
+      requestAnimationFrame(animate);
+    };
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
+    animate();
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", resizeCanvas);
+    };
+  }, []);
 
   useEffect(() => {
     const particlesArray = particlesArrayRef.current;

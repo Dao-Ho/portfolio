@@ -1,12 +1,10 @@
-
 import Image from "next/image";
 import { React, useEffect, useState, useRef } from "react";
 import sideprofile from "../../../../public/Images/website pfp.png";
-import { motion, scrollRef} from "framer-motion";
+import { motion, scrollRef } from "framer-motion";
 
 export const SecondSlide = () => {
-  const scrollRef = useRef(null)
-  
+  const scrollRef = useRef(null);
 
   const pfp = () => {
     return (
@@ -42,10 +40,7 @@ export const SecondSlide = () => {
     };
   }, []);
 
-
-
   return (
-    
     <motion.div className="box-border h-screen w-screen">
       <div className="flex justify-center items-center w-full h-full">
         <div
@@ -74,10 +69,10 @@ export const SecondSlide = () => {
               }
             >
               <motion.h1
-               initial={{ opacity: 0, y: 60 }}
-               whileInView={{ opacity: 1, y: 0}}
-               transition={{duration: 0.5, delay: 0}}
-               viewport={{ root: scrollRef }}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0 }}
+                viewport={{ root: scrollRef }}
                 className={
                   isMobile
                     ? "font-libre font-bold text-[2vh] text-background "
