@@ -15,20 +15,22 @@ const ParticleEffect = ({ isLight }) => {
     const particlesArray = particlesArrayRef.current;
     ctxRef.current = ctx;
 
+    // Set initial canvas dimensions properly
+    const setCanvasDimensions = () => {
+      canvas.width = Math.floor(window.innerWidth * 0.8);
+      canvas.height = Math.floor(window.innerHeight * 0.8);
+    };
+
     //resive canvas to fit current viewport
     const resizeCanvas = () => {
       const oldWidth = canvas.width;
       const oldHeight = canvas.height;
 
-      //new sizes
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      setCanvasDimensions();
 
-      //find ratio of new size relative to old
       const widthRatio = canvas.width / oldWidth;
       const heightRatio = canvas.height / oldHeight;
 
-      //update the particles by increasing them by said factor
       particlesArray.forEach((particle) => {
         particle.x *= widthRatio;
         particle.y *= heightRatio;
@@ -39,18 +41,37 @@ const ParticleEffect = ({ isLight }) => {
 
     //update coordinate to track mouse position
     const handleMouseMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      console.log(mouse.x, mouse.y);
-      console.log("isLight :", isLight);
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+        mouse.x = x;
+        mouse.y = y;
+      } else {
+        mouse.x = null;
+        mouse.y = null;
+      }
     };
 
     //update coordinate to track touch position
     const handleTouchMove = (e) => {
       if (e.touches.length > 0) {
         const touch = e.touches[0];
-        mouse.x = touch.clientX;
-        mouse.y = touch.clientY;
+        const rect = canvas.getBoundingClientRect();
+
+        // Calculate touch position relative to canvas
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+
+        // Only update coordinates if inside canvas
+        if (x >= 0 && x <= canvas.width && y <= canvas.height && y >= 0) {
+          mouse.x = x;
+          mouse.y = y;
+        } else {
+          mouse.x = null;
+          mouse.y = null;
+        }
       }
     };
 
@@ -85,15 +106,18 @@ const ParticleEffect = ({ isLight }) => {
       //update particle position relative to mouse position and movement.
       //velocity of the particle pushed away from the mouse calculated using the distance between cursor and particle, as well as the angle the mouse is coming from
       update() {
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const distance = dx * dx + dy * dy;
-        const force = -mouse.radius / distance;
+        // Only apply force if mouse is inside canvas
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const distance = dx * dx + dy * dy;
+          const force = -mouse.radius / distance;
 
-        if (distance < mouse.radius) {
-          const angle = Math.atan2(dy, dx);
-          this.vx += force * Math.cos(angle);
-          this.vy += force * Math.sin(angle);
+          if (distance < mouse.radius) {
+            const angle = Math.atan2(dy, dx);
+            this.vx += force * Math.cos(angle);
+            this.vy += force * Math.sin(angle);
+          }
         }
 
         this.x +=
@@ -125,13 +149,30 @@ const ParticleEffect = ({ isLight }) => {
       requestAnimationFrame(animate);
     };
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    initParticles();
-    animate();
+    // Initialize everything after a brief delay to ensure layout is complete
+    setCanvasDimensions();
+
+    // Small timeout to ensure the layout is fully rendered
+    setTimeout(() => {
+      // Force a recalculation of canvas position
+      const rect = canvas.getBoundingClientRect();
+      console.log(
+        "Canvas position:",
+        rect.left,
+        rect.top,
+        rect.width,
+        rect.height
+      );
+
+      // Reinitialize with correct dimensions
+      setCanvasDimensions();
+      initParticles();
+      animate();
+    }, 100);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
@@ -143,11 +184,9 @@ const ParticleEffect = ({ isLight }) => {
   }, [isLight]);
 
   return (
-    //set canvas to size of viewport and ensure it's the bottom layer
-    <canvas
-      ref={canvasRef}
-      className="w-[100vw] h-full fixed top-0 left-0 z-0"
-    />
+    <div className="w-[100vw] h-[100vh] flex bg-transparent items-center justify-center">
+      <canvas ref={canvasRef} className="z-50 w-[80vw] h-[80vh]" />
+    </div>
   );
 };
 

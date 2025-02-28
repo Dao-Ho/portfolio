@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ParticleEffect from "./components/particles";
 import React from "react";
 import {
@@ -71,6 +71,7 @@ export default function Home() {
             priority
           />
         </div>
+
         <div className={`flex flex-col absolute z-20 w-[100vw] items-center`}>
           {isMobile ? (
             <div className={`fixed z-20`}>
@@ -83,14 +84,13 @@ export default function Home() {
               </div>
             )
           )}
-
           <FrontPage />
-          {/* <ExperiencePage />
-          <Footer /> */}
+          <ExperiencePage />
+          <Footer />
         </div>
-        {/* <div className="relative z-10 ">
+        <div className="relative z-10 ">
           <ParticleEffect isLight={isLight} />
-        </div> */}
+        </div>
       </div>
     </GlobalProvider>
   );

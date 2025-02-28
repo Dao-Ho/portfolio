@@ -22,7 +22,7 @@ const desktopPage = (scrollRef: MutableRefObject<null>) => {
   const styles = {
     allExperiencesContainer: `flex flex-col mt-[20vh] space-y-[25vh] mb-[25vh]`,
     experienceContainer: `space-x-[12vw] flex-row flex items-center font-sourceSans3 `,
-    parentContainer: `w-[100vw] y-overflow overflow-hidden bg-background text-foreground flex justify-center`,
+    parentContainer: `w-[100vw] y-overflow overflow-hidden bg-transparent text-foreground flex justify-center`,
     companyName: `text-[2.75vw] leading-[3vw] font-bold font-oswald`,
     role: "font-semibold font-oswald text-[1.5vw] leading-[2.5vw]",
     summary: "font-med text-[1.3vw] leading-[1.3vw] mt-[2vh]",

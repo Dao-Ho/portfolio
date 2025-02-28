@@ -14,16 +14,3 @@
   }
 }
 
-@layer utilities {
-  .texture-overlay {
-    position: fixed;
-    inset: 0;
-    background-image: url("/textures/overlay.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.6;
-    pointer-events: none;
-    z-index: 50;
-  }
-}
