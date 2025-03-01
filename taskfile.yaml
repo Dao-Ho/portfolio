@@ -1,0 +1,22 @@
+version: "3"
+
+tasks:
+  install:
+    desc: Install the dependencies
+    cmds:
+      - npm install
+  run:
+    desc: Start the development server
+    cmds:
+      - npm install
+      - npm run dev
+
+  build:
+    desc: Build the production-ready application
+    cmds:
+      - npm run build
+
+  format:
+    desc: Format the codebase
+    cmds:
+      - npx prettier --write .

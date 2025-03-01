@@ -161,7 +161,7 @@ const ParticleEffect = ({ isLight, widthSize, heightSize }) => {
         rect.left,
         rect.top,
         rect.width,
-        rect.height
+        rect.height,
       );
 
       // Reinitialize with correct dimensions
