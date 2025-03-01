@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 
-const ParticleEffect = ({ isLight }) => {
+const ParticleEffect = ({ isLight, widthSize, heightSize }) => {
   const canvasRef = useRef(null);
   //stores particle array so it doesn't need to re-render everytime the component updates
   const particlesArrayRef = useRef([]);
@@ -17,8 +17,8 @@ const ParticleEffect = ({ isLight }) => {
 
     // Set initial canvas dimensions properly
     const setCanvasDimensions = () => {
-      canvas.width = Math.floor(window.innerWidth * 0.8);
-      canvas.height = Math.floor(window.innerHeight * 0.8);
+      canvas.width = Math.floor(window.innerWidth * widthSize);
+      canvas.height = Math.floor(window.innerHeight * heightSize);
     };
 
     //resive canvas to fit current viewport
