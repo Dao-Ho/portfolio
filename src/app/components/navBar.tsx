@@ -2,27 +2,14 @@ import { useGlobal } from "../../context-providers/global-provider";
 import Switch from "./switch";
 import { motion } from "framer-motion";
 
-const NavBar = ({
-  isLight,
-  toggleTheme,
-}: {
-  isLight: boolean;
-  toggleTheme: () => void;
-}) => {
+const NavBar = () => {
   const { isMobile } = useGlobal();
 
-  return isMobile
-    ? mobileNavBar({ isLight, toggleTheme })
-    : desktopNavBar({ isLight, toggleTheme });
+  return isMobile ? mobileNavBar() : desktopNavBar();
 };
 
-const desktopNavBar = ({
-  isLight,
-  toggleTheme,
-}: {
-  isLight: boolean;
-  toggleTheme: () => void;
-}) => {
+const desktopNavBar = () => {
+  const { isLight, setIsLight } = useGlobal();
   return (
     <motion.div initial={{ y: "-7vh" }} animate={{ y: "0vh" }}>
       <div
@@ -61,20 +48,15 @@ const desktopNavBar = ({
               <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-[0.3vh] bg-foreground"></span>
             </a>
           </div>
-          <Switch isChecked={!isLight} onChange={toggleTheme} />
+          <Switch isChecked={!isLight} setIsChecked={setIsLight} />
         </div>
       </div>
     </motion.div>
   );
 };
 
-const mobileNavBar = ({
-  isLight,
-  toggleTheme,
-}: {
-  isLight: boolean;
-  toggleTheme: () => void;
-}) => {
+const mobileNavBar = () => {
+  const { isLight, setIsLight } = useGlobal();
   return (
     <motion.div initial={{ y: "-7vh" }} animate={{ y: "0vh" }}>
       <div
@@ -107,7 +89,7 @@ const mobileNavBar = ({
               <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-[0.3vh] bg-foreground"></span>
             </a>
           </div>
-          <Switch isChecked={!isLight} onChange={toggleTheme} />
+          <Switch isChecked={!isLight} setIsChecked={setIsLight} />
         </div>
       </div>
     </motion.div>

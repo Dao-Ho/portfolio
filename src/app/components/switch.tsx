@@ -5,16 +5,20 @@ import { useGlobal } from "../../context-providers/global-provider";
 
 export default function Switch({
   isChecked,
-  onChange,
+  setIsChecked,
 }: {
   isChecked: boolean;
-  onChange: () => void;
+  setIsChecked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { isMobile } = useGlobal();
+  const handleClick = () => {
+    setIsChecked((prev) => !prev);
+  };
+
   return (
     <div
       className={` ${isMobile ? "w-[2vw] h-[2.5vh] " : ""} inline-flex flex min-w-[5vh] items-center cursor-pointer w-[3vw] h-[3vh] border-[0.15vw] rounded-full ${isChecked ? "bg-dark-background" : "bg-light-background"} border ${isChecked ? "border-light-background" : "border-light-foreground"} transition-colors duration-300`}
-      onClick={onChange}
+      onClick={handleClick}
     >
       <span
         className={` ${isMobile ? "w-[2vh] h-[2vh] min-w-[1vh] min-h-[1vh] " : ""}

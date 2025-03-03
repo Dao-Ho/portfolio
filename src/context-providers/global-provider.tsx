@@ -2,12 +2,16 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface GlobalContextType {
   isMobile: boolean;
+  isLight: boolean;
+  setIsLight: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsMobile: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isLight, setIsLight] = useState<boolean>(true);
 
   //debounce to prevent the resize event from firing too often
   const debounce = (
@@ -43,7 +47,9 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <GlobalContext.Provider value={{ isMobile }}>
+    <GlobalContext.Provider
+      value={{ isMobile, isLight, setIsLight, setIsMobile }}
+    >
       {children}
     </GlobalContext.Provider>
   );
