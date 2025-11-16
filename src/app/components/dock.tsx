@@ -11,11 +11,15 @@ import {
 } from 'motion/react';
 import React, { Children, cloneElement, useEffect, useMemo, useRef, useState } from 'react';
 
+// Primary accent color used throughout the dock
+const ACCENT_COLOR = 'rgba(255, 255, 255, 0.4)';
+
 export type DockItemData = {
   icon: React.ReactNode;
   label: React.ReactNode;
   onClick: () => void;
   className?: string;
+  iconClassName?: string;
 };
 
 export type DockProps = {
@@ -31,6 +35,7 @@ export type DockProps = {
 
 type DockItemProps = {
   className?: string;
+  iconClassName?: string;
   children: React.ReactNode;
   onClick?: () => void;
   mouseX: MotionValue<number>;
@@ -43,6 +48,7 @@ type DockItemProps = {
 function DockItem({
   children,
   className = '',
+  iconClassName = '',
   onClick,
   mouseX,
   spring,
@@ -69,23 +75,28 @@ function DockItem({
       ref={ref}
       style={{
         width: size,
-        height: size
+        height: size,
+        borderColor: ACCENT_COLOR,
+        borderWidth: '1px'
       }}
       onHoverStart={() => isHovered.set(1)}
       onHoverEnd={() => isHovered.set(0)}
       onFocus={() => isHovered.set(1)}
       onBlur={() => isHovered.set(0)}
       onClick={onClick}
-      className={`relative inline-flex items-center justify-center rounded-full bg-[#060010] border-neutral-700 border-2 shadow-md ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-full bg-white/6 backdrop-blur-sm shadow-lg ${className}`}
       tabIndex={0}
       role="button"
       aria-haspopup="true"
     >
-      {Children.map(children, child =>
-        React.isValidElement(child)
-          ? cloneElement(child as React.ReactElement<{ isHovered?: MotionValue<number> }>, { isHovered })
-          : child
-      )}
+      {Children.map(children, child => {
+        if (!React.isValidElement(child)) return child;
+        // Pass iconClassName to DockIcon component
+        if (child.type === DockIcon) {
+          return cloneElement(child as React.ReactElement<{ className?: string }>, { className: iconClassName });
+        }
+        return cloneElement(child as React.ReactElement<{ isHovered?: MotionValue<number> }>, { isHovered });
+      })}
     </motion.div>
   );
 }
@@ -115,9 +126,9 @@ function DockLabel({ children, className = '', isHovered }: DockLabelProps) {
           animate={{ opacity: 1, y: -10 }}
           exit={{ opacity: 0, y: 0 }}
           transition={{ duration: 0.2 }}
-          className={`${className} absolute -top-6 left-1/2 w-fit whitespace-pre rounded-md border border-neutral-700 bg-[#060010] px-2 py-0.5 text-xs text-white`}
+          className={`${className} absolute -top-6 left-1/2 w-fit whitespace-pre rounded-md bg-white/5 px-2 py-0.5 text-xs backdrop-blur-sm`}
+          style={{ x: '-50%', borderColor: ACCENT_COLOR, borderWidth: '1px', color: ACCENT_COLOR }}
           role="tooltip"
-          style={{ x: '-50%' }}
         >
           {children}
         </motion.div>
@@ -133,7 +144,17 @@ type DockIconProps = {
 };
 
 function DockIcon({ children, className = '' }: DockIconProps) {
-  return <div className={`flex items-center justify-center ${className}`}>{children}</div>;
+  return (
+    <div className={`flex items-center justify-center ${className}`}>
+      {React.isValidElement(children) 
+        ? cloneElement(children as React.ReactElement<any>, { 
+            color: ACCENT_COLOR,
+            style: { color: ACCENT_COLOR }
+          })
+        : children
+      }
+    </div>
+  );
 }
 
 export default function Dock({
@@ -164,8 +185,8 @@ export default function Dock({
           isHovered.set(0);
           mouseX.set(Infinity);
         }}
-        className={`${className} flex items-end w-fit gap-4 rounded-2xl border-neutral-700 border-2 pb-2 px-4`}
-        style={{ height: panelHeight }}
+        className={`${className} flex items-end w-fit gap-4 rounded-3xl bg-white/5 bg-clip-padding backdrop-blur-lg p-2`}
+        style={{ height: panelHeight, borderColor: ACCENT_COLOR, borderWidth: '1px' }}
         role="toolbar"
         aria-label="Application dock"
       >
@@ -174,6 +195,7 @@ export default function Dock({
             key={index}
             onClick={item.onClick}
             className={item.className}
+            iconClassName={item.iconClassName}
             mouseX={mouseX}
             spring={spring}
             distance={distance}

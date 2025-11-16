@@ -46,11 +46,13 @@ export default function Home() {
     };
   }, []);
 
+  const ITEMSTYLING = "text-white/90 hover:text-white flex flex-col items-center justify-center";
+
   const items = [
-    { icon: <House size={18} />, label: 'Home', onClick: () => alert('Home!') },
-    { icon: <House size={18} />, label: 'Archive', onClick: () => alert('Archive!') },
-    { icon: <House size={18} />, label: 'Profile', onClick: () => alert('Profile!') },
-    { icon: <House size={18} />, label: 'Settings', onClick: () => alert('Settings!') },
+    { icon: <House size={18} />, label: 'Home', onClick: () => alert('Home!'), iconClassName: ITEMSTYLING },
+    { icon: <House size={18} />, label: 'Archive', onClick: () => alert('Archive!'), iconClassName: ITEMSTYLING },
+    { icon: <House size={18} />, label: 'Profile', onClick: () => alert('Profile!'), iconClassName: ITEMSTYLING },
+    { icon: <House size={18} />, label: 'Settings', onClick: () => alert('Settings!'), iconClassName: ITEMSTYLING },
   ];
 
   return (
