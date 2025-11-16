@@ -26,10 +26,6 @@ import { Link } from 'react-scroll';
 export const FirstSlide = () => {
 
  
-  
-  const handleImageLoad = () => {
-    console.log("Image loaded successfully");
-  };
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -199,10 +195,6 @@ export const FirstSlide = () => {
               }}
               navigation={{ nextEl: "#swiper-forward", prevEl: "#swiper-back" }}
               scrollbar={{ draggable: true }}
-              onSlideChange={() => console.log("slide change")}
-              onSwiper={(swiper) => {
-                console.log("Swiper initialized", swiper);
-              }}
             >
               <SwiperSlide> {slide1()}</SwiperSlide>
               <SwiperSlide> {slide2()}</SwiperSlide>
