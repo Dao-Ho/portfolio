@@ -10,7 +10,7 @@ import NavBar from "./components/navBar";
 import FrontPage from "./components/front-page";
 import ExperiencePage from "./components/experience";
 import Footer from "./components/footer";
-import { House } from "lucide-react";
+import { House, Sun, Moon } from "lucide-react";
 import Dock from "./components/dock";
 
 export default function Home() {
@@ -48,11 +48,19 @@ export default function Home() {
 
   const ITEMSTYLING = "text-white/90 hover:text-white flex flex-col items-center justify-center";
 
+  const getThemeIcon = () => {
+    return isLight ? <Moon size={18} /> : <Sun size={18} />;
+  }
+
+  const getThemeLabel = () => {
+    return isLight ? 'Dark Mode' : 'Light Mode';
+  }
+
   const items = [
     { icon: <House size={18} />, label: 'Home', onClick: () => alert('Home!'), iconClassName: ITEMSTYLING },
     { icon: <House size={18} />, label: 'Archive', onClick: () => alert('Archive!'), iconClassName: ITEMSTYLING },
     { icon: <House size={18} />, label: 'Profile', onClick: () => alert('Profile!'), iconClassName: ITEMSTYLING },
-    { icon: <House size={18} />, label: 'Settings', onClick: () => alert('Settings!'), iconClassName: ITEMSTYLING },
+    { icon: getThemeIcon(), label: getThemeLabel(), onClick: () => toggleTheme(), iconClassName: ITEMSTYLING },
   ];
 
   return (
