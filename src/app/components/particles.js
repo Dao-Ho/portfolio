@@ -41,8 +41,6 @@ const ParticleEffect = ({isLight}) => {
     const handleMouseMove = (e) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
-      console.log(mouse.x, mouse.y);
-      console.log("isLight :", isLight);
     };
 
     //update coordinate to track touch position
