@@ -11,8 +11,13 @@ import {
 } from 'motion/react';
 import React, { Children, cloneElement, useEffect, useMemo, useRef, useState } from 'react';
 
-// Primary accent color used throughout the dock
-const ACCENT_COLOR = 'rgba(255, 255, 255, 0.4)';
+const getAccentColor = (isLight: boolean): string => {
+  return isLight ? '#1a1a1a' : '#edeef0';
+};
+
+const getBorderColor = (isLight: boolean): string => {
+  return isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.6)';
+};
 
 export type DockItemData = {
   icon: React.ReactNode;
@@ -31,6 +36,7 @@ export type DockProps = {
   dockHeight?: number;
   magnification?: number;
   spring?: SpringOptions;
+  isLight?: boolean;
 };
 
 type DockItemProps = {
@@ -43,6 +49,7 @@ type DockItemProps = {
   distance: number;
   baseItemSize: number;
   magnification: number;
+  isLight?: boolean;
 };
 
 function DockItem({
@@ -54,7 +61,8 @@ function DockItem({
   spring,
   distance,
   magnification,
-  baseItemSize
+  baseItemSize,
+  isLight = false
 }: DockItemProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isHovered = useMotionValue(0);
@@ -76,7 +84,7 @@ function DockItem({
       style={{
         width: size,
         height: size,
-        borderColor: ACCENT_COLOR,
+        borderColor: getBorderColor(isLight),
         borderWidth: '1px'
       }}
       onHoverStart={() => isHovered.set(1)}
@@ -91,9 +99,13 @@ function DockItem({
     >
       {Children.map(children, child => {
         if (!React.isValidElement(child)) return child;
-        // Pass iconClassName to DockIcon component
+        // Pass iconClassName to DockIcon component and isLight
         if (child.type === DockIcon) {
-          return cloneElement(child as React.ReactElement<{ className?: string }>, { className: iconClassName });
+          return cloneElement(child as React.ReactElement<{ className?: string; isLight?: boolean }>, { className: iconClassName, isLight });
+        }
+        // Pass isLight to DockLabel
+        if (child.type === DockLabel) {
+          return cloneElement(child as React.ReactElement<{ isHovered?: MotionValue<number>; isLight?: boolean }>, { isHovered, isLight });
         }
         return cloneElement(child as React.ReactElement<{ isHovered?: MotionValue<number> }>, { isHovered });
       })}
@@ -105,9 +117,10 @@ type DockLabelProps = {
   className?: string;
   children: React.ReactNode;
   isHovered?: MotionValue<number>;
+  isLight?: boolean;
 };
 
-function DockLabel({ children, className = '', isHovered }: DockLabelProps) {
+function DockLabel({ children, className = '', isHovered, isLight = false }: DockLabelProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -127,7 +140,7 @@ function DockLabel({ children, className = '', isHovered }: DockLabelProps) {
           exit={{ opacity: 0, y: 0 }}
           transition={{ duration: 0.2 }}
           className={`${className} absolute -top-6 left-1/2 w-fit whitespace-pre rounded-md bg-white/5 px-2 py-0.5 text-xs backdrop-blur-sm`}
-          style={{ x: '-50%', borderColor: ACCENT_COLOR, borderWidth: '1px', color: ACCENT_COLOR }}
+          style={{ x: '-50%', borderColor: getBorderColor(isLight), borderWidth: '1px', color: getAccentColor(isLight) }}
           role="tooltip"
         >
           {children}
@@ -141,15 +154,17 @@ type DockIconProps = {
   className?: string;
   children: React.ReactNode;
   isHovered?: MotionValue<number>;
+  isLight?: boolean;
 };
 
-function DockIcon({ children, className = '' }: DockIconProps) {
+function DockIcon({ children, className = '', isLight = false }: DockIconProps) {
+  const accentColor = getAccentColor(isLight);
   return (
     <div className={`flex items-center justify-center ${className}`}>
       {React.isValidElement(children) 
         ? cloneElement(children as React.ReactElement<any>, { 
-            color: ACCENT_COLOR,
-            style: { color: ACCENT_COLOR }
+            color: accentColor,
+            style: { color: accentColor }
           })
         : children
       }
@@ -165,7 +180,8 @@ export default function Dock({
   distance = 200,
   panelHeight = 64,
   dockHeight = 256,
-  baseItemSize = 50
+  baseItemSize = 50,
+  isLight = false
 }: DockProps) {
   const mouseX = useMotionValue(Infinity);
   const isHovered = useMotionValue(0);
@@ -186,7 +202,7 @@ export default function Dock({
           mouseX.set(Infinity);
         }}
         className={`${className} flex items-end w-fit gap-4 rounded-3xl bg-white/5 bg-clip-padding backdrop-blur-lg p-2`}
-        style={{ height: panelHeight, borderColor: ACCENT_COLOR, borderWidth: '1px' }}
+        style={{ height: panelHeight, borderColor: getBorderColor(isLight), borderWidth: '1px' }}
         role="toolbar"
         aria-label="Application dock"
       >
@@ -197,6 +213,7 @@ export default function Dock({
             className={item.className}
             iconClassName={item.iconClassName}
             mouseX={mouseX}
+            isLight={isLight}
             spring={spring}
             distance={distance}
             magnification={magnification}

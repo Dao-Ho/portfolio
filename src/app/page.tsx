@@ -89,6 +89,7 @@ export default function Home() {
               magnification={70}
               dockHeight={60}
               distance={200}
+              isLight={isLight}
             />
           </div>
         )}
