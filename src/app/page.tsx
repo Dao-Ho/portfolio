@@ -56,7 +56,7 @@ export default function Home() {
   }
 
   const handleNavigateToGallery = () => {
-    router.push('/gallery');  
+    router.push('/gallery');
   };
 
   const items = [
@@ -88,7 +88,10 @@ export default function Home() {
 
         </div>
         <div className="relative z-10 ">
-          <ParticleEffect isLight={isLight} />
+          {isMobile && (
+            <ParticleEffect isLight={isLight} />
+          )}
+
         </div>
         {/* Dock positioned fixed at bottom center of the viewport */}
         {!isMobile && (
