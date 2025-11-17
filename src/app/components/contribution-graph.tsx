@@ -1,7 +1,8 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
+import { ChevronRight, ArrowRight } from 'lucide-react';
 
 interface ContributionDay {
   contributionCount: number;
@@ -44,6 +45,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
   const [contributions, setContributions] = useState<ContributionCalendar | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [cellStates, setCellStates] = useState<Map<string, CellState>>(new Map());
+  const [isHovering, setIsHovering] = useState(false);
   const mouseRef = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -106,7 +108,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
       const newStates = new Map(cellStates);
       const mouse = mouseRef.current;
       const mouseRadius = 100;
-      
+
       newStates.forEach((state, key) => {
         const cellElement = document.getElementById(`cell-${key}`);
         if (!cellElement) return;
@@ -124,7 +126,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
           const distance = Math.sqrt(distanceSquared);
           const force = (mouseRadius - distance) / mouseRadius;
           const angle = Math.atan2(dy, dx);
-          
+
           const pushStrength = force * force * 2.5;
           state.vx -= pushStrength * Math.cos(angle);
           state.vy -= pushStrength * Math.sin(angle);
@@ -174,28 +176,50 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     );
   }
 
+  const router = useRouter();
+  const navigateToGitHub = () => {
+    router.push('https://github.com/Dao-Ho');
+  };
+
   return (
-    <div 
+    <div
       ref={containerRef}
       className="flex flex-col gap-2"
     >
-      <Link href="https://github.com/Dao-Ho" target="_blank">
-      <p 
-          className="text-sm tracking-wide font-light opacity-60 hover:cursor-pointer transition-colors duration-200"
-          style={{ color: isLight ? '#625444' : '#938d82' }}
-          onMouseEnter={(e) => e.currentTarget.style.color = '#3c7cff'}
-          onMouseLeave={(e) => e.currentTarget.style.color = isLight ? '#625444' : '#938d82'}
+      <div>
+        <span
+          className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
+          onClick={navigateToGitHub}
+          onMouseEnter={(e) => {
+            setIsHovering(true);
+            e.currentTarget.style.color = '#3c7cff';
+          }}
+          onMouseLeave={(e) => {
+            setIsHovering(false);
+            e.currentTarget.style.color = isLight ? '#262523' : '#cbd0d2';
+          }}
         >
           See what I've been up to
-        </p>
-      </Link>
+          {isHovering ? (
+            <ArrowRight
+              className="inline-block transition-all duration-300"
+              size={16}
+            />
+          ) : (
+            <ChevronRight
+              className="inline-block transition-all duration-300"
+              size={16}
+            />
+          )}
+        </span>
+      </div>
       <div className="flex gap-1">
         {contributions.weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="flex flex-col gap-2">
             {week.contributionDays.map((day, dayIndex) => {
               const key = `${weekIndex}-${dayIndex}`;
               const state = cellStates.get(key) || { x: 0, y: 0, vx: 0, vy: 0 };
-              
+
               return (
                 <div
                   key={key}
