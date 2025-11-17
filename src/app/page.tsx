@@ -2,20 +2,19 @@
 import { useEffect, useState, useRef } from "react";
 import ParticleEffect from "./components/particles";
 import React from "react";
-import { GlobalProvider, useGlobal } from '../context-providers/global-provider'
-
-import { motion } from "framer-motion";
+import { GlobalProvider } from '../context-providers/global-provider'
+import { useRouter } from "next/navigation";
 
 import NavBar from "./components/navBar";
 import FrontPage from "./components/front-page";
 import ExperiencePage from "./components/experience";
 import Footer from "./components/footer";
-import { House, Sun, Moon } from "lucide-react";
+import { House, Sun, Moon, Palette } from "lucide-react";
 import Dock from "./components/dock";
 
 export default function Home() {
-  const [isLight, setIsLight] = useState(true);
-
+  const [isLight, setIsLight] = useState(false);
+  const router = useRouter();
 
   const toggleTheme = () => {
     setIsLight(!isLight);
@@ -56,10 +55,14 @@ export default function Home() {
     return isLight ? 'Dark Mode' : 'Light Mode';
   }
 
+  const handleNavigateToGallery = () => {
+    router.push('/gallery');  
+  };
+
   const items = [
     { icon: <House size={18} />, label: 'Home', onClick: () => alert('Home!'), iconClassName: ITEMSTYLING },
     { icon: <House size={18} />, label: 'Archive', onClick: () => alert('Archive!'), iconClassName: ITEMSTYLING },
-    { icon: <House size={18} />, label: 'Profile', onClick: () => alert('Profile!'), iconClassName: ITEMSTYLING },
+    { icon: <Palette size={18} />, label: 'Gallery', onClick: () => handleNavigateToGallery(), iconClassName: ITEMSTYLING },
     { icon: getThemeIcon(), label: getThemeLabel(), onClick: () => toggleTheme(), iconClassName: ITEMSTYLING },
   ];
 
