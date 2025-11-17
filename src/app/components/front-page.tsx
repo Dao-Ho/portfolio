@@ -19,7 +19,9 @@ const FrontPage = ({isLight}: {isLight: boolean}) => {
 const desktopPage = ({isLight}: {isLight: boolean}) => {
     return (
         <div className="flex flex-col h-[85vh] bg-transparent w-[100vw] text-foreground ">
+            <div className="h-full w-full items-center justify-center flex flex-row">
             <GitHubContributions userName="Dao-Ho" isLight={isLight} />
+            </div>
         </div>
     );
 };

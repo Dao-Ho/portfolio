@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useState, useEffect, useRef } from 'react';
 
 interface ContributionDay {
@@ -176,8 +177,18 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full flex items-center justify-center"
+      className="flex flex-col gap-2"
     >
+      <Link href="https://github.com/Dao-Ho" target="_blank">
+      <p 
+          className="text-sm tracking-wide font-light opacity-60 hover:cursor-pointer transition-colors duration-200"
+          style={{ color: isLight ? '#625444' : '#938d82' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#3c7cff'}
+          onMouseLeave={(e) => e.currentTarget.style.color = isLight ? '#625444' : '#938d82'}
+        >
+          See what I've been up to
+        </p>
+      </Link>
       <div className="flex gap-1">
         {contributions.weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="flex flex-col gap-2">
@@ -189,13 +200,12 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                 <div
                   key={key}
                   id={`cell-${key}`}
-                  className="w-[0.85vw] h-[0.85vw] rounded-[0.25vw]"
+                  className="w-[0.85vw] h-[0.85vw] rounded-full"
                   style={{
                     backgroundColor: getColor(day.contributionCount),
                     transform: `translate(${state.x}px, ${state.y}px)`,
                     willChange: 'transform'
                   }}
-                  title={`${day.date}: ${day.contributionCount} contributions`}
                 />
               );
             })}
