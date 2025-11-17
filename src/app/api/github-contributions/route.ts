@@ -25,6 +25,10 @@ interface GitHubResponse {
   errors?: Array<{ message: string }>;
 }
 
+// In-memory cache
+const cache = new Map<string, { data: GitHubResponse; timestamp: number }>();
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const userName = searchParams.get('userName');
@@ -35,6 +39,22 @@ export async function GET(request: NextRequest) {
       { status: 400 }
     );
   }
+
+  // Check cache first
+  const cached = cache.get(userName);
+  const now = Date.now();
+
+  if (cached && now - cached.timestamp < CACHE_DURATION) {
+    console.log(`✅ Cache hit for ${userName}`);
+    return NextResponse.json(cached.data, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'X-Cache-Status': 'HIT'
+      }
+    });
+  }
+
+  console.log(`❌ Cache miss for ${userName}, fetching from GitHub...`);
 
   const query = `
     query($userName:String!) { 
@@ -67,8 +87,7 @@ export async function GET(request: NextRequest) {
       })
     });
 
-    console.log('GitHub API response:', response);
-    console.log('GitHub TOKEN:', process.env.NEXT_PUBLIC_GITHUB_TOKEN);
+    console.log('GitHub API response status:', response.status);
 
     const data: GitHubResponse = await response.json();
     
@@ -79,7 +98,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(data);
+    // Store in cache
+    cache.set(userName, { data, timestamp: now });
+    console.log(`💾 Cached data for ${userName}`);
+
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'X-Cache-Status': 'MISS'
+      }
+    });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },

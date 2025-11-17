@@ -161,9 +161,61 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     if (count < 10) return isLight ? '#80705f' : '#6e6860';
     return isLight ? '#5a4d3f' : '#938d82';
   };
+  const router = useRouter();
+  const navigateToGitHub = () => {
+    router.push('https://github.com/Dao-Ho');
+  };
 
   if (loading) {
-    return null;
+    return (
+      <div
+        ref={containerRef}
+        className="flex flex-col gap-2"
+      >
+        <div>
+          <span
+            className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
+            onClick={navigateToGitHub}
+            onMouseEnter={(e) => {
+              setIsHovering(true);
+              e.currentTarget.style.color = '#3c7cff';
+            }}
+            onMouseLeave={(e) => {
+              setIsHovering(false);
+              e.currentTarget.style.color = isLight ? '#262523' : '#cbd0d2';
+            }}
+          >
+            See what I've been up to
+            {isHovering ? (
+              <ArrowRight
+                className="inline-block transition-all duration-300"
+                size={16}
+              />
+            ) : (
+              <ChevronRight
+                className="inline-block transition-all duration-300"
+                size={16}
+              />
+            )}
+          </span>
+        </div>
+        <div className="flex gap-1 opacity-50 animate-pulse">
+          {Array.from({ length: 52 }).map((_, weekIndex) => (
+            <div key={weekIndex} className="flex flex-col gap-2">
+              {Array.from({ length: 7 }).map((_, dayIndex) => (
+                <div
+                  key={dayIndex}
+                  className="w-[0.85vw] h-[0.85vw] rounded-full"
+                  style={{
+                    backgroundColor: isLight ? '#ebe6dd' : '#2d2c29'
+                  }}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (!contributions) {
@@ -176,10 +228,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     );
   }
 
-  const router = useRouter();
-  const navigateToGitHub = () => {
-    router.push('https://github.com/Dao-Ho');
-  };
+
 
   return (
     <div
