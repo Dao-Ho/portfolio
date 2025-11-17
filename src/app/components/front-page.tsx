@@ -4,22 +4,25 @@ import Image from "next/image";
 
 import headshot from "../../../public/portfolio-photo.png";
 import { useGlobal } from "../../context-providers/global-provider";
+import GitHubContributions from "./contribution-graph";
 
 
-const FrontPage = () => {
+
+
+const FrontPage = ({isLight}: {isLight: boolean}) => {
     const { isMobile } = useGlobal();
 
 
-    return isMobile ? mobilePage() : desktopPage();
+    return isMobile ? mobilePage() : desktopPage({isLight: isLight});
 }
 
-const desktopPage = () => (
-    <div className="flex flex-col h-[85vh] bg-transparent w-[100vw] text-foreground ">
-        <h1>
-            hello
-        </h1>
-    </div>
-);
+const desktopPage = ({isLight}: {isLight: boolean}) => {
+    return (
+        <div className="flex flex-col h-[85vh] bg-transparent w-[100vw] text-foreground ">
+            <GitHubContributions userName="Dao-Ho" isLight={isLight} />
+        </div>
+    );
+};
 
 const mobilePage = () => (
     <div className="flex flex-col h-[85vh] bg-transparent w-[100vw] text-foreground justify-center items-center ">

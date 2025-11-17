@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     const response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -66,6 +66,9 @@ export async function GET(request: NextRequest) {
         variables: { userName }
       })
     });
+
+    console.log('GitHub API response:', response);
+    console.log('GitHub TOKEN:', process.env.NEXT_PUBLIC_GITHUB_TOKEN);
 
     const data: GitHubResponse = await response.json();
     
