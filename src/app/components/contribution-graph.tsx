@@ -104,7 +104,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     const animate = () => {
       const newStates = new Map(cellStates);
       const mouse = mouseRef.current;
-      const mouseRadius = 180;
+      const mouseRadius = 100;
       
       newStates.forEach((state, key) => {
         const cellElement = document.getElementById(`cell-${key}`);
@@ -153,20 +153,14 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
 
   const getColor = (count: number) => {
     if (count === 0) return isLight ? '#ebe6dd' : '#2d2c29';
-    if (count < 5) return isLight ? '#cbbfaf' : '#3f3d3a';
-    if (count < 10) return isLight ? '#a89582' : '#565350';
-    if (count < 15) return isLight ? '#80705f' : '#6e6860';
+    if (count < 2) return isLight ? '#cbbfaf' : '#3f3d3a';
+    if (count < 5) return isLight ? '#a89582' : '#565350';
+    if (count < 10) return isLight ? '#80705f' : '#6e6860';
     return isLight ? '#5a4d3f' : '#938d82';
   };
 
   if (loading) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        <p className={isLight ? 'text-gray-800' : 'text-gray-200'}>
-          Loading contributions...
-        </p>
-      </div>
-    );
+    return null;
   }
 
   if (!contributions) {
@@ -186,7 +180,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     >
       <div className="flex gap-1">
         {contributions.weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="flex flex-col gap-1">
+          <div key={weekIndex} className="flex flex-col gap-2">
             {week.contributionDays.map((day, dayIndex) => {
               const key = `${weekIndex}-${dayIndex}`;
               const state = cellStates.get(key) || { x: 0, y: 0, vx: 0, vy: 0 };
@@ -195,7 +189,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                 <div
                   key={key}
                   id={`cell-${key}`}
-                  className="w-[0.75vw] h-[0.75vw] rounded-[0.25vw]"
+                  className="w-[0.85vw] h-[0.85vw] rounded-[0.25vw]"
                   style={{
                     backgroundColor: getColor(day.contributionCount),
                     transform: `translate(${state.x}px, ${state.y}px)`,
