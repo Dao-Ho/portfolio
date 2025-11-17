@@ -11,7 +11,30 @@ import {
 } from 'framer-motion';
 import React, { Children, cloneElement, useEffect, useMemo, useRef, useState, useId } from 'react';
 
-// Full GlassSurface implementation
+type GlassSurfaceProps = {
+  children?: React.ReactNode;
+  width?: number | string;
+  height?: number | string;
+  borderRadius?: number;
+  borderWidth?: number;
+  brightness?: number;
+  opacity?: number;
+  blur?: number;
+  displace?: number;
+  backgroundOpacity?: number;
+  saturation?: number;
+  distortionScale?: number;
+  redOffset?: number;
+  greenOffset?: number;
+  blueOffset?: number;
+  xChannel?: string;
+  yChannel?: string;
+  mixBlendMode?: string;
+  className?: string;
+  style?: React.CSSProperties;
+  isDarkMode?: boolean;
+};
+
 const GlassSurface = ({
   children,
   width = 200,
@@ -34,18 +57,18 @@ const GlassSurface = ({
   className = '',
   style = {},
   isDarkMode = false
-}) => {
+}: GlassSurfaceProps) => {
   const uniqueId = useId().replace(/:/g, '-');
   const filterId = `glass-filter-${uniqueId}`;
   const redGradId = `red-grad-${uniqueId}`;
   const blueGradId = `blue-grad-${uniqueId}`;
 
-  const containerRef = useRef(null);
-  const feImageRef = useRef(null);
-  const redChannelRef = useRef(null);
-  const greenChannelRef = useRef(null);
-  const blueChannelRef = useRef(null);
-  const gaussianBlurRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const feImageRef = useRef<SVGFEImageElement | null>(null);
+  const redChannelRef = useRef<SVGFEDisplacementMapElement | null>(null);
+  const greenChannelRef = useRef<SVGFEDisplacementMapElement | null>(null);
+  const blueChannelRef = useRef<SVGFEDisplacementMapElement | null>(null);
+  const gaussianBlurRef = useRef<SVGFEGaussianBlurElement | null>(null);
 
 
   const generateDisplacementMap = () => {
@@ -418,78 +441,10 @@ function DockItem({
               isLight 
             });
           }
-          if (child.type === DockLabel) {
-            return cloneElement(child as React.ReactElement<{ isHovered?: MotionValue<number>; isLight?: boolean }>, { 
-              isHovered, 
-              isLight
-            });
-          }
           return cloneElement(child as React.ReactElement<{ isHovered?: MotionValue<number> }>, { isHovered });
         })}
       </GlassSurface>
     </motion.div>
-  );
-}
-
-type DockLabelProps = {
-  className?: string;
-  children: React.ReactNode;
-  isHovered?: MotionValue<number>;
-  isLight?: boolean;
-};
-
-function DockLabel({ children, className = '', isHovered, isLight = false }: DockLabelProps) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    if (!isHovered) return;
-    const unsubscribe = isHovered.on('change', latest => {
-      setIsVisible(latest === 1);
-    });
-    return () => unsubscribe();
-  }, [isHovered]);
-
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0, y: 0, scale: 0.9 }}
-          animate={{ opacity: 1, y: -10, scale: 1 }}
-          exit={{ opacity: 0, y: 0, scale: 0.9 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          className={`${className} absolute -top-6 left-1/2 w-fit whitespace-pre text-xs`}
-          style={{ 
-            x: '-50%',
-            color: getAccentColor(!isLight)
-          }}
-          role="tooltip"
-        >
-          <GlassSurface
-            borderRadius={8}
-            borderWidth={0.07}
-            brightness={50}
-            opacity={0.93}
-            blur={11}
-            displace={0}
-            backgroundOpacity={0}
-            saturation={1}
-            distortionScale={-180}
-            redOffset={0}
-            greenOffset={10}
-            blueOffset={20}
-            xChannel="R"
-            yChannel="G"
-            mixBlendMode="difference"
-            style={{ width: 'auto', height: 'auto' }}
-            isDarkMode={!isLight}
-          >
-            <div className="px-3 py-1.5">
-              {children}
-            </div>
-          </GlassSurface>
-        </motion.div>
-      )}
-    </AnimatePresence>
   );
 }
 
@@ -578,7 +533,6 @@ export default function Dock({
               isLight={isLight}
             >
               <DockIcon>{item.icon}</DockIcon>
-              <DockLabel>{item.label}</DockLabel>
             </DockItem>
           ))}
         </motion.div>
