@@ -9,7 +9,7 @@ import NavBar from "./components/navBar";
 import FrontPage from "./components/front-page";
 import ExperiencePage from "./components/experience";
 import Footer from "./components/footer";
-import { House, Sun, Moon, Palette } from "lucide-react";
+import { House, Sun, Moon, Palette, List } from "lucide-react";
 import Dock from "./components/dock";
 
 export default function Home() {
@@ -61,7 +61,7 @@ export default function Home() {
 
   const items = [
     { icon: <House size={18} />, label: 'Home', onClick: () => alert('Home!'), iconClassName: ITEMSTYLING },
-    { icon: <House size={18} />, label: 'Archive', onClick: () => alert('Archive!'), iconClassName: ITEMSTYLING },
+    { icon: <List size={18} />, label: 'Archive', onClick: () => alert('Archive!'), iconClassName: ITEMSTYLING },
     { icon: <Palette size={18} />, label: 'Gallery', onClick: () => handleNavigateToGallery(), iconClassName: ITEMSTYLING },
     { icon: getThemeIcon(), label: getThemeLabel(), onClick: () => toggleTheme(), iconClassName: ITEMSTYLING },
   ];
