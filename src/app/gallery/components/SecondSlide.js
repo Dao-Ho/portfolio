@@ -84,7 +84,7 @@ export const SecondSlide = () => {
                     : "pt-24 font-libre font-bold text-[2vw] text-background"
                 }
               >
-                Dao Ho is an 19-year-old self-taught artist studying at
+                Dao Ho is an 21-year-old self-taught artist studying at
                 Northeastern University. With a focus on ink, he combines
                 various mark-making techniques to emphasize values hidden in
                 ordinary everyday life.

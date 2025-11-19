@@ -24,7 +24,8 @@ module.exports = {
       'light-foreground': '#262523',
       'light-background': '#fff7f0',
       'dark-foreground': '#fff7f0',
-      'dark-background': '#272624',
+      'dark-background': '#1a1921',
+      'text-hover': '#3c7cff',
       'background': 'var(--background-color)',
       'foreground': 'var(--foreground-color)',
 
