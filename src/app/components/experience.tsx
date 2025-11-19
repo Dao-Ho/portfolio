@@ -15,9 +15,7 @@ const ExperiencePage = () => {
   const scrollRef = useRef(null);
   const { isMobile } = useGlobal();
 
-  return isMobile
-    ? mobilePage(scrollRef)
-    : desktopPage(scrollRef);
+  return isMobile ? mobilePage(scrollRef) : desktopPage(scrollRef);
 };
 
 const desktopPage = (scrollRef: MutableRefObject<null>) => {
@@ -32,7 +30,13 @@ const desktopPage = (scrollRef: MutableRefObject<null>) => {
     textContainer: `w-[20vw] flex flex-col justify-center`,
   };
 
-  const rightLogo = (companyName: string, role: string, summary: string, photo: string | StaticImport, link: string | undefined) => {
+  const rightLogo = (
+    companyName: string,
+    role: string,
+    summary: string,
+    photo: string | StaticImport,
+    link: string | undefined
+  ) => {
     return (
       <div className={styles.experienceContainer}>
         <motion.div
@@ -61,7 +65,13 @@ const desktopPage = (scrollRef: MutableRefObject<null>) => {
     );
   };
 
-  const leftLogo = (companyName: string, role: string, summary: string, photo: string | StaticImport, link: string | undefined) => {
+  const leftLogo = (
+    companyName: string,
+    role: string,
+    summary: string,
+    photo: string | StaticImport,
+    link: string | undefined
+  ) => {
     return (
       <div className={styles.experienceContainer}>
         <motion.div
@@ -93,11 +103,33 @@ const desktopPage = (scrollRef: MutableRefObject<null>) => {
   return (
     <div className={styles.parentContainer}>
       <div className={styles.allExperiencesContainer} id="experience">
+      {leftLogo(
+          "Agency",
+          "Member of Technical Staff Co-op",
+          "Learning the meaning of tracer bullets and what it takes to scale them.",
+          generate,
+          "https://paynalli.com/"
+        )}
+      {rightLogo(
+          "Generate Product Development",
+          "Technical Lead",
+          "Led a team of 5 engineers in building and shipping Vetted, a web application currently in use connecting pet owners with care providers. Collaborated with clients to define the product vision and delivered a full-stack platform with robust deployment infrastructure.",
+          generate,
+          "https://generatenu.com/"
+        )}
+        {leftLogo(
+          "DesignAI",
+          "Software Engineer Intern",
+          "Designed and built an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
+          generate,
+          "https://paynalli.com/"
+        )}
         {rightLogo(
           "Generate Product Development",
           "Software Engineer",
-          "",
-          generate, "https://generatenu.com/"
+          "Contributed as an engineer to build Three Stones, a mobile application allowing retail investors to crowdfund real estate projects.",
+          generate,
+          "https://generatenu.com/"
         )}
 
         {leftLogo(
@@ -120,7 +152,8 @@ const desktopPage = (scrollRef: MutableRefObject<null>) => {
           scalable and robust database schema, secure API endpoints,
           responsive frontend designs, and rigorous tests. Currently
           developing a revampled website to improve user experience.`,
-          nusci, "https://nuscimagazine.com/"
+          nusci,
+          "https://nuscimagazine.com/"
         )}
 
         {leftLogo(
@@ -128,7 +161,8 @@ const desktopPage = (scrollRef: MutableRefObject<null>) => {
           "Discrete Math Teaching Assistant",
           `Led weekly office hours and teaching sessions to reinforce student understanding of course concepts. I provided additional resources, 
       and comprehensive grading feedback to students on homeworks and exams to ensure success in the course.`,
-          neu, "https://www.khoury.northeastern.edu/"
+          neu,
+          "https://www.khoury.northeastern.edu/"
         )}
       </div>
     </div>
@@ -147,7 +181,13 @@ const mobilePage = (scrollRef: MutableRefObject<null>) => {
     textContainer: `w-[85vw] flex flex-col items-center justify-center`,
   };
 
-  const experience = (companyName: string, role: string, summary: string, photo: string | StaticImport, link: string | undefined) => {
+  const experience = (
+    companyName: string,
+    role: string,
+    summary: string,
+    photo: string | StaticImport,
+    link: string | undefined
+  ) => {
     return (
       <div className={styles.experienceContainer}>
         <motion.div
@@ -178,11 +218,12 @@ const mobilePage = (scrollRef: MutableRefObject<null>) => {
   return (
     <div className={styles.parentContainer}>
       <div className={styles.allExperiencesContainer} id="experience">
-      {experience(
+        {experience(
           "Generate Product Development",
           "Software Engineer",
           "",
-          generate, "https://generatenu.com/"
+          generate,
+          "https://generatenu.com/"
         )}
 
         {experience(
@@ -205,7 +246,8 @@ const mobilePage = (scrollRef: MutableRefObject<null>) => {
           scalable and robust database schema, secure API endpoints,
           responsive frontend designs, and rigorous tests. Currently
           developing a revampled website to improve user experience.`,
-          nusci, "https://nuscimagazine.com/"
+          nusci,
+          "https://nuscimagazine.com/"
         )}
 
         {experience(
@@ -213,7 +255,8 @@ const mobilePage = (scrollRef: MutableRefObject<null>) => {
           "Discrete Math Teaching Assistant",
           `Led weekly office hours and teaching sessions to reinforce student understanding of course concepts. I provided additional resources, 
       and comprehensive grading feedback to students on homeworks and exams to ensure success in the course.`,
-          neu, "https://www.khoury.northeastern.edu/"
+          neu,
+          "https://www.khoury.northeastern.edu/"
         )}
       </div>
     </div>
