@@ -273,7 +273,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                 <div
                   key={key}
                   id={`cell-${key}`}
-                  className="w-[0.85vw] h-[0.85vw] rounded-full"
+                  className="w-[0.85vw] h-[0.85vw] rounded-full transition-colors duration-300"
                   style={{
                     backgroundColor: getColor(day.contributionCount),
                     transform: `translate(${state.x}px, ${state.y}px)`,

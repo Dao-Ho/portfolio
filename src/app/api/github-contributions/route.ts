@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from 'redis';
 
 interface ContributionDay {
   contributionCount: number;
@@ -25,9 +26,18 @@ interface GitHubResponse {
   errors?: Array<{ message: string }>;
 }
 
-// In-memory cache
-const cache = new Map<string, { data: GitHubResponse; timestamp: number }>();
-const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+const CACHE_DURATION = 60 * 60; // 1 hour in seconds
+
+// Create Redis client
+let redis: ReturnType<typeof createClient> | null = null;
+
+async function getRedisClient() {
+  if (!redis) {
+    redis = createClient({ url: process.env.REDIS_URL });
+    await redis.connect();
+  }
+  return redis;
+}
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -40,21 +50,24 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Check cache first
-  const cached = cache.get(userName);
-  const now = Date.now();
-
-  if (cached && now - cached.timestamp < CACHE_DURATION) {
-    console.log(`✅ Cache hit for ${userName}`);
-    return NextResponse.json(cached.data, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-        'X-Cache-Status': 'HIT'
-      }
-    });
+  // Check Redis cache first
+  try {
+    const client = await getRedisClient();
+    const cached = await client.get(`github-contributions:${userName}`);
+    
+    if (cached) {
+      const data = JSON.parse(cached);
+      return NextResponse.json(data, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+          'X-Cache-Status': 'HIT-REDIS'
+        }
+      });
+    }
+  } catch (error) {
+    // Silently continue to GitHub API if Redis fails
   }
 
-  console.log(`❌ Cache miss for ${userName}, fetching from GitHub...`);
 
   const query = `
     query($userName:String!) { 
@@ -78,7 +91,7 @@ export async function GET(request: NextRequest) {
     const response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -87,7 +100,6 @@ export async function GET(request: NextRequest) {
       })
     });
 
-    console.log('GitHub API response status:', response.status);
 
     const data: GitHubResponse = await response.json();
     
@@ -98,14 +110,18 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Store in cache
-    cache.set(userName, { data, timestamp: now });
-    console.log(`💾 Cached data for ${userName}`);
+    // Store in Redis cache with TTL
+    try {
+      const client = await getRedisClient();
+      await client.setEx(`github-contributions:${userName}`, CACHE_DURATION, JSON.stringify(data));
+    } catch (error) {
+      console.error('Failed to cache data in Redis:', error);
+    }
 
     return NextResponse.json(data, {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-        'X-Cache-Status': 'MISS'
+        'X-Cache-Status': 'MISS-REDIS'
       }
     });
   } catch (error) {
