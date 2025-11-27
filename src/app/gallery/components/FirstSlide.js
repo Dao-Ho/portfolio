@@ -175,7 +175,7 @@ export const FirstSlide = () => {
               <p className={`font-bebas italic text-[#212121] font-bold 
               ${isMobile? 'flex pt-[2vh] text-[5vw] justify-center' 
               : 'pt-5 pl-3  text-[2vw] '}`}>
-              &lt;Developer + Artist + Designer/&gt;
+              &lt;Engineer + Artist/&gt;
               </p>
               </motion.div>
             </div>

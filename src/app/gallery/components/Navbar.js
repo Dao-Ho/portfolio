@@ -62,7 +62,7 @@ const Navbar = () => {
           href="/"
           className={isMobile? 'font-roboto text-[3vw] font-bold transition ease-in-out delay-50 hover:scale-110 cursor-pointer'
             : 'font-roboto text-[1.5vw] font-bold transition ease-in-out delay-50 hover:scale-110 cursor-pointer'}>
-            Developer
+            Engineer
           </a>
         </div>
 
