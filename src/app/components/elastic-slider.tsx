@@ -153,7 +153,7 @@ const Slider: React.FC<SliderProps> = ({
 
         <div
           ref={sliderRef}
-          className="relative flex w-full max-w-xs flex-grow cursor-grab touch-none select-none items-center py-4"
+          className="relative flex w-full max-w-xs flex-grow cursor-grab touch-none select-none items-center"
           onPointerMove={handlePointerMove}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
-import { ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronRight, ArrowRight, IterationCw } from "lucide-react";
 import ElasticSlider from "./elastic-slider";
 
 interface ContributionDay {
@@ -228,17 +228,13 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
             }}
           >
             See what I've been up to
-            {isHovering ? (
-              <ArrowRight
-                className="inline-block transition-all duration-300"
-                size={16}
-              />
-            ) : (
-              <ChevronRight
-                className="inline-block transition-all duration-300"
-                size={16}
-              />
-            )}
+            <ArrowRight
+              className="inline-block transition-all duration-300"
+              size={16}
+              style={{
+                transform: isHovering ? "rotate(90deg)" : "rotate(0deg)",
+              }}
+            />
           </span>
         </div>
         <div className="flex gap-1 opacity-50 animate-pulse">
@@ -288,12 +284,12 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
           See what I've been up to
           {isHovering ? (
             <ArrowRight
-              className="inline-block transition-all duration-300"
+              className="inline-block transition-all duration-300 ml-1"
               size={16}
             />
           ) : (
             <ChevronRight
-              className="inline-block transition-all duration-300"
+              className="inline-block transition-all duration-300 ml-1"
               size={16}
             />
           )}
@@ -331,7 +327,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
           </div>
         ))}
       </div>
-      <div className="flex items-center justify-end mt-12 gap-8">
+      <div className="flex items-end justify-end mt-12 gap-8">
         <ElasticSlider
           startingValue={0}
           defaultValue={50}
@@ -345,26 +341,22 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
           className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
           onClick={resetGraph}
           onMouseEnter={(e) => {
-            setIsHovering(true);
+            setIsResetHovering(true);
             e.currentTarget.style.color = "#3c7cff";
           }}
           onMouseLeave={(e) => {
-            setIsHovering(false);
+            setIsResetHovering(false);
             e.currentTarget.style.color = isLight ? "#262523" : "#cbd0d2";
           }}
         >
           Reset
-          {isHovering ? (
-            <ArrowRight
-              className="inline-block transition-all duration-300"
-              size={16}
-            />
-          ) : (
-            <ChevronRight
-              className="inline-block transition-all duration-300"
-              size={16}
-            />
-          )}
+          <IterationCw
+            className="inline-block transition-all duration-300 ml-1"
+            size={16}
+            style={{
+              transform: isResetHovering ? "rotate(90deg)" : "rotate(0deg)",
+            }}
+          />
         </span>
       </div>
     </div>
