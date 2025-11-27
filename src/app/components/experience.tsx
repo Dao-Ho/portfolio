@@ -1,6 +1,6 @@
+"use client";
+
 import { MutableRefObject, useRef } from "react";
-import { gsap } from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
 import agencyLogoMap from "../../../public/Images/agency-logo-map.json";
 import nuscimagazineLogoMap from "../../../public/Images/nusci-logo-map.json";
 import neuLogoMap from "../../../public/Images/neu-logo-map.json";
@@ -9,15 +9,9 @@ import generateLogoMap from "../../../public/Images/generate-logo-map.json";
 import designAiLogoMap from "../../../public/Images/design-ai-logo-map.json";
 import vetrulyLogoMap from "../../../public/Images/vetruly-logo-map.json";
 
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-const useGlobal = () => ({ isMobile: window.innerWidth < 768 });
-
 import ScrollReveal from "./scroll-reveal";
 import InteractiveLogoDots, { LogoMapConfig } from "./interactive-logo";
+import { useGlobal } from "../../lib/utils";
 
 const experiences = [
   {
