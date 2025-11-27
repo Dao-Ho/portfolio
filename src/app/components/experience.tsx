@@ -35,7 +35,7 @@ const experiences = [
     companyName: "DesignAI",
     role: "Software Engineer Intern",
     summary:
-      "Designed and built an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
+      "Led the development of an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
     link: "https://www.designai.co/",
     logoMap: designAiLogoMap,
   },
@@ -59,7 +59,7 @@ const experiences = [
     companyName: "NUSci – Northeastern Science Magazine",
     role: "Junior Software Engineer",
     summary:
-      "Worked with an awesome team of developers, helped architect scalable and robust database schema, secure API endpoints, responsive frontend designs, and rigorous tests. Currently developing a revampled website to improve user experience.",
+      "Worked with an awesome team of developers, helped architect scalable and robust database schema, secure API endpoints, responsive frontend designs, and rigorous tests. Developed a revampled website to improve user experience.",
     link: "https://nuscimagazine.com/",
     logoMap: nuscimagazineLogoMap,
   },
