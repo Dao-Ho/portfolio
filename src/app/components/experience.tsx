@@ -25,7 +25,7 @@ const experiences = [
     role: "Member of Technical Staff Co-op",
     summary:
       "Learning the meaning of tracer bullets, velocity, and what it takes to scale them.",
-    link: "https://paynalli.com/",
+    link: "https://www.agency.inc/",
     logoMap: agencyLogoMap,
   },
   {
@@ -42,7 +42,7 @@ const experiences = [
     role: "Software Engineer Intern",
     summary:
       "Designed and built an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
-    link: "https://paynalli.com/",
+    link: "https://www.designai.co/",
     logoMap: designAiLogoMap,
   },
   {
