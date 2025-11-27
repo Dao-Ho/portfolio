@@ -163,9 +163,9 @@ const DesktopPage = ({
       </div>
     );
 
-    const logoPlaceholder = (
-      <div className="w-[22vw] h-[25vw] bg-gray-200 rounded-lg flex items-center justify-center">
-        <span className="text-gray-500 text-sm">Logo</span>
+    const logoContainer = (
+      <div className="w-[22vw] h-[25vw] flex items-center justify-center">
+        <InteractiveLogoDots logoMap={logoMap} isLight={isLight} />
       </div>
     );
 
@@ -173,13 +173,13 @@ const DesktopPage = ({
       <div className={styles.experienceContainer}>
         {isReversed ? (
           <>
-            <InteractiveLogoDots logoMap={logoMap} isLight={isLight} />
+            {logoContainer}
             {textContent}
           </>
         ) : (
           <>
             {textContent}
-            <InteractiveLogoDots logoMap={logoMap} isLight={isLight} gradientColors={["#34181c", "#1f0f15", "#010002"]} />
+            {logoContainer}
           </>
         )}
       </div>
