@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, ArrowRight } from 'lucide-react';
+import { useRouter } from "next/navigation";
+import React, { useState, useEffect, useRef } from "react";
+import { ChevronRight, ArrowRight } from "lucide-react";
 
 interface ContributionDay {
   contributionCount: number;
@@ -39,13 +39,21 @@ interface CellState {
   y: number;
   vx: number;
   vy: number;
+  touched: boolean;
 }
 
-const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userName, isLight }) => {
-  const [contributions, setContributions] = useState<ContributionCalendar | null>(null);
+const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
+  userName,
+  isLight,
+}) => {
+  const [contributions, setContributions] =
+    useState<ContributionCalendar | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [cellStates, setCellStates] = useState<Map<string, CellState>>(new Map());
+  const [cellStates, setCellStates] = useState<Map<string, CellState>>(
+    new Map()
+  );
   const [isHovering, setIsHovering] = useState(false);
+  const [isResetHovering, setIsResetHovering] = useState(false);
   const mouseRef = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,12 +61,14 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
   // Fetch GitHub data
   useEffect(() => {
     fetch(`/api/github-contributions?userName=${userName}`)
-      .then(res => res.json())
+      .then((res) => res.json())
       .then((data: GitHubResponse | { error: string }) => {
-        if ('error' in data) {
+        if ("error" in data) {
           console.error(data.error);
         } else {
-          setContributions(data.data.user.contributionsCollection.contributionCalendar);
+          setContributions(
+            data.data.user.contributionsCollection.contributionCalendar
+          );
         }
       })
       .catch((err: Error) => console.error(err))
@@ -73,7 +83,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     contributions.weeks.forEach((week, weekIndex) => {
       week.contributionDays.forEach((day, dayIndex) => {
         const key = `${weekIndex}-${dayIndex}`;
-        initialStates.set(key, { x: 0, y: 0, vx: 0, vy: 0 });
+        initialStates.set(key, { x: 0, y: 0, vx: 0, vy: 0, touched: false });
       });
     });
     setCellStates(initialStates);
@@ -91,12 +101,12 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
 
@@ -130,6 +140,11 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
           const pushStrength = force * force * 2.5;
           state.vx -= pushStrength * Math.cos(angle);
           state.vy -= pushStrength * Math.sin(angle);
+
+          // Mark as touched when in radius
+          if (!state.touched) {
+            state.touched = true;
+          }
         }
 
         // Apply friction
@@ -154,35 +169,61 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     };
   }, [contributions, cellStates.size]);
 
-  const getColor = (count: number) => {
-    if (count === 0) return isLight ? '#ebe6dd' : '#2d2c29';
-    if (count < 2) return isLight ? '#cbbfaf' : '#3f3d3a';
-    if (count < 5) return isLight ? '#a89582' : '#565350';
-    if (count < 10) return isLight ? '#80705f' : '#6e6860';
-    return isLight ? '#5a4d3f' : '#938d82';
+  const getColor = (count: number, touched: boolean) => {
+    // GitHub green colors when touched (adjusted for light/dark mode)
+    if (touched) {
+      if (isLight) {
+        // Light mode GitHub greens
+        if (count === 0) return "#ebedf0";
+        if (count < 2) return "#9be9a8";
+        if (count < 5) return "#40c463";
+        if (count < 10) return "#30a14e";
+        return "#216e39";
+      } else {
+        // Dark mode GitHub greens
+        if (count === 0) return "#1c1f26";
+        if (count < 2) return "#0e4429";
+        if (count < 5) return "#006d32";
+        if (count < 10) return "#26a641";
+        return "#39d353";
+      }
+    }
+
+    // Original colors when not touched
+    if (count === 0) return isLight ? "#ebe6dd" : "#2d2c29";
+    if (count < 2) return isLight ? "#cbbfaf" : "#3f3d3a";
+    if (count < 5) return isLight ? "#a89582" : "#565350";
+    if (count < 10) return isLight ? "#80705f" : "#6e6860";
+    return isLight ? "#5a4d3f" : "#938d82";
   };
+
   const router = useRouter();
   const navigateToGitHub = () => {
-    router.push('https://github.com/Dao-Ho');
+    router.push("https://github.com/Dao-Ho");
+  };
+
+  const resetGraph = () => {
+    const resetStates = new Map(cellStates);
+    resetStates.forEach((state) => {
+      state.touched = false;
+    });
+    setCellStates(resetStates);
   };
 
   if (loading) {
     return (
-      <div
-        ref={containerRef}
-        className="flex flex-col gap-2"
-      >
+      <div ref={containerRef} className="flex flex-col gap-2">
         <div>
           <span
             className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
             onClick={navigateToGitHub}
             onMouseEnter={(e) => {
               setIsHovering(true);
-              e.currentTarget.style.color = '#3c7cff';
+              e.currentTarget.style.color = "#3c7cff";
             }}
             onMouseLeave={(e) => {
               setIsHovering(false);
-              e.currentTarget.style.color = isLight ? '#262523' : '#cbd0d2';
+              e.currentTarget.style.color = isLight ? "#262523" : "#cbd0d2";
             }}
           >
             See what I've been up to
@@ -207,7 +248,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                   key={dayIndex}
                   className="w-[0.85vw] h-[0.85vw] rounded-full"
                   style={{
-                    backgroundColor: isLight ? '#ebe6dd' : '#2d2c29'
+                    backgroundColor: isLight ? "#ebe6dd" : "#2d2c29",
                   }}
                 />
               ))}
@@ -221,31 +262,26 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
   if (!contributions) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <p className={isLight ? 'text-gray-800' : 'text-gray-200'}>
+        <p className={isLight ? "text-gray-800" : "text-gray-200"}>
           Failed to load contributions
         </p>
       </div>
     );
   }
 
-
-
   return (
-    <div
-      ref={containerRef}
-      className="flex flex-col gap-2"
-    >
+    <div ref={containerRef} className="flex flex-col gap-2">
       <div>
         <span
           className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
           onClick={navigateToGitHub}
           onMouseEnter={(e) => {
             setIsHovering(true);
-            e.currentTarget.style.color = '#3c7cff';
+            e.currentTarget.style.color = "#3c7cff";
           }}
           onMouseLeave={(e) => {
             setIsHovering(false);
-            e.currentTarget.style.color = isLight ? '#262523' : '#cbd0d2';
+            e.currentTarget.style.color = isLight ? "#262523" : "#cbd0d2";
           }}
         >
           See what I've been up to
@@ -267,7 +303,13 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
           <div key={weekIndex} className="flex flex-col gap-2">
             {week.contributionDays.map((day, dayIndex) => {
               const key = `${weekIndex}-${dayIndex}`;
-              const state = cellStates.get(key) || { x: 0, y: 0, vx: 0, vy: 0 };
+              const state = cellStates.get(key) || {
+                x: 0,
+                y: 0,
+                vx: 0,
+                vy: 0,
+                touched: false,
+              };
 
               return (
                 <div
@@ -275,15 +317,45 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                   id={`cell-${key}`}
                   className="w-[0.85vw] h-[0.85vw] rounded-full transition-colors duration-300"
                   style={{
-                    backgroundColor: getColor(day.contributionCount),
+                    backgroundColor: getColor(
+                      day.contributionCount,
+                      state.touched
+                    ),
                     transform: `translate(${state.x}px, ${state.y}px)`,
-                    willChange: 'transform'
+                    willChange: "transform",
                   }}
                 />
               );
             })}
           </div>
         ))}
+      </div>
+      <div className="flex items-center mt-12">
+        <span
+          className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300 ml-auto"
+          onClick={resetGraph}
+          onMouseEnter={(e) => {
+            setIsHovering(true);
+            e.currentTarget.style.color = "#3c7cff";
+          }}
+          onMouseLeave={(e) => {
+            setIsHovering(false);
+            e.currentTarget.style.color = isLight ? "#262523" : "#cbd0d2";
+          }}
+        >
+          Reset
+          {isHovering ? (
+            <ArrowRight
+              className="inline-block transition-all duration-300"
+              size={16}
+            />
+          ) : (
+            <ChevronRight
+              className="inline-block transition-all duration-300"
+              size={16}
+            />
+          )}
+        </span>
       </div>
     </div>
   );
