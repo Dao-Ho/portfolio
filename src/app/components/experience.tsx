@@ -35,7 +35,7 @@ const experiences = [
     companyName: "DesignAI",
     role: "Software Engineer Intern",
     summary:
-      "Designed and built an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
+      "Led the development of an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
     link: "https://www.designai.co/",
     logoMap: designAiLogoMap,
   },
@@ -51,7 +51,7 @@ const experiences = [
     companyName: "Paynalli Systems",
     role: "Software Engineer Intern",
     summary:
-      "Working with an incredible team under the SCRUM methodology, I played a key role in developing, revising, and shipping software to production. Beyond creating an intuitive and responsive frontend, I experimented with and Engineered the RAG architecture for various embedding models and vector databases to streamline the recruiter-candidate search experience.",
+      "Worked with an incredible team under the SCRUM methodology, I played a key role in developing, revising, and shipping software to production. Beyond creating an intuitive and responsive frontend, I experimented with and Engineered the RAG architecture for various embedding models and vector databases to streamline the recruiter-candidate search experience.",
     link: "https://paynalli.com/",
     logoMap: paynalliSystemsLogoMap,
   },
@@ -59,7 +59,7 @@ const experiences = [
     companyName: "NUSci – Northeastern Science Magazine",
     role: "Junior Software Engineer",
     summary:
-      "Working with an awesome team of developers, I help architect scalable and robust database schema, secure API endpoints, responsive frontend designs, and rigorous tests. Currently developing a revampled website to improve user experience.",
+      "Worked with an awesome team of developers, helped architect scalable and robust database schema, secure API endpoints, responsive frontend designs, and rigorous tests. Developed a revampled website to improve user experience.",
     link: "https://nuscimagazine.com/",
     logoMap: nuscimagazineLogoMap,
   },
@@ -67,7 +67,7 @@ const experiences = [
     companyName: "Northeastern University Khoury College of Computer Sciences",
     role: "Discrete Math Teaching Assistant",
     summary:
-      "Led weekly office hours and teaching sessions to reinforce student understanding of course concepts. I provided additional resources, and comprehensive grading feedback to students on homeworks and exams to ensure success in the course.",
+      "Led weekly office hours and teaching sessions to reinforce student understanding of course concepts. Provided additional resources, and comprehensive grading feedback to students on homeworks and exams to ensure success in the course.",
     link: "https://www.khoury.northeastern.edu/",
     logoMap: neuLogoMap,
   },
