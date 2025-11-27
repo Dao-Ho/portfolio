@@ -83,7 +83,7 @@ export default function Home() {
 
           <FrontPage isLight={isLight} />
 
-          <ExperiencePage />
+          <ExperiencePage isLight={isLight} />
           <Footer />
 
         </div>
