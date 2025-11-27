@@ -210,14 +210,6 @@ const Slider: React.FC<SliderProps> = ({
           {rightIcon}
         </motion.div>
       </motion.div>
-      <p 
-        className="absolute transform -translate-y-4 text-xs font-medium tracking-wide"
-        style={{
-          color: isLight ? '#9ca3af' : '#6b7280'
-        }}
-      >
-        {Math.round(value)}
-      </p>
     </>
   );
 };

@@ -53,9 +53,10 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
   const [cellStates, setCellStates] = useState<Map<string, CellState>>(
     new Map()
   );
+  const DEFAULT_MOUSE_RADIUS = 50;
   const [isHovering, setIsHovering] = useState(false);
   const [isResetHovering, setIsResetHovering] = useState(false);
-  const [mouseRadius, setMouseRadius] = useState<number>(100);
+  const [mouseRadius, setMouseRadius] = useState<number>(DEFAULT_MOUSE_RADIUS);
   const mouseRef = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -295,7 +296,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
           )}
         </span>
       </div>
-      <div className="flex gap-1">
+      <div className="flex gap-1 w-full">
         {contributions.weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="flex flex-col gap-2">
             {week.contributionDays.map((day, dayIndex) => {
@@ -330,10 +331,10 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
       <div className="flex items-end justify-end mt-12 gap-8">
         <ElasticSlider
           startingValue={0}
-          defaultValue={50}
-          maxValue={100}
+          defaultValue={DEFAULT_MOUSE_RADIUS}
+          maxValue={200}
           isStepped
-          stepSize={5}
+          stepSize={10}
           isLight={isLight}
           onChange={setMouseRadius}
         />
