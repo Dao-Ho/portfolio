@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronRight, ArrowRight } from "lucide-react";
+import ElasticSlider from "./elastic-slider";
 
 interface ContributionDay {
   contributionCount: number;
@@ -54,6 +55,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
   );
   const [isHovering, setIsHovering] = useState(false);
   const [isResetHovering, setIsResetHovering] = useState(false);
+  const [mouseRadius, setMouseRadius] = useState<number>(100);
   const mouseRef = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -117,7 +119,6 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
     const animate = () => {
       const newStates = new Map(cellStates);
       const mouse = mouseRef.current;
-      const mouseRadius = 100;
 
       newStates.forEach((state, key) => {
         const cellElement = document.getElementById(`cell-${key}`);
@@ -167,7 +168,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [contributions, cellStates.size]);
+  }, [contributions, cellStates.size, mouseRadius]);
 
   const getColor = (count: number, touched: boolean) => {
     // GitHub green colors when touched (adjusted for light/dark mode)
@@ -330,9 +331,18 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({
           </div>
         ))}
       </div>
-      <div className="flex items-center mt-12">
+      <div className="flex items-center justify-end mt-12 gap-8">
+        <ElasticSlider
+          startingValue={0}
+          defaultValue={50}
+          maxValue={100}
+          isStepped
+          stepSize={5}
+          isLight={isLight}
+          onChange={setMouseRadius}
+        />
         <span
-          className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300 ml-auto"
+          className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
           onClick={resetGraph}
           onMouseEnter={(e) => {
             setIsHovering(true);
