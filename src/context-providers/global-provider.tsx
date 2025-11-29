@@ -1,19 +1,16 @@
-import React, { createContext, useContext, useState, useEffect } from "react"
-
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface GlobalContextType {
     isMobile: boolean;
-  }
+}
 
-
-
-const GlobalContext = createContext<GlobalContextType | undefined>(undefined)
+const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [isMobile, setIsMobile] = useState<boolean>(false);
 
     //debounce to prevent the resize event from firing too often
-    const debounce = (func: { (): void; (): void; }, delay: number | undefined) => {
+    const debounce = (func: { (): void; (): void }, delay: number | undefined) => {
         let timeoutId: NodeJS.Timeout;
         return () => {
             clearTimeout(timeoutId);
@@ -21,7 +18,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 func();
             }, delay);
         };
-    }
+    };
 
     useEffect(() => {
         const handleResize = () => {
@@ -30,32 +27,25 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             } else {
                 setIsMobile(false);
             }
-        }
+        };
 
         const debouncedResize = debounce(handleResize, 200);
 
         handleResize();
-        window.addEventListener('resize', debouncedResize);
+        window.addEventListener("resize", debouncedResize);
 
         return () => {
-            window.removeEventListener('resize', handleResize);
-        }
-    }, [])
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
 
-    return (
-        <GlobalContext.Provider value={{ isMobile }}>
-            {children}
-        </GlobalContext.Provider>
-    )
-}
-
+    return <GlobalContext.Provider value={{ isMobile }}>{children}</GlobalContext.Provider>;
+};
 
 export const useGlobal = () => {
     const context = useContext(GlobalContext);
     if (!context) {
-      throw new Error('useGlobal must be used within an GlobalProvider');
+        throw new Error("useGlobal must be used within an GlobalProvider");
     }
     return context;
-  };
-
-
+};

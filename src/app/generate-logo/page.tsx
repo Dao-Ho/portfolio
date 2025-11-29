@@ -1,5 +1,5 @@
-import LogoMapGenerator from '../components/logo-map-generator';
+import LogoMapGenerator from "../components/logo-map-generator";
 
 export default function GeneratorPage() {
-  return <LogoMapGenerator isLight={true} />;
+    return <LogoMapGenerator isLight={true} />;
 }
