@@ -106,7 +106,7 @@ const DesktopPage = ({
       "space-x-[12vw] flex-row flex items-center font-sourceSans3",
     textContainer: "w-[20vw] flex flex-col justify-center",
     companyName: "text-[2.75vw] leading-[3vw] font-bold font-playfairDisplay",
-    duration: "font-semibold font-oswald text-[1vw] leading-[1.25vw] mt-[0.5vh]",
+    duration: "font-semibold font-oswald text-[1vw] leading-[1.25vw]",
     role: "font-semibold font-oswald text-[1.5vw] mt-[0.5vh]",
     summary: "font-med text-[1.10vw] leading-[1.75vw] mt-[2vh]",
   };
