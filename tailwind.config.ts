@@ -53,6 +53,7 @@ module.exports = {
         robotoCondensed: 'var(--font-roboto-condensed)',
         oswald: 'var(--font-oswald)',
         sourceSans3: 'var(--font-source-sans-3)',
+        playfairDisplay: 'var(--font-playfair-display)',
       },
     },
   },
