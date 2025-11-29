@@ -1,4 +1,4 @@
-import { Inter, Bebas_Neue, Libre_Baskerville, Roboto, Roboto_Condensed, Oswald, Source_Sans_3 } from 'next/font/google'
+import { Inter, Bebas_Neue, Libre_Baskerville, Roboto, Roboto_Condensed, Oswald, Source_Sans_3, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { Analytics } from "@vercel/analytics/react"
 
@@ -44,7 +44,11 @@ const fontSourceSansPro = Source_Sans_3({
   weight: '400'
 })
 
-
+const fontPlayfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair-display',
+  weight: '400'
+})
 
 export const metadata = {
   title: 'Dao Ho',
@@ -54,7 +58,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${fontbebas.variable} ${fontlibre.variable} ${fontroboto.variable} ${fontRobotoCondensed.variable} ${fontOswald.variable} ${fontSourceSansPro.variable} scroll-smooth overflow-x-clip`}>{children}</body>
+      <body className={`${inter.variable} ${fontbebas.variable} ${fontlibre.variable} ${fontroboto.variable} ${fontRobotoCondensed.variable} ${fontOswald.variable} ${fontSourceSansPro.variable} ${fontPlayfairDisplay.variable} scroll-smooth overflow-x-clip`}>{children}</body>
       <Analytics />
     </html>
     

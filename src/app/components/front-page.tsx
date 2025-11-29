@@ -21,10 +21,10 @@ const desktopPage = ({ isLight }: { isLight: boolean }) => {
         <div className="flex flex-col h-[85vh] bg-transparent w-[100vw] px-[20vw] text-foreground">
             <div className="h-full w-full mt-40 flex flex-col">
                 <motion.div className="leading-[3vh]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-                    <h1 className="font-normal text-[18px] ">Xin chào, I'm Dao.</h1>
-                    <h1 className="font-normal text-[18px] ">I'm a Software Engineer passionate about building the future.</h1>
-                    <h1 className="font-normal text-[18px] ">Northeastern '27, Computer Science and Finance.</h1>
-                    <h1 className="font-normal text-[18px] ">Currently, building at Agency</h1>
+                    <h1 className="font-playfairDisplay text-[18px] ">Xin chào, I'm Dao.</h1>
+                    <h1 className="font-playfairDisplay text-[18px] ">I'm a Software Engineer passionate about building the future.</h1>
+                    <h1 className="font-playfairDisplay text-[18px] ">Northeastern '27, Computer Science and Finance.</h1>
+                    <h1 className="font-playfairDisplay text-[18px] ">Currently, building at Agency.</h1>
                 </motion.div>
                 <motion.div className="mt-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.25}}>
                     <GitHubContributions userName="Dao-Ho" isLight={isLight} />
