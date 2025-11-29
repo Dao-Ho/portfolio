@@ -17,7 +17,7 @@ const experiences = [
   {
     companyName: "AGENCY",
     role: "Member of Technical Staff Co-op",
-    duration: "May 2025 - present",
+    duration: "May 2025 - Present",
     summary:
       "Learning the meaning of tracer bullets, velocity, and what it takes to scale them.",
     link: "https://www.agency.inc/",
