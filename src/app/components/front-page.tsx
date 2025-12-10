@@ -1,10 +1,8 @@
 "use client";
-import { delay, motion } from "framer-motion";
-import Image from "next/image";
-
-import headshot from "../../../public/portfolio-photo.png";
+import { motion } from "framer-motion";
 import { useGlobal } from "../../context-providers/global-provider";
 import GitHubContributions from "./contribution-graph";
+import { useRouter } from "next/navigation";
 
 const FrontPage = ({ isLight }: { isLight: boolean }) => {
     const { isMobile } = useGlobal();
@@ -13,6 +11,12 @@ const FrontPage = ({ isLight }: { isLight: boolean }) => {
 };
 
 const desktopPage = ({ isLight }: { isLight: boolean }) => {
+    const router = useRouter();
+    const CURRENT_EXPERIENCE_URL = "https://www.agency.inc/";
+    const CURRENT_EXPERIENCE = "Agency";
+    const handleCurrentExperienceRedirect = () => {
+        router.push(CURRENT_EXPERIENCE_URL);
+    };
     return (
         <div className="flex flex-col h-[85vh] bg-transparent w-[100vw] px-[20vw] text-foreground">
             <div className="h-full w-full mt-40 flex flex-col">
@@ -22,14 +26,19 @@ const desktopPage = ({ isLight }: { isLight: boolean }) => {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
                 >
-                    <h1 className="font-playfairDisplay text-[18px] ">Xin chào, I'm Dao.</h1>
-                    <h1 className="font-playfairDisplay text-[18px] ">
+                    <h1 className="font-roboto text-[18px] ">Xin chào, I'm Dao.</h1>
+                    <h1 className="font-roboto text-[18px] ">
                         I'm a Software Engineer passionate about building the future.
                     </h1>
-                    <h1 className="font-playfairDisplay text-[18px] ">
+                    <h1 className="font-roboto text-[18px] ">
                         Northeastern '27, Computer Science and Finance.
                     </h1>
-                    <h1 className="font-playfairDisplay text-[18px] ">Currently, building at Agency.</h1>
+                    <h1 className="font-roboto text-[18px] " onClick={() => {
+                        handleCurrentExperienceRedirect();
+                    }}>
+                        Currently, building{" "}
+                        <span className="underline cursor-pointer hover:text-[#3c7cff] transition-colors">@{CURRENT_EXPERIENCE}</span>
+                    </h1>
                 </motion.div>
                 <motion.div
                     className="mt-20"
