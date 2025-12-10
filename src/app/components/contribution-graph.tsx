@@ -54,7 +54,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     const mouseRef = useRef({ x: 0, y: 0 });
     const animationRef = useRef<number>();
     const containerRef = useRef<HTMLDivElement>(null);
-
+    const SQUASHED_MSG = "Yes, these commits are squashed."
     // Fetch GitHub data
     useEffect(() => {
         fetch(`/api/github-contributions?userName=${userName}`)
@@ -228,6 +228,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                                 transform: isHovering ? "rotate(90deg)" : "rotate(0deg)",
                             }}
                         />
+
                     </span>
                 </div>
                 <div className="flex gap-1 opacity-50 animate-pulse">
@@ -263,13 +264,10 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                 <span
                     className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
                     onClick={navigateToGitHub}
-                    onMouseEnter={(e) => {
-                        setIsHovering(true);
-                        e.currentTarget.style.color = "#3c7cff";
-                    }}
-                    onMouseLeave={(e) => {
-                        setIsHovering(false);
-                        e.currentTarget.style.color = isLight ? "#262523" : "#cbd0d2";
+                    onMouseEnter={() => setIsHovering(true)}
+                    onMouseLeave={() => setIsHovering(false)}
+                    style={{
+                        color: isHovering ? "#3c7cff" : (isLight ? "#262523" : "#cbd0d2"),
                     }}
                 >
                     See what I've been up to
@@ -279,6 +277,11 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                         <ChevronRight className="inline-block transition-all duration-300 ml-1" size={16} />
                     )}
                 </span>
+                <p
+                    className={`text-xs mt-1 transition-all duration-300 overflow-hidden ${isLight ? "text-gray-500" : "text-gray-400"} ${isHovering ? "opacity-60 max-h-[20px]" : "opacity-0 max-h-0"}`}
+                >
+                    *{SQUASHED_MSG}
+                </p>
             </div>
             <div className="flex gap-1 w-full">
                 {contributions.weeks.map((week, weekIndex) => (
