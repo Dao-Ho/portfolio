@@ -8,7 +8,7 @@ import paynalliSystemsLogoMap from "../../../public/Images/paynalli-systems-map.
 import generateLogoMap from "../../../public/Images/generate-logo-map.json";
 import designAiLogoMap from "../../../public/Images/design-ai-logo-map.json";
 import vetrulyLogoMap from "../../../public/Images/vetruly-logo-map.json";
-
+import GoogleLogoMap from "../../../public/Images/google-logo-map.json";
 import ScrollReveal from "./scroll-reveal";
 import InteractiveLogoDots, { LogoMapConfig } from "./interactive-logo";
 import { useGlobal } from "../../lib/utils";
@@ -17,8 +17,24 @@ const experiences = [
     {
         companyName: "AGENCY",
         role: "Member of Technical Staff Co-op",
-        duration: "May 2025 - Present",
-        summary: "Learning the meaning of tracer bullets, velocity, and what it takes to scale them.",
+        duration: "Fall 2026",
+        summary: "Incoming fall 2026.",
+        link: "https://www.agency.inc/",
+        logoMap: agencyLogoMap,
+    },
+    {
+        companyName: "GOOGLE",
+        role: "Software Engineer Intern",
+        duration: "Summer 2026",
+        summary: "Incoming summer 2026 | AI/ML in Shopping Search.",
+        link: "https://www.google.com/",
+        logoMap: GoogleLogoMap,
+    },
+    {
+        companyName: "AGENCY",
+        role: "Member of Technical Staff Co-op",
+        duration: "May 2025 - Dec 2025",
+        summary: "Learned the meaning of tracer bullets, velocity, and what it takes to scale them.",
         link: "https://www.agency.inc/",
         logoMap: agencyLogoMap,
     },
