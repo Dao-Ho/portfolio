@@ -54,7 +54,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
     const mouseRef = useRef({ x: 0, y: 0 });
     const animationRef = useRef<number>();
     const containerRef = useRef<HTMLDivElement>(null);
-    const SQUASHED_MSG = "Yes, these commits are squashed."
+    const SQUASHED_MSG = "Yes, these commits are squashed.";
     // Fetch GitHub data
     useEffect(() => {
         fetch(`/api/github-contributions?userName=${userName}`)
@@ -228,7 +228,6 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                                 transform: isHovering ? "rotate(90deg)" : "rotate(0deg)",
                             }}
                         />
-
                     </span>
                 </div>
                 <div className="flex gap-1 opacity-50 animate-pulse">
@@ -267,7 +266,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                     onMouseEnter={() => setIsHovering(true)}
                     onMouseLeave={() => setIsHovering(false)}
                     style={{
-                        color: isHovering ? "#3c7cff" : (isLight ? "#262523" : "#cbd0d2"),
+                        color: isHovering ? "#3c7cff" : isLight ? "#262523" : "#cbd0d2",
                     }}
                 >
                     See what I've been up to

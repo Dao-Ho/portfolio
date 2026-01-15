@@ -13,84 +13,85 @@ import ScrollReveal from "./scroll-reveal";
 import InteractiveLogoDots, { LogoMapConfig } from "./interactive-logo";
 import { useGlobal } from "../../lib/utils";
 
-const experiences = [{
-    companyName: "AGENCY",
-    role: "Member of Technical Staff Co-op",
-    duration: "Fall 2026",
-    summary: "Incoming fall 2026.",
-    link: "https://www.agency.inc/",
-    logoMap: agencyLogoMap,
-},
-{
-    companyName: "GOOGLE",
-    role: "Software Engineer Intern",
-    duration: "Summer 2026",
-    summary: "Incoming summer 2026 | AI/ML in Shopping Search.",
-    link: "https://www.google.com/",
-    logoMap: GoogleLogoMap,
-},
-{
-    companyName: "AGENCY",
-    role: "Member of Technical Staff Co-op",
-    duration: "May 2025 - Dec 2025",
-    summary: "Learned the meaning of tracer bullets, velocity, and what it takes to scale them.",
-    link: "https://www.agency.inc/",
-    logoMap: agencyLogoMap,
-},
-{
-    companyName: "VETRULY",
-    role: "Technical Lead",
-    duration: "Jan 2025 - May 2025",
-    summary:
-        "Led a team of 5 engineers in building and shipping Vetted, a web application currently in use connecting pet owners with care providers. Collaborated with clients to define the product vision and delivered a full-stack platform with robust deployment infrastructure.",
-    link: "https://www.vetruly.com/",
-    logoMap: vetrulyLogoMap,
-},
-{
-    companyName: "DESIGNAI",
-    role: "Software Engineer Intern",
-    duration: "Sept 2024 - Jan 2025",
-    summary:
-        "Led the development of an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
-    link: "https://www.designai.co/",
-    logoMap: designAiLogoMap,
-},
-{
-    companyName: "GENERATE PRODUCT DEVELOPMENT",
-    role: "Software Engineer",
-    duration: "Sept 2024 - Dec 2024",
-    summary:
-        "Contributed as an engineer to build Three Stones, a mobile application allowing retail investors to crowdfund real estate projects. Designed and implemented authentication and core user flows across the entire stack.",
-    link: "https://generatenu.com/",
-    logoMap: generateLogoMap,
-},
-{
-    companyName: "PAYNALLI SYSTEMS",
-    role: "Software Engineer Intern",
-    duration: "July 2024 - Sept 2024",
-    summary:
-        "Worked with an incredible team under the SCRUM methodology, I played a key role in developing, revising, and shipping software to production. Beyond creating an intuitive and responsive frontend, I experimented with and Engineered the RAG architecture for various embedding models and vector databases to streamline the recruiter-candidate search experience.",
-    link: "https://paynalli.com/",
-    logoMap: paynalliSystemsLogoMap,
-},
-{
-    companyName: "NUSCI – NORTHEASTERN SCIENCE MAGAZINE",
-    role: "Junior Software Engineer",
-    duration: "Jan 2024 - Sept 2024",
-    summary:
-        "Worked with an awesome team of developers, helped architect scalable and robust database schema, secure API endpoints, responsive frontend designs, and rigorous tests. Developed a revampled website to improve user experience.",
-    link: "https://nuscimagazine.com/",
-    logoMap: nuscimagazineLogoMap,
-},
-{
-    companyName: "NORTHEASTERN UNIVERSITY",
-    role: "Discrete Math Teaching Assistant",
-    duration: "Sept 2023 - May 2024",
-    summary:
-        "Led weekly office hours and teaching sessions to reinforce student understanding of course concepts. Provided additional resources, and comprehensive grading feedback to students on homeworks and exams to ensure success in the course.",
-    link: "https://www.khoury.northeastern.edu/",
-    logoMap: neuLogoMap,
-},
+const experiences = [
+    {
+        companyName: "AGENCY",
+        role: "Member of Technical Staff Co-op",
+        duration: "Fall 2026",
+        summary: "Incoming fall 2026.",
+        link: "https://www.agency.inc/",
+        logoMap: agencyLogoMap,
+    },
+    {
+        companyName: "GOOGLE",
+        role: "Software Engineer Intern",
+        duration: "Summer 2026",
+        summary: "Incoming summer 2026 | AI/ML in Shopping Search.",
+        link: "https://www.google.com/",
+        logoMap: GoogleLogoMap,
+    },
+    {
+        companyName: "AGENCY",
+        role: "Member of Technical Staff Co-op",
+        duration: "May 2025 - Dec 2025",
+        summary: "Learned the meaning of tracer bullets, velocity, and what it takes to scale them.",
+        link: "https://www.agency.inc/",
+        logoMap: agencyLogoMap,
+    },
+    {
+        companyName: "VETRULY",
+        role: "Technical Lead",
+        duration: "Jan 2025 - May 2025",
+        summary:
+            "Led a team of 5 engineers in building and shipping Vetted, a web application currently in use connecting pet owners with care providers. Collaborated with clients to define the product vision and delivered a full-stack platform with robust deployment infrastructure.",
+        link: "https://www.vetruly.com/",
+        logoMap: vetrulyLogoMap,
+    },
+    {
+        companyName: "DESIGNAI",
+        role: "Software Engineer Intern",
+        duration: "Sept 2024 - Jan 2025",
+        summary:
+            "Led the development of an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
+        link: "https://www.designai.co/",
+        logoMap: designAiLogoMap,
+    },
+    {
+        companyName: "GENERATE PRODUCT DEVELOPMENT",
+        role: "Software Engineer",
+        duration: "Sept 2024 - Dec 2024",
+        summary:
+            "Contributed as an engineer to build Three Stones, a mobile application allowing retail investors to crowdfund real estate projects. Designed and implemented authentication and core user flows across the entire stack.",
+        link: "https://generatenu.com/",
+        logoMap: generateLogoMap,
+    },
+    {
+        companyName: "PAYNALLI SYSTEMS",
+        role: "Software Engineer Intern",
+        duration: "July 2024 - Sept 2024",
+        summary:
+            "Worked with an incredible team under the SCRUM methodology, I played a key role in developing, revising, and shipping software to production. Beyond creating an intuitive and responsive frontend, I experimented with and Engineered the RAG architecture for various embedding models and vector databases to streamline the recruiter-candidate search experience.",
+        link: "https://paynalli.com/",
+        logoMap: paynalliSystemsLogoMap,
+    },
+    {
+        companyName: "NUSCI – NORTHEASTERN SCIENCE MAGAZINE",
+        role: "Junior Software Engineer",
+        duration: "Jan 2024 - Sept 2024",
+        summary:
+            "Worked with an awesome team of developers, helped architect scalable and robust database schema, secure API endpoints, responsive frontend designs, and rigorous tests. Developed a revampled website to improve user experience.",
+        link: "https://nuscimagazine.com/",
+        logoMap: nuscimagazineLogoMap,
+    },
+    {
+        companyName: "NORTHEASTERN UNIVERSITY",
+        role: "Discrete Math Teaching Assistant",
+        duration: "Sept 2023 - May 2024",
+        summary:
+            "Led weekly office hours and teaching sessions to reinforce student understanding of course concepts. Provided additional resources, and comprehensive grading feedback to students on homeworks and exams to ensure success in the course.",
+        link: "https://www.khoury.northeastern.edu/",
+        logoMap: neuLogoMap,
+    },
 ];
 
 const ExperiencePage = ({ isLight }: { isLight: boolean }) => {

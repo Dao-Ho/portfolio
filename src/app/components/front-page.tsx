@@ -30,14 +30,17 @@ const desktopPage = ({ isLight }: { isLight: boolean }) => {
                     <h1 className="font-roboto text-[18px] ">
                         I'm a Software Engineer passionate about building the future.
                     </h1>
-                    <h1 className="font-roboto text-[18px] ">
-                        Northeastern '27, Computer Science and Finance.
-                    </h1>
-                    <h1 className="font-roboto text-[18px] " onClick={() => {
-                        handleCurrentExperienceRedirect();
-                    }}>
+                    <h1 className="font-roboto text-[18px] ">Northeastern '27, Computer Science and Finance.</h1>
+                    <h1
+                        className="font-roboto text-[18px] "
+                        onClick={() => {
+                            handleCurrentExperienceRedirect();
+                        }}
+                    >
                         Currently, building{" "}
-                        <span className="underline cursor-pointer hover:text-[#3c7cff] transition-colors">@{CURRENT_EXPERIENCE}</span>
+                        <span className="underline cursor-pointer hover:text-[#3c7cff] transition-colors">
+                            @{CURRENT_EXPERIENCE}
+                        </span>
                     </h1>
                 </motion.div>
                 <motion.div
