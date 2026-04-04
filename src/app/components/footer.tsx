@@ -22,11 +22,6 @@ const mobileNavBar = () => {
                 </div>
                 <div className="flex-2 flex flex-row mr-[2vw] items-center space-x-[4vw]">
                     <div className="font-bebas flex items-center justify-center translate-y-[0.60vh] space-x-[2vw]">
-                        <a href="./Dao-Ho-resume.pdf" className={styles.mobileText}>
-                            Resume
-                            <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-[0.3vh] bg-foreground"></span>
-                        </a>
-
                         <a href="https://www.linkedin.com/in/dao-ho/" className={styles.mobileText}>
                             LinkedIn
                             <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-[0.3vh] bg-foreground"></span>
