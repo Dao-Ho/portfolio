@@ -211,14 +211,9 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                     <span
                         className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
                         onClick={navigateToGitHub}
-                        onMouseEnter={(e) => {
-                            setIsHovering(true);
-                            e.currentTarget.style.color = "#3c7cff";
-                        }}
-                        onMouseLeave={(e) => {
-                            setIsHovering(false);
-                            e.currentTarget.style.color = isLight ? "#262523" : "#cbd0d2";
-                        }}
+                        onMouseEnter={() => setIsHovering(true)}
+                        onMouseLeave={() => setIsHovering(false)}
+                        style={{ color: isHovering ? "#3c7cff" : isLight ? "#262523" : "#cbd0d2" }}
                     >
                         See what I've been up to
                         <ArrowRight
@@ -324,14 +319,9 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                 <span
                     className=" text-md font-light opacity-70 cursor-pointer transition-colors duration-300"
                     onClick={resetGraph}
-                    onMouseEnter={(e) => {
-                        setIsResetHovering(true);
-                        e.currentTarget.style.color = "#3c7cff";
-                    }}
-                    onMouseLeave={(e) => {
-                        setIsResetHovering(false);
-                        e.currentTarget.style.color = isLight ? "#262523" : "#cbd0d2";
-                    }}
+                    onMouseEnter={() => setIsResetHovering(true)}
+                    onMouseLeave={() => setIsResetHovering(false)}
+                    style={{ color: isResetHovering ? "#3c7cff" : isLight ? "#262523" : "#cbd0d2" }}
                 >
                     Reset
                     <IterationCw
