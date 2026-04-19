@@ -118,7 +118,7 @@ export default function ProjectsRoute() {
         const handleWheel = (e: WheelEvent) => {
             if (isMobile) return;
             e.preventDefault();
-            if (cooldown) return;
+        if (cooldown) return;
             accumulated += e.deltaY;
             if (Math.abs(accumulated) >= 80) {
                 if (accumulated > 0) setActiveIndex((i) => Math.min(i + 1, projects.length - 1));

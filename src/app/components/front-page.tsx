@@ -12,8 +12,8 @@ const FrontPage = ({ isLight }: { isLight: boolean }) => {
 
 const desktopPage = ({ isLight }: { isLight: boolean }) => {
     const router = useRouter();
-    const CURRENT_EXPERIENCE_URL = "https://github.com/GenerateNU/selfserve";
-    const CURRENT_EXPERIENCE = "Generate";
+    const CURRENT_EXPERIENCE_URL = "https://www.google.com/";
+    const CURRENT_EXPERIENCE = "Google";
     const handleCurrentExperienceRedirect = () => {
         router.push(CURRENT_EXPERIENCE_URL);
     };
