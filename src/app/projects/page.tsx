@@ -56,10 +56,10 @@ const projects: Project[] = [
 ];
 
 // Layout constants (all in viewport units, converted to px at runtime)
-const CONTENT_X_VW = 5;      // left offset of active content from edge
+const CONTENT_X_VW = 5; // left offset of active content from edge
 const ACTIVE_HALF_H_VH = 14; // half-height of expanded active card
-const PILL_H_VH = 5;         // pill height
-const PILL_GAP_VH = 2;       // gap between active card edge and first pill, and between pills
+const PILL_H_VH = 5; // pill height
+const PILL_GAP_VH = 2; // gap between active card edge and first pill, and between pills
 
 function getItemPos(dist: number, vw: number, vh: number) {
     const absDist = Math.abs(dist);
@@ -78,7 +78,8 @@ function getItemPos(dist: number, vw: number, vh: number) {
     const sign = dist > 0 ? 1 : -1;
     const pillHalf = (PILL_H_VH / 2) * vh;
     // first pill center is just outside the active card, subsequent ones stack with gap
-    const pillCenterY = sign * (ACTIVE_HALF_H_VH + PILL_GAP_VH + PILL_H_VH / 2 + (absDist - 1) * (PILL_H_VH + PILL_GAP_VH)) * vh;
+    const pillCenterY =
+        sign * (ACTIVE_HALF_H_VH + PILL_GAP_VH + PILL_H_VH / 2 + (absDist - 1) * (PILL_H_VH + PILL_GAP_VH)) * vh;
 
     return {
         x: contentX - (absDist - 1) * 2.5 * vw,
@@ -124,7 +125,10 @@ export default function ProjectsRoute() {
                 else setActiveIndex((i) => Math.max(i - 1, 0));
                 accumulated = 0;
                 cooldown = true;
-                setTimeout(() => { cooldown = false; accumulated = 0; }, 600);
+                setTimeout(() => {
+                    cooldown = false;
+                    accumulated = 0;
+                }, 600);
             }
         };
         window.addEventListener("keydown", handleKey);
@@ -137,19 +141,13 @@ export default function ProjectsRoute() {
 
     return (
         <GlobalProvider>
-            <div
-                className="w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground dark"
-            >
+            <div className="w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground dark">
                 {!isMobile && <GlobalDock />}
 
                 {isMobile ? (
                     <MobileLayout />
                 ) : (
-                    <DesktopLayout
-                        activeIndex={activeIndex}
-                        setActiveIndex={setActiveIndex}
-                        dims={dims}
-                    />
+                    <DesktopLayout activeIndex={activeIndex} setActiveIndex={setActiveIndex} dims={dims} />
                 )}
             </div>
         </GlobalProvider>
@@ -222,55 +220,60 @@ function DesktopLayout({
 
             {/* Origin: left edge, vertical center */}
             <div className="absolute left-0 top-1/2 z-10">
-                {ready && projects.map((project, i) => {
-                    const dist = i - activeIndex;
-                    const pos = getItemPos(dist, dims.vw, dims.vh);
-                    const isActive = dist === 0;
+                {ready &&
+                    projects.map((project, i) => {
+                        const dist = i - activeIndex;
+                        const pos = getItemPos(dist, dims.vw, dims.vh);
+                        const isActive = dist === 0;
 
-                    return (
-                        <motion.div
-                            key={i}
-                            className="absolute"
-                            style={{ left: 0, top: 0, cursor: isActive ? "default" : "pointer" }}
-                            animate={{ x: pos.x, y: pos.y, opacity: pos.opacity, scale: pos.scale }}
-                            transition={{ type: "spring", stiffness: 240, damping: 28 }}
-                            onClick={() => !isActive && setActiveIndex(i)}
-                        >
-                            {isActive ? (
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={activeIndex}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="flex flex-col"
-                                        style={{ gap: "1.2vh", width: "28vw" }}
+                        return (
+                            <motion.div
+                                key={i}
+                                className="absolute"
+                                style={{ left: 0, top: 0, cursor: isActive ? "default" : "pointer" }}
+                                animate={{ x: pos.x, y: pos.y, opacity: pos.opacity, scale: pos.scale }}
+                                transition={{ type: "spring", stiffness: 240, damping: 28 }}
+                                onClick={() => !isActive && setActiveIndex(i)}
+                            >
+                                {isActive ? (
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={activeIndex}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="flex flex-col"
+                                            style={{ gap: "1.2vh", width: "28vw" }}
+                                        >
+                                            <span className="font-oswald text-[0.85vw] text-foreground/30">
+                                                {project.index}
+                                            </span>
+                                            <h2 className="font-playfairDisplay font-bold text-[3.5vw] leading-[4vw]">
+                                                {project.name}
+                                            </h2>
+                                            <p className="font-sourceSans3 text-[1.05vw] leading-[1.7vw] text-foreground/60 w-full">
+                                                {project.description}
+                                            </p>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                ) : (
+                                    <div
+                                        className="rounded-xl backdrop-blur-md border border-foreground/10 flex items-center px-[1.2vw]"
+                                        style={{
+                                            width: "22vw",
+                                            height: "5vh",
+                                            background: "color-mix(in srgb, var(--foreground-color) 5%, transparent)",
+                                        }}
                                     >
-                                        <span className="font-oswald text-[0.85vw] text-foreground/30">{project.index}</span>
-                                        <h2 className="font-playfairDisplay font-bold text-[3.5vw] leading-[4vw]">{project.name}</h2>
-                                        <p className="font-sourceSans3 text-[1.05vw] leading-[1.7vw] text-foreground/60 w-full">
-                                            {project.description}
-                                        </p>
-                                    </motion.div>
-                                </AnimatePresence>
-                            ) : (
-                                <div
-                                    className="rounded-xl backdrop-blur-md border border-foreground/10 flex items-center px-[1.2vw]"
-                                    style={{
-                                        width: "22vw",
-                                        height: "5vh",
-                                        background: "color-mix(in srgb, var(--foreground-color) 5%, transparent)",
-                                    }}
-                                >
-                                    <span className="font-playfairDisplay font-bold text-[1vw] leading-none text-foreground whitespace-nowrap">
-                                        {project.name}
-                                    </span>
-                                </div>
-                            )}
-                        </motion.div>
-                    );
-                })}
+                                        <span className="font-playfairDisplay font-bold text-[1vw] leading-none text-foreground whitespace-nowrap">
+                                            {project.name}
+                                        </span>
+                                    </div>
+                                )}
+                            </motion.div>
+                        );
+                    })}
             </div>
         </div>
     );
@@ -279,9 +282,7 @@ function DesktopLayout({
 function MobileLayout() {
     return (
         <div className="pt-[12vh] pb-[8vh] px-[8vw] overflow-y-auto h-full">
-            <h1 className="font-playfairDisplay font-bold text-[8vw] leading-[9vw] mb-[5vh]">
-                Projects
-            </h1>
+            <h1 className="font-playfairDisplay font-bold text-[8vw] leading-[9vw] mb-[5vh]">Projects</h1>
             <div className="flex flex-col">
                 {projects.map((project, index) => (
                     <AnimatedItem key={index} index={index} delay={index * 0.05}>
@@ -292,11 +293,20 @@ function MobileLayout() {
                             className="flex flex-col py-[2.5vh] border-t border-foreground/10"
                         >
                             <span className="font-oswald text-[3vw] text-foreground/30">{project.index}</span>
-                            <span className="font-playfairDisplay font-bold text-[5.5vw] leading-[7vw] mt-[0.5vh]">{project.name}</span>
-                            <span className="font-sourceSans3 text-[3.5vw] leading-[5.5vw] text-foreground/60 mt-[1vh]">{project.description}</span>
+                            <span className="font-playfairDisplay font-bold text-[5.5vw] leading-[7vw] mt-[0.5vh]">
+                                {project.name}
+                            </span>
+                            <span className="font-sourceSans3 text-[3.5vw] leading-[5.5vw] text-foreground/60 mt-[1vh]">
+                                {project.description}
+                            </span>
                             <div className="flex flex-wrap gap-[2vw] mt-[1.5vh]">
                                 {project.tech.map((t, i) => (
-                                    <span key={i} className="font-oswald text-[2.75vw] text-foreground/40 border border-foreground/15 px-[2.5vw] py-[0.25vh] rounded-sm">{t}</span>
+                                    <span
+                                        key={i}
+                                        className="font-oswald text-[2.75vw] text-foreground/40 border border-foreground/15 px-[2.5vw] py-[0.25vh] rounded-sm"
+                                    >
+                                        {t}
+                                    </span>
                                 ))}
                             </div>
                         </a>

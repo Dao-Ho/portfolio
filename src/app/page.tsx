@@ -44,9 +44,7 @@ export default function Home() {
                     <Footer />
                 </div>
                 <div className="relative z-10">{isMobile && <ParticleEffect isLight={isLight} />}</div>
-                {!isMobile && (
-                    <GlobalDock isLight={isLight} toggleTheme={() => setIsLight((v) => !v)} />
-                )}
+                {!isMobile && <GlobalDock isLight={isLight} toggleTheme={() => setIsLight((v) => !v)} />}
             </div>
         </GlobalProvider>
     );
