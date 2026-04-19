@@ -9,7 +9,7 @@ import NavBar from "./components/navBar";
 import FrontPage from "./components/front-page";
 import ExperiencePage from "./components/experience";
 import Footer from "./components/footer";
-import { House, Sun, Moon, Palette, Linkedin } from "lucide-react";
+import { House, Sun, Moon, Palette, Linkedin, FolderOpen } from "lucide-react";
 import Dock from "./components/dock";
 
 export default function Home() {
@@ -65,6 +65,7 @@ export default function Home() {
 
     const items = [
         { icon: <House size={18} />, label: "Home", onClick: () => handleHomeNavigation(), iconClassName: ITEMSTYLING },
+        { icon: <FolderOpen size={18} />, label: "Projects", onClick: () => router.push("/projects"), iconClassName: ITEMSTYLING },
         {
             icon: <Linkedin size={18} />,
             label: "LinkedIn",

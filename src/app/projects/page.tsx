@@ -5,6 +5,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { GlobalProvider } from "../../context-providers/global-provider";
 import { AnimatedItem } from "../components/animated-list";
+import Dock from "../components/dock";
+import { House, Sun, Palette, Linkedin, FolderOpen } from "lucide-react";
 
 type Project = {
     index: string;
@@ -139,6 +141,25 @@ export default function ProjectsRoute() {
             <div
                 className="w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground dark"
             >
+                {!isMobile && (
+                    <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30">
+                        <Dock
+                            items={[
+                                { icon: <House size={18} />, label: "Home", onClick: () => window.location.href = "/", iconClassName: "text-white/90 hover:text-white flex flex-col items-center justify-center" },
+                                { icon: <FolderOpen size={18} />, label: "Projects", onClick: () => window.location.href = "/projects", iconClassName: "text-white/90 hover:text-white flex flex-col items-center justify-center" },
+                                { icon: <Linkedin size={18} />, label: "LinkedIn", onClick: () => window.open("https://www.linkedin.com/in/dao-ho/", "_blank"), iconClassName: "text-white/90 hover:text-white flex flex-col items-center justify-center" },
+                                { icon: <Palette size={18} />, label: "Gallery", onClick: () => window.location.href = "/gallery", iconClassName: "text-white/90 hover:text-white flex flex-col items-center justify-center" },
+                                { icon: <Sun size={18} />, label: "Light Mode", onClick: () => {}, iconClassName: "text-white/20 flex flex-col items-center justify-center cursor-not-allowed" },
+                            ]}
+                            panelHeight={68}
+                            baseItemSize={50}
+                            magnification={70}
+                            dockHeight={60}
+                            distance={200}
+                            isLight={false}
+                        />
+                    </div>
+                )}
 
                 {isMobile ? (
                     <MobileLayout />
