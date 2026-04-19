@@ -11,8 +11,18 @@ import vetrulyLogoMap from "../../../public/Images/vetruly-logo-map.json";
 import ScrollReveal from "./scroll-reveal";
 import InteractiveLogoDots, { LogoMapConfig } from "./interactive-logo";
 import { useGlobal } from "../../lib/utils";
+import GoogleLogoMap from "../../../public/Images/google-logo-map.json";
 
 const experiences = [
+    {
+        companyName: "GOOGLE",
+        role: "Software Engineer Intern",
+        duration: "Summer 2026",
+        summary: `Incoming summer 2026.
+AI/ML in Shopping Search.`,
+        link: "https://www.google.com/",
+        logoMap: GoogleLogoMap,
+    },
     {
         companyName: "AGENCY",
         role: "Member of Technical Staff Co-op",
@@ -93,7 +103,7 @@ const DesktopPage = ({ scrollRef, isLight }: { scrollRef: MutableRefObject<null>
         companyName: "text-[2.75vw] leading-[3vw] font-bold font-playfairDisplay",
         duration: "font-semibold font-oswald text-[1vw] leading-[1.25vw]",
         role: "font-semibold font-oswald text-[1.5vw] mt-[0.5vh]",
-        summary: "font-med text-[1.10vw] leading-[1.75vw] mt-[2vh]",
+        summary: "font-med text-[1.10vw] leading-[1.75vw] mt-[2vh] whitespace-pre-line",
     };
 
     const ExperienceItem = ({
@@ -212,7 +222,7 @@ const MobilePage = ({ scrollRef }: { scrollRef: MutableRefObject<null> }) => {
         textContainer: "w-[85vw] flex flex-col items-center justify-center text-center",
         companyName: "text-[6vh] leading-[6vh] text-center font-bold font-oswald",
         role: "font-semibold font-oswald text-[3.5vh] leading-[5.5vh] text-center",
-        summary: "font-med text-[2vh] leading-[2vh] mt-[2vh]",
+        summary: "font-med text-[2vh] leading-[2vh] mt-[2vh] whitespace-pre-line",
     };
 
     const MobileExperienceItem = ({
