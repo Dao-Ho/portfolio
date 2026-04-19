@@ -5,9 +5,7 @@ import agencyLogoMap from "../../../public/Images/agency-logo-map.json";
 import nuscimagazineLogoMap from "../../../public/Images/nusci-logo-map.json";
 import neuLogoMap from "../../../public/Images/neu-logo-map.json";
 import paynalliSystemsLogoMap from "../../../public/Images/paynalli-systems-map.json";
-import generateLogoMap from "../../../public/Images/generate-logo-map.json";
 import designAiLogoMap from "../../../public/Images/design-ai-logo-map.json";
-import vetrulyLogoMap from "../../../public/Images/vetruly-logo-map.json";
 import ScrollReveal from "./scroll-reveal";
 import InteractiveLogoDots, { LogoMapConfig } from "./interactive-logo";
 import { useGlobal } from "../../lib/utils";
@@ -32,15 +30,6 @@ AI/ML in Shopping Search.`,
         logoMap: agencyLogoMap,
     },
     {
-        companyName: "VETRULY",
-        role: "Technical Lead",
-        duration: "Jan 2025 - May 2025",
-        summary:
-            "Led a team of 5 engineers in building and shipping Vetted, a web application currently in use connecting pet owners with care providers. Collaborated with clients to define the product vision and delivered a full-stack platform with robust deployment infrastructure.",
-        link: "https://www.vetruly.com/",
-        logoMap: vetrulyLogoMap,
-    },
-    {
         companyName: "DESIGNAI",
         role: "Software Engineer Intern",
         duration: "Sept 2024 - Jan 2025",
@@ -48,15 +37,6 @@ AI/ML in Shopping Search.`,
             "Led the development of an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
         link: "https://www.designai.co/",
         logoMap: designAiLogoMap,
-    },
-    {
-        companyName: "GENERATE PRODUCT DEVELOPMENT",
-        role: "Software Engineer",
-        duration: "Sept 2024 - Dec 2024",
-        summary:
-            "Contributed as an engineer to build Three Stones, a mobile application allowing retail investors to crowdfund real estate projects. Designed and implemented authentication and core user flows across the entire stack.",
-        link: "https://generatenu.com/",
-        logoMap: generateLogoMap,
     },
     {
         companyName: "PAYNALLI SYSTEMS",
