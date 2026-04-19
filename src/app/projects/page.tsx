@@ -115,15 +115,20 @@ export default function ProjectsRoute() {
                 setActiveIndex((i) => Math.max(i - 1, 0));
             }
         };
-        let lastWheel = 0;
+        let accumulated = 0;
+        let cooldown = false;
         const handleWheel = (e: WheelEvent) => {
             if (isMobile) return;
             e.preventDefault();
-            const now = Date.now();
-            if (now - lastWheel < 600) return;
-            lastWheel = now;
-            if (e.deltaY > 0) setActiveIndex((i) => Math.min(i + 1, projects.length - 1));
-            else setActiveIndex((i) => Math.max(i - 1, 0));
+            if (cooldown) return;
+            accumulated += e.deltaY;
+            if (Math.abs(accumulated) >= 80) {
+                if (accumulated > 0) setActiveIndex((i) => Math.min(i + 1, projects.length - 1));
+                else setActiveIndex((i) => Math.max(i - 1, 0));
+                accumulated = 0;
+                cooldown = true;
+                setTimeout(() => { cooldown = false; accumulated = 0; }, 600);
+            }
         };
         window.addEventListener("keydown", handleKey);
         window.addEventListener("wheel", handleWheel, { passive: false });
