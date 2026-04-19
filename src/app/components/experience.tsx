@@ -76,7 +76,8 @@ const ExperiencePage = ({ isLight }: { isLight: boolean }) => {
 
 const DesktopPage = ({ scrollRef, isLight }: { scrollRef: MutableRefObject<null>; isLight: boolean }) => {
     const styles = {
-        parentContainer: "w-[100vw] y-overflow overflow-hidden bg-background text-foreground flex justify-center",
+        parentContainer:
+            "w-[100vw] y-overflow overflow-hidden bg-background text-foreground transition-colors duration-300 flex justify-center",
         allExperiencesContainer: "flex flex-col mt-[20vh] space-y-[25vh] mb-[25vh]",
         experienceContainer: "space-x-[12vw] flex-row flex items-center font-sourceSans3",
         textContainer: "w-[20vw] flex flex-col justify-center",
@@ -196,7 +197,8 @@ const DesktopPage = ({ scrollRef, isLight }: { scrollRef: MutableRefObject<null>
 
 const MobilePage = ({ scrollRef }: { scrollRef: MutableRefObject<null> }) => {
     const styles = {
-        parentContainer: "w-[100vw] y-overflow overflow-hidden bg-background text-foreground flex justify-center",
+        parentContainer:
+            "w-[100vw] y-overflow overflow-hidden bg-background text-foreground transition-colors duration-300 flex justify-center",
         allExperiencesContainer: "flex flex-col mt-[20vh] space-y-[25vh] mb-[25vh]",
         experienceContainer: "flex justify-center font-sourceSans3 mb-[10vh]",
         textContainer: "w-[85vw] flex flex-col items-center justify-center text-center",
