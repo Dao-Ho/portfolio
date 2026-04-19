@@ -168,7 +168,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
         if (touched) {
             if (isLight) {
                 // Light mode GitHub greens
-                if (count === 0) return "#ebedf0";
+                if (count === 0) return "#ebe6dd";
                 if (count < 2) return "#9be9a8";
                 if (count < 5) return "#40c463";
                 if (count < 10) return "#30a14e";
