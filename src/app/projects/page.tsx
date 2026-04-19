@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { GlobalProvider } from "../../context-providers/global-provider";
 import { AnimatedItem } from "../components/animated-list";
@@ -93,8 +91,6 @@ export default function ProjectsRoute() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const [dims, setDims] = useState({ vw: 0, vh: 0 });
-    const router = useRouter();
-
     useEffect(() => {
         const update = () => {
             setIsMobile(window.innerWidth < 768);
@@ -143,15 +139,6 @@ export default function ProjectsRoute() {
             <div
                 className="w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground dark"
             >
-                <div className="fixed top-0 left-0 right-0 z-20 flex items-center px-[4vw] py-[3vh]">
-                    <button
-                        onClick={() => router.push("/")}
-                        className="flex items-center gap-2 font-oswald text-[0.85vw] text-foreground/50 hover:text-foreground transition-colors duration-200 max-md:text-[3.5vw]"
-                    >
-                        <ArrowLeft size={14} />
-                        Back
-                    </button>
-                </div>
 
                 {isMobile ? (
                     <MobileLayout />
