@@ -154,6 +154,7 @@ const GlassSurface = ({
     }, [width, height]);
 
     const supportsSVGFilters = () => {
+        if (typeof window === "undefined") return false;
         const isWebkit = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
         const isFirefox = /Firefox/.test(navigator.userAgent);
 
@@ -257,7 +258,7 @@ const GlassSurface = ({
     };
 
     const glassSurfaceClasses =
-        "relative flex items-center justify-center overflow-hidden transition-opacity duration-[260ms] ease-out";
+        "relative flex items-center justify-center overflow-hidden transition-opacity ease-out";
 
     const focusVisibleClasses = isDarkMode
         ? "focus-visible:outline-2 focus-visible:outline-[#0A84FF] focus-visible:outline-offset-2"
