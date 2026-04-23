@@ -32,10 +32,10 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
             <div className="fixed top-[3vw] left-[3vw] right-[3vw] z-50">
                 <button
                     onClick={() => setOpen((v) => !v)}
-                    className="w-full flex items-center justify-between px-[5vw] py-[3.5vw] rounded-2xl cursor-pointer"
+                    className="w-full flex items-center justify-between px-[5vw] py-[3.5vw] rounded-full cursor-pointer"
                     style={{ background: pillBg, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                 >
-                    <span className="font-bebas text-[4.5vw] tracking-[0.15em]" style={{ color: fg }}>
+                    <span className="font-bebas text-25 tracking-[0.15em]" style={{ color: fg }}>
                         Dao Ho
                     </span>
                     <div className="relative" style={{ width: "5vw", height: "5vw" }}>
@@ -131,7 +131,7 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
 
 function GridIcon({ color }: { color: string }) {
     return (
-        <svg style={{ width: "5vw", height: "5vw" }} viewBox="0 0 16 16" fill={color}>
+        <svg style={{ width: "4vw", height: "4vw" }} viewBox="0 0 16 16" fill={color}>
             <circle cx="4" cy="4" r="1.5" />
             <circle cx="12" cy="4" r="1.5" />
             <circle cx="4" cy="12" r="1.5" />
@@ -143,7 +143,7 @@ function GridIcon({ color }: { color: string }) {
 function CloseIcon({ color }: { color: string }) {
     return (
         <svg
-            style={{ width: "4.5vw", height: "4.5vw" }}
+            style={{ width: "4vw", height: "4vw" }}
             viewBox="0 0 16 16"
             fill="none"
             stroke={color}
