@@ -147,7 +147,9 @@ export default function ProjectsRoute() {
     }, [isMobile]);
 
     return (
-        <div className={`w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground ${isLight ? "light" : "dark"}`}>
+        <div
+            className={`w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground ${isLight ? "light" : "dark"}`}
+        >
             {!isMobile && <GlobalDock />}
 
             {isMobile ? (
