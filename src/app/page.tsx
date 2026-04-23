@@ -1,13 +1,11 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import ParticleEffect from "./components/particles";
 import React from "react";
 import { useGlobal } from "../context-providers/global-provider";
 
 import MobileNav from "./components/mobile-nav";
 import FrontPage from "./components/front-page";
 import ExperiencePage from "./components/experience";
-import Footer from "./components/footer";
 import GlobalDock from "./components/global-dock";
 
 export default function Home() {
@@ -36,9 +34,7 @@ export default function Home() {
                 {isMobile && <MobileNav isLight={isLight} toggleTheme={toggleTheme} />}
                 <FrontPage isLight={isLight} />
                 <ExperiencePage isLight={isLight} />
-                <Footer />
             </div>
-            <div className="relative z-10">{isMobile && <ParticleEffect isLight={isLight} />}</div>
             {!isMobile && <GlobalDock isLight={isLight} toggleTheme={toggleTheme} />}
         </div>
     );

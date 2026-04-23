@@ -56,58 +56,34 @@ const desktopPage = ({ isLight }: { isLight: boolean }) => {
     );
 };
 
-const mobilePage = () => (
-    <div className="flex flex-col h-[85vh] bg-transparent w-[100vw] text-foreground justify-center items-center ">
-        <div className="flex-1 flex flex-row items-center h-full w-full justify-center items-center">
-            <div className="flex-1 w-[55vw] flex flex-col font-roboto mx-[1.75vw] mt-[15vh] items-center">
-                <motion.div
-                    initial={{ y: 50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                >
-                    <h1 className="font-semibold text-[7vw] leading-[5vh]">Xin Chào,</h1>
-                </motion.div>
-                <motion.div
-                    initial={{ y: 50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                >
-                    <h1 className="font-black text-[17vw] leading-[15vh]">I'm Dao Ho</h1>
-                </motion.div>
-                <motion.div
-                    initial={{ y: 50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.2 }}
-                >
-                    <h1 className="font-semibold text-[4.75vw] leading-[6vw]">
-                        Software Engineer, Developer, and Artist.
-                    </h1>
-                </motion.div>
-                <motion.div
-                    initial={{ y: 50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.3 }}
-                >
-                    <h1 className="font-semibold text-[4vw] leading-[6vh]">Northeastern '27, BS CS and Finance</h1>
-                </motion.div>
-            </div>
+const mobilePage = () => {
+    const router = useRouter();
+    const CURRENT_EXPERIENCE_URL = "https://www.google.com/";
+    const CURRENT_EXPERIENCE = "Google";
+    return (
+        <div className="flex flex-col bg-transparent w-[100vw] text-foreground px-6 pt-[15vh] pb-8">
+            <p className="font-inter text-[15px] leading-relaxed mb-3">
+                <span className="opacity-60">Xin chào, I&apos;m </span>
+                <strong className="opacity-70">Dao</strong>
+                <span className="opacity-60">.</span>
+            </p>
+            <p className="font-inter text-[15px] leading-relaxed mb-3">
+                <span className="opacity-60">I&apos;m a </span>
+                <strong className="opacity-70">Software Engineer</strong>
+                <span className="opacity-60"> passionate about building the future.</span>
+            </p>
+            <p className="font-inter text-[15px] leading-relaxed mb-3">
+                <strong className="opacity-70">Northeastern &apos;27</strong>
+                <span className="opacity-60">, Computer Science and Finance.</span>
+            </p>
+            <p className="font-inter text-[15px] leading-relaxed" onClick={() => router.push(CURRENT_EXPERIENCE_URL)}>
+                <span className="opacity-60">Currently, building </span>
+                <strong className="opacity-70 underline cursor-pointer hover:text-[#3c7cff] transition-colors">
+                    @{CURRENT_EXPERIENCE}
+                </strong>
+            </p>
         </div>
-        <div className="flex flex-2 w-[20vw] h-[20vh]">
-            <motion.button
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.4 }}
-                onClick={() => {
-                    const anchor = document.querySelector("#experience");
-                    anchor?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                className="text-[4vw] font-roboto font-bold animate-bounce h-[2vh] "
-            >
-                {" "}
-                see more
-            </motion.button>
-        </div>
-    </div>
-);
+    );
+};
 
 export default FrontPage;
