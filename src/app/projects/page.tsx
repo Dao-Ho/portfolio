@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
-import { GlobalProvider } from "../../context-providers/global-provider";
+import { useGlobal } from "../../context-providers/global-provider";
 import { AnimatedItem } from "../components/animated-list";
 import GlobalDock from "../components/global-dock";
 import MobileNav from "../components/mobile-nav";
@@ -96,6 +96,7 @@ function getItemPos(dist: number, vw: number, vh: number) {
 }
 
 export default function ProjectsRoute() {
+    const { isLight, toggleTheme } = useGlobal();
     const [activeIndex, setActiveIndex] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const [dims, setDims] = useState({ vw: 0, vh: 0 });
@@ -146,17 +147,15 @@ export default function ProjectsRoute() {
     }, [isMobile]);
 
     return (
-        <GlobalProvider>
-            <div className="w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground dark">
-                {!isMobile && <GlobalDock />}
+        <div className={`w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground ${isLight ? "light" : "dark"}`}>
+            {!isMobile && <GlobalDock />}
 
-                {isMobile ? (
-                    <MobileLayout />
-                ) : (
-                    <DesktopLayout activeIndex={activeIndex} setActiveIndex={setActiveIndex} dims={dims} />
-                )}
-            </div>
-        </GlobalProvider>
+            {isMobile ? (
+                <MobileLayout isLight={isLight} toggleTheme={toggleTheme} />
+            ) : (
+                <DesktopLayout activeIndex={activeIndex} setActiveIndex={setActiveIndex} dims={dims} />
+            )}
+        </div>
     );
 }
 
@@ -285,10 +284,10 @@ function DesktopLayout({
     );
 }
 
-function MobileLayout() {
+function MobileLayout({ isLight, toggleTheme }: { isLight: boolean; toggleTheme: () => void }) {
     return (
         <div className="w-full h-full overflow-y-auto bg-background">
-            <MobileNav />
+            <MobileNav isLight={isLight} toggleTheme={toggleTheme} />
             <div className="flex flex-col px-[5vw] pt-[20vw] pb-[12vh]">
                 {projects.map((project, i) => (
                     <div key={project.index} className="flex flex-col pb-[16vw]">

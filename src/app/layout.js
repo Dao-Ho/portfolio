@@ -10,6 +10,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
+import { GlobalProvider } from "../context-providers/global-provider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -69,7 +70,7 @@ export default function RootLayout({ children }) {
             <body
                 className={`${inter.variable} ${fontbebas.variable} ${fontlibre.variable} ${fontroboto.variable} ${fontRobotoCondensed.variable} ${fontOswald.variable} ${fontSourceSansPro.variable} ${fontPlayfairDisplay.variable} scroll-smooth overflow-x-clip`}
             >
-                {children}
+                <GlobalProvider>{children}</GlobalProvider>
             </body>
             <Analytics />
         </html>

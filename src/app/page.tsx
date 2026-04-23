@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import ParticleEffect from "./components/particles";
 import React from "react";
-import { GlobalProvider } from "../context-providers/global-provider";
+import { useGlobal } from "../context-providers/global-provider";
 
 import MobileNav from "./components/mobile-nav";
 import FrontPage from "./components/front-page";
@@ -11,7 +11,7 @@ import Footer from "./components/footer";
 import GlobalDock from "./components/global-dock";
 
 export default function Home() {
-    const [isLight, setIsLight] = useState(false);
+    const { isLight, toggleTheme } = useGlobal();
     const oldScrollY = useRef(0);
     const [isMobile, setIsMobile] = useState(true);
 
@@ -26,22 +26,20 @@ export default function Home() {
     }, []);
 
     return (
-        <GlobalProvider>
-            <div
-                id="mainPage"
-                className={`w-[100vw] min-h-[100vh] overflow-y-scroll transition-colors duration-300 bg-background ${
-                    isLight ? "light" : "dark"
-                }`}
-            >
-                <div className={`flex flex-col absolute z-20 w-[100vw] items-center`}>
-                    {isMobile && <MobileNav isLight={isLight} toggleTheme={() => setIsLight((v) => !v)} />}
-                    <FrontPage isLight={isLight} />
-                    <ExperiencePage isLight={isLight} />
-                    <Footer />
-                </div>
-                <div className="relative z-10">{isMobile && <ParticleEffect isLight={isLight} />}</div>
-                {!isMobile && <GlobalDock isLight={isLight} toggleTheme={() => setIsLight((v) => !v)} />}
+        <div
+            id="mainPage"
+            className={`w-[100vw] min-h-[100vh] overflow-y-scroll transition-colors duration-300 bg-background ${
+                isLight ? "light" : "dark"
+            }`}
+        >
+            <div className={`flex flex-col absolute z-20 w-[100vw] items-center`}>
+                {isMobile && <MobileNav isLight={isLight} toggleTheme={toggleTheme} />}
+                <FrontPage isLight={isLight} />
+                <ExperiencePage isLight={isLight} />
+                <Footer />
             </div>
-        </GlobalProvider>
+            <div className="relative z-10">{isMobile && <ParticleEffect isLight={isLight} />}</div>
+            {!isMobile && <GlobalDock isLight={isLight} toggleTheme={toggleTheme} />}
+        </div>
     );
 }

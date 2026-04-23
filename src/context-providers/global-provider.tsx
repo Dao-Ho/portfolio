@@ -1,15 +1,32 @@
+"use client";
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface GlobalContextType {
     isMobile: boolean;
+    isLight: boolean;
+    toggleTheme: () => void;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [isMobile, setIsMobile] = useState<boolean>(false);
+    const [isLight, setIsLight] = useState<boolean>(false);
 
-    //debounce to prevent the resize event from firing too often
+    useEffect(() => {
+        const stored = localStorage.getItem("theme");
+        if (stored === "light") setIsLight(true);
+    }, []);
+
+    const toggleTheme = () => {
+        setIsLight((v) => {
+            const next = !v;
+            localStorage.setItem("theme", next ? "light" : "dark");
+            return next;
+        });
+    };
+
     const debounce = (func: { (): void; (): void }, delay: number | undefined) => {
         let timeoutId: NodeJS.Timeout;
         return () => {
@@ -39,7 +56,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, []);
 
-    return <GlobalContext.Provider value={{ isMobile }}>{children}</GlobalContext.Provider>;
+    return <GlobalContext.Provider value={{ isMobile, isLight, toggleTheme }}>{children}</GlobalContext.Provider>;
 };
 
 export const useGlobal = () => {
