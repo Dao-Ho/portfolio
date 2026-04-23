@@ -296,6 +296,7 @@ function MobileLayout() {
                                         fill
                                         className="object-cover"
                                         priority={i === 0}
+                                        loading={i === 0 ? "eager" : "lazy"}
                                     />
                                 )}
                             </div>
