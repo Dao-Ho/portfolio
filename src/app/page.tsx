@@ -4,7 +4,7 @@ import ParticleEffect from "./components/particles";
 import React from "react";
 import { GlobalProvider } from "../context-providers/global-provider";
 
-import NavBar from "./components/navBar";
+import MobileNav from "./components/mobile-nav";
 import FrontPage from "./components/front-page";
 import ExperiencePage from "./components/experience";
 import Footer from "./components/footer";
@@ -34,11 +34,7 @@ export default function Home() {
                 }`}
             >
                 <div className={`flex flex-col absolute z-20 w-[100vw] items-center`}>
-                    {isMobile && (
-                        <div className={`fixed z-20`}>
-                            <NavBar toggleTheme={() => setIsLight((v) => !v)} isLight={isLight} />
-                        </div>
-                    )}
+                    {isMobile && <MobileNav isLight={isLight} toggleTheme={() => setIsLight((v) => !v)} />}
                     <FrontPage isLight={isLight} />
                     <ExperiencePage isLight={isLight} />
                     <Footer />
