@@ -281,38 +281,28 @@ function DesktopLayout({
 
 function MobileLayout() {
     return (
-        <div className="pt-[12vh] pb-[8vh] px-[8vw] overflow-y-auto h-full">
-            <h1 className="font-playfairDisplay font-bold text-[8vw] leading-[9vw] mb-[5vh]">Projects</h1>
-            <div className="flex flex-col">
-                {projects.map((project, index) => (
-                    <AnimatedItem key={index} index={index} delay={index * 0.05}>
-                        <a
-                            href={project.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex flex-col py-[2.5vh] border-t border-foreground/10"
-                        >
-                            <span className="font-oswald text-[3vw] text-foreground/30">{project.index}</span>
-                            <span className="font-playfairDisplay font-bold text-[5.5vw] leading-[7vw] mt-[0.5vh]">
+        <div className="w-full h-full overflow-y-auto bg-background">
+            <div className="flex flex-col gap-[3vw] px-[3vw] pt-[3vw] pb-[12vh]">
+                {projects.map((project, i) => (
+                    <AnimatedItem key={project.index} index={i} delay={i * 0.06}>
+                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="block">
+                            <div className="relative w-full rounded-2xl overflow-hidden" style={{ height: "70vw" }}>
+                                {project.background && (
+                                    <Image
+                                        src={project.background}
+                                        alt={project.name}
+                                        fill
+                                        className="object-cover"
+                                        priority={i === 0}
+                                    />
+                                )}
+                            </div>
+                            <span className="font-inter text-[4vw] font-[400] text-foreground/20 mt-[2.5vw] px-[1vw] block">
                                 {project.name}
                             </span>
-                            <span className="font-sourceSans3 text-[3.5vw] leading-[5.5vw] text-foreground/60 mt-[1vh]">
-                                {project.description}
-                            </span>
-                            <div className="flex flex-wrap gap-[2vw] mt-[1.5vh]">
-                                {project.tech.map((t, i) => (
-                                    <span
-                                        key={i}
-                                        className="font-oswald text-[2.75vw] text-foreground/40 border border-foreground/15 px-[2.5vw] py-[0.25vh] rounded-sm"
-                                    >
-                                        {t}
-                                    </span>
-                                ))}
-                            </div>
                         </a>
                     </AnimatedItem>
                 ))}
-                <div className="border-t border-foreground/10" />
             </div>
         </div>
     );
