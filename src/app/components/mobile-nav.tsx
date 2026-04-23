@@ -35,7 +35,7 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
                     className="w-full flex items-center justify-between px-[5vw] py-[3.5vw] rounded-full cursor-pointer"
                     style={{ background: pillBg, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                 >
-                    <span className="font-bebas text-25 tracking-[0.15em]" style={{ color: fg }}>
+                    <span className="font-inter font-normal text-20 tracking-normal" style={{ color: fg }}>
                         Dao Ho
                     </span>
                     <div className="relative" style={{ width: "5vw", height: "5vw" }}>
