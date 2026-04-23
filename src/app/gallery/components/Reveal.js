@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from "react";
-import { motion, useInView, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 
 export const Reveal = ({ children }) => {
     return (

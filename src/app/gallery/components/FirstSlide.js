@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { React, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import transaction from "../../../../public/Images/transaction final.png";
 import fishmarket from "../../../../public/Images/Fish Market refined.png";
 import haku from "../../../../public/Images/haku final refined.png";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useSwiper } from "swiper/react";
-import { motion, scrollRef } from "framer-motion";
-import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from "swiper/modules";
+import { motion } from "framer-motion";
+import { Navigation, Pagination, Scrollbar, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
