@@ -7,16 +7,13 @@ import duality from "../../../../public/Images/FINAL selected 2.png";
 import held from "../../../../public/Images/Held final refined.png";
 import engulfed from "../../../../public/Images/engulfed final refined.png";
 import { useState } from "react";
-import { Container } from "postcss";
-import { motion, controls, inView, useAnimation, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { useRef, useEffect } from "react";
 
 import { createPortal } from "react-dom";
 
 export const Artworks = () => {
-    const scrollRef = useRef(null);
-
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
