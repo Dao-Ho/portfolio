@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
+import { ExternalLink, Sun, Moon, Github } from "lucide-react";
 
 const navLinks = [
     { label: "Home", href: "/" },
@@ -10,7 +11,10 @@ const navLinks = [
     { label: "Gallery", href: "/gallery" },
 ];
 
-const secondaryLinks = [{ label: "LinkedIn ↗", href: "https://www.linkedin.com/in/dao-ho/" }];
+const secondaryLinks = [
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/dao-ho/" },
+    { label: "GitHub", href: "https://github.com/daoh/" },
+];
 
 interface MobileNavProps {
     isLight?: boolean;
@@ -106,19 +110,23 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
                                     href={link.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="font-inter text-[3.5vw] tracking-wide"
+                                    className="font-inter text-[3.5vw] tracking-wide flex items-center gap-[1.5vw]"
                                     style={{ color: fgDim }}
                                 >
                                     {link.label}
+                                    {link.label === "GitHub"
+                                        ? <Github size="3vw" strokeWidth={1.5} />
+                                        : <ExternalLink size="3vw" strokeWidth={1.5} />
+                                    }
                                 </a>
                             ))}
                             {toggleTheme && (
                                 <button
                                     onClick={toggleTheme}
-                                    className="font-inter text-[3.5vw] tracking-wide cursor-pointer"
+                                    className="cursor-pointer"
                                     style={{ color: fgDim }}
                                 >
-                                    {isLight ? "Dark mode" : "Light mode"}
+                                    {isLight ? <Moon size="4.5vw" strokeWidth={1.5} /> : <Sun size="4.5vw" strokeWidth={1.5} />}
                                 </button>
                             )}
                         </div>
