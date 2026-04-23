@@ -308,23 +308,15 @@ function MobileLayout() {
                             </div>
 
                             {/* Name */}
-                            <h2 className="font-inter text-[21px] mt-[5vw] mb-2 text-foreground">
-                                {project.name}
-                            </h2>
+                            <h2 className="font-inter text-[21px] mt-[5vw] mb-2 text-foreground">{project.name}</h2>
 
                             {/* Description */}
-                            <p className="font-inter text-[17px] text-foreground opacity-60">
-                                {project.description}
-                            </p>
+                            <p className="font-inter text-[17px] text-foreground opacity-60">{project.description}</p>
 
                             {/* Year */}
                             <div className="mt-7">
-                                <p className="font-inter text-[17px] text-foreground opacity-60 mb-1">
-                                    Year
-                                </p>
-                                <p className="font-inter text-[17px] text-foreground">
-                                    {project.year}
-                                </p>
+                                <p className="font-inter text-[17px] text-foreground opacity-60 mb-1">Year</p>
+                                <p className="font-inter text-[17px] text-foreground">{project.year}</p>
                             </div>
 
                             {/* View project button */}
