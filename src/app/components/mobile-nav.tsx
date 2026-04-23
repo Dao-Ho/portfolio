@@ -114,19 +114,20 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
                                     style={{ color: fgDim }}
                                 >
                                     {link.label}
-                                    {link.label === "GitHub"
-                                        ? <Github size="3vw" strokeWidth={1.5} />
-                                        : <ExternalLink size="3vw" strokeWidth={1.5} />
-                                    }
+                                    {link.label === "GitHub" ? (
+                                        <Github size="3vw" strokeWidth={1.5} />
+                                    ) : (
+                                        <ExternalLink size="3vw" strokeWidth={1.5} />
+                                    )}
                                 </a>
                             ))}
                             {toggleTheme && (
-                                <button
-                                    onClick={toggleTheme}
-                                    className="cursor-pointer"
-                                    style={{ color: fgDim }}
-                                >
-                                    {isLight ? <Moon size="4.5vw" strokeWidth={1.5} /> : <Sun size="4.5vw" strokeWidth={1.5} />}
+                                <button onClick={toggleTheme} className="cursor-pointer" style={{ color: fgDim }}>
+                                    {isLight ? (
+                                        <Moon size="4.5vw" strokeWidth={1.5} />
+                                    ) : (
+                                        <Sun size="4.5vw" strokeWidth={1.5} />
+                                    )}
                                 </button>
                             )}
                         </div>
