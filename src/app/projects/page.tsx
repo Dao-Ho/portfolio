@@ -13,6 +13,7 @@ type Project = {
     name: string;
     description: string;
     tech: string[];
+    year: string;
     link: string;
     background?: string;
 };
@@ -24,6 +25,7 @@ const projects: Project[] = [
         description:
             "Jira for hotel operations. Designed and shipped an internal platform that gives hotel staff a self-serve dashboard to manage tasks, track requests, and streamline day-to-day operations.",
         tech: ["Next.js", "TypeScript", "Go"],
+        year: "Spring 2026",
         link: "https://github.com/GenerateNU/selfserve",
         background: "/projects/selfserve/selfserve-background.svg",
     },
@@ -33,6 +35,7 @@ const projects: Project[] = [
         description:
             "GitHub notifications, in your notch. Native GitHub notifications living seamlessly in your Mac's Dynamic Island. Never lose track of a review again.",
         tech: ["Swift", "GitHub API"],
+        year: "Spring 2026",
         link: "https://github.com/dao-ho/dynami",
         background: "/projects/dynami/dynami-background.svg",
     },
@@ -42,6 +45,7 @@ const projects: Project[] = [
         description:
             "Full-stack platform connecting pet owners with vetted care providers. Led a team of 5 engineers from concept to production.",
         tech: ["Next.js", "TypeScript", "PostgreSQL"],
+        year: "Spring 2025",
         link: "https://www.vetruly.com/",
         background: "/projects/vetruly/vetruly-background.svg",
     },
@@ -51,6 +55,7 @@ const projects: Project[] = [
         description:
             "Mobile application allowing retail investors to crowdfund real estate projects. Built authentication and core user flows end-to-end.",
         tech: ["React Native", "Go", "AWS"],
+        year: "Fall 2024",
         link: "https://generatenu.com/",
         background: "/projects/3-stones/3-stones-background.svg",
     },
@@ -284,11 +289,12 @@ function MobileLayout() {
     return (
         <div className="w-full h-full overflow-y-auto bg-background">
             <MobileNav />
-            <div className="flex flex-col gap-[3vw] px-[3vw] pt-[18vw] pb-[12vh]">
+            <div className="flex flex-col px-[5vw] pt-[20vw] pb-[12vh]">
                 {projects.map((project, i) => (
                     <AnimatedItem key={project.index} index={i} delay={i * 0.06}>
-                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="block">
-                            <div className="relative w-full rounded-2xl overflow-hidden" style={{ height: "70vw" }}>
+                        <div className="flex flex-col pb-[16vw]">
+                            {/* Image */}
+                            <div className="relative w-full rounded-2xl overflow-hidden" style={{ height: "65vw" }}>
                                 {project.background && (
                                     <Image
                                         src={project.background}
@@ -296,13 +302,42 @@ function MobileLayout() {
                                         fill
                                         className="object-cover"
                                         priority={i === 0}
+                                        loading={i === 0 ? "eager" : "lazy"}
                                     />
                                 )}
                             </div>
-                            <span className="font-inter text-[4vw] font-[400] text-foreground/20 mt-[2.5vw] px-[1vw] block">
+
+                            {/* Name */}
+                            <h2 className="font-inter text-[21px] mt-[5vw] mb-2 text-foreground">
                                 {project.name}
-                            </span>
-                        </a>
+                            </h2>
+
+                            {/* Description */}
+                            <p className="font-inter text-[17px] text-foreground opacity-60">
+                                {project.description}
+                            </p>
+
+                            {/* Year */}
+                            <div className="mt-7">
+                                <p className="font-inter text-[17px] text-foreground opacity-60 mb-1">
+                                    Year
+                                </p>
+                                <p className="font-inter text-[17px] text-foreground">
+                                    {project.year}
+                                </p>
+                            </div>
+
+                            {/* View project button */}
+                            <a
+                                href={project.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-7 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-12/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
+                                style={{ background: "color-mix(in srgb, var(--foreground-color) 8%, transparent)" }}
+                            >
+                                View project
+                            </a>
+                        </div>
                     </AnimatedItem>
                 ))}
             </div>
