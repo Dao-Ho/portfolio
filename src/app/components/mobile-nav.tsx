@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
+import { ExternalLink, Sun, Moon, Github } from "lucide-react";
 
 const navLinks = [
     { label: "Home", href: "/" },
@@ -10,7 +11,10 @@ const navLinks = [
     { label: "Gallery", href: "/gallery" },
 ];
 
-const secondaryLinks = [{ label: "LinkedIn ↗", href: "https://www.linkedin.com/in/dao-ho/" }];
+const secondaryLinks = [
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/dao-ho/" },
+    { label: "GitHub", href: "https://github.com/daoh/" },
+];
 
 interface MobileNavProps {
     isLight?: boolean;
@@ -32,10 +36,10 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
             <div className="fixed top-[3vw] left-[3vw] right-[3vw] z-50">
                 <button
                     onClick={() => setOpen((v) => !v)}
-                    className="w-full flex items-center justify-between px-[5vw] py-[3.5vw] rounded-2xl cursor-pointer"
+                    className="w-full flex items-center justify-between px-[5vw] py-[3.5vw] rounded-full cursor-pointer"
                     style={{ background: pillBg, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                 >
-                    <span className="font-bebas text-[4.5vw] tracking-[0.15em]" style={{ color: fg }}>
+                    <span className="font-inter font-normal text-20 tracking-normal" style={{ color: fg }}>
                         Dao Ho
                     </span>
                     <div className="relative" style={{ width: "5vw", height: "5vw" }}>
@@ -106,19 +110,24 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
                                     href={link.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="font-inter text-[3.5vw] tracking-wide"
+                                    className="font-inter text-[3.5vw] tracking-wide flex items-center gap-[1.5vw]"
                                     style={{ color: fgDim }}
                                 >
                                     {link.label}
+                                    {link.label === "GitHub" ? (
+                                        <Github size="3vw" strokeWidth={1.5} />
+                                    ) : (
+                                        <ExternalLink size="3vw" strokeWidth={1.5} />
+                                    )}
                                 </a>
                             ))}
                             {toggleTheme && (
-                                <button
-                                    onClick={toggleTheme}
-                                    className="font-inter text-[3.5vw] tracking-wide cursor-pointer"
-                                    style={{ color: fgDim }}
-                                >
-                                    {isLight ? "Dark mode" : "Light mode"}
+                                <button onClick={toggleTheme} className="cursor-pointer" style={{ color: fgDim }}>
+                                    {isLight ? (
+                                        <Moon size="4.5vw" strokeWidth={1.5} />
+                                    ) : (
+                                        <Sun size="4.5vw" strokeWidth={1.5} />
+                                    )}
                                 </button>
                             )}
                         </div>
@@ -131,7 +140,7 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
 
 function GridIcon({ color }: { color: string }) {
     return (
-        <svg style={{ width: "5vw", height: "5vw" }} viewBox="0 0 16 16" fill={color}>
+        <svg style={{ width: "4vw", height: "4vw" }} viewBox="0 0 16 16" fill={color}>
             <circle cx="4" cy="4" r="1.5" />
             <circle cx="12" cy="4" r="1.5" />
             <circle cx="4" cy="12" r="1.5" />
@@ -143,7 +152,7 @@ function GridIcon({ color }: { color: string }) {
 function CloseIcon({ color }: { color: string }) {
     return (
         <svg
-            style={{ width: "4.5vw", height: "4.5vw" }}
+            style={{ width: "4vw", height: "4vw" }}
             viewBox="0 0 16 16"
             fill="none"
             stroke={color}
