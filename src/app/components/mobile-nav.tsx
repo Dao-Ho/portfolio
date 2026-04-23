@@ -32,8 +32,8 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
             <div className="fixed top-[3vw] left-[3vw] right-[3vw] z-50">
                 <button
                     onClick={() => setOpen((v) => !v)}
-                    className="w-full flex items-center justify-between px-[5vw] py-[3.5vw] rounded-2xl backdrop-blur-md cursor-pointer"
-                    style={{ background: pillBg }}
+                    className="w-full flex items-center justify-between px-[5vw] py-[3.5vw] rounded-2xl cursor-pointer"
+                    style={{ background: pillBg, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
                 >
                     <span className="font-bebas text-[4.5vw] tracking-[0.15em]" style={{ color: fg }}>
                         Dao Ho
