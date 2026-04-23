@@ -291,8 +291,7 @@ function MobileLayout() {
             <MobileNav />
             <div className="flex flex-col px-[5vw] pt-[20vw] pb-[12vh]">
                 {projects.map((project, i) => (
-                    <AnimatedItem key={project.index} index={i} delay={i * 0.06}>
-                        <div className="flex flex-col pb-[16vw]">
+                    <div key={project.index} className="flex flex-col pb-[16vw]">
                             {/* Image */}
                             <div className="relative w-full rounded-2xl overflow-hidden" style={{ height: "65vw" }}>
                                 {project.background && (
@@ -314,7 +313,7 @@ function MobileLayout() {
                             <p className="font-inter text-[17px] text-foreground opacity-60">{project.description}</p>
 
                             {/* Year */}
-                            <div className="mt-7">
+                            <div className="mt-5">
                                 <p className="font-inter text-[17px] text-foreground opacity-60 mb-1">Year</p>
                                 <p className="font-inter text-[17px] text-foreground">{project.year}</p>
                             </div>
@@ -324,13 +323,12 @@ function MobileLayout() {
                                 href={project.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="mt-7 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-12/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
+                                className="mt-5 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-12/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
                                 style={{ background: "color-mix(in srgb, var(--foreground-color) 8%, transparent)" }}
                             >
                                 View project
                             </a>
                         </div>
-                    </AnimatedItem>
                 ))}
             </div>
         </div>
