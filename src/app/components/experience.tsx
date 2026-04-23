@@ -13,55 +13,60 @@ import GoogleLogoMap from "../../../public/Images/google-logo-map.json";
 
 const experiences = [
     {
-        companyName: "GOOGLE",
+        companyName: "Google",
         role: "Software Engineer Intern",
         duration: "Summer 2026",
-        summary: `Incoming summer 2026.
-AI/ML in Shopping Search.`,
+        yearRange: "Summer 2026",
+        summary: `Incoming summer 2026. AI/ML in Shopping Search.`,
         link: "https://www.google.com/",
         logoMap: GoogleLogoMap,
     },
     {
-        companyName: "AGENCY",
+        companyName: "Agency",
         role: "Member of Technical Staff Co-op",
         duration: "May 2025 - Dec 2025",
+        yearRange: "May → Dec 2025",
         summary: "Learned the meaning of tracer bullets, velocity, and what it takes to scale them.",
         link: "https://www.agency.inc/",
         logoMap: agencyLogoMap,
     },
     {
-        companyName: "DESIGNAI",
+        companyName: "DesignAI",
         role: "Software Engineer Intern",
         duration: "Sept 2024 - Jan 2025",
+        yearRange: "Sept 2024 → Jan 2025",
         summary:
             "Led the development of an image management platform that streamlined how interior designers search, organize, and work with furniture design collections. Architected the search system for fast, intuitive performance and created a secure infrastructure for managing design assets.",
         link: "https://www.designai.co/",
         logoMap: designAiLogoMap,
     },
     {
-        companyName: "PAYNALLI SYSTEMS",
+        companyName: "Paynalli Systems",
         role: "Software Engineer Intern",
         duration: "July 2024 - Sept 2024",
+        yearRange: "Jul → Sept 2024",
         summary:
-            "Worked with an incredible team under the SCRUM methodology, I played a key role in developing, revising, and shipping software to production. Beyond creating an intuitive and responsive frontend, I experimented with and Engineered the RAG architecture for various embedding models and vector databases to streamline the recruiter-candidate search experience.",
+            "Worked with an incredible team under the SCRUM methodology, I played a key role in developing, revising, and shipping software to production. Beyond creating an intuitive and responsive frontend, I experimented with and engineered the RAG architecture for various embedding models and vector databases to streamline the recruiter-candidate search experience.",
         link: "https://paynalli.com/",
         logoMap: paynalliSystemsLogoMap,
     },
     {
-        companyName: "NUSCI – NORTHEASTERN SCIENCE MAGAZINE",
+        companyName: "NUSci Magazine",
         role: "Junior Software Engineer",
         duration: "Jan 2024 - Sept 2024",
+        yearRange: "Jan → Sept 2024",
         summary:
-            "Worked with an awesome team of developers, helped architect scalable and robust database schema, secure API endpoints, responsive frontend designs, and rigorous tests. Developed a revampled website to improve user experience.",
+            "Worked with an awesome team of developers, helped architect scalable and robust database schema, secure API endpoints, responsive frontend designs, and rigorous tests. Developed a revamped website to improve user experience.",
         link: "https://nuscimagazine.com/",
         logoMap: nuscimagazineLogoMap,
     },
     {
-        companyName: "NORTHEASTERN UNIVERSITY",
+        companyName: "Northeastern University",
         role: "Discrete Math Teaching Assistant",
         duration: "Sept 2023 - May 2024",
+        yearRange: "Sept 2023 → May 2024",
         summary:
-            "Led weekly office hours and teaching sessions to reinforce student understanding of course concepts. Provided additional resources, and comprehensive grading feedback to students on homeworks and exams to ensure success in the course.",
+            "Led weekly office hours and teaching sessions to reinforce student understanding of course concepts. Provided additional resources and comprehensive grading feedback to students on homeworks and exams.",
         link: "https://www.khoury.northeastern.edu/",
         logoMap: neuLogoMap,
     },
@@ -196,75 +201,47 @@ const DesktopPage = ({ scrollRef, isLight }: { scrollRef: MutableRefObject<null>
 };
 
 const MobilePage = ({ scrollRef }: { scrollRef: MutableRefObject<null> }) => {
-    const styles = {
-        parentContainer:
-            "w-[100vw] y-overflow overflow-hidden bg-background text-foreground transition-colors duration-300 flex justify-center",
-        allExperiencesContainer: "flex flex-col mt-[20vh] space-y-[25vh] mb-[25vh]",
-        experienceContainer: "flex justify-center font-sourceSans3 mb-[10vh]",
-        textContainer: "w-[85vw] flex flex-col items-center justify-center text-center",
-        companyName: "text-[6vh] leading-[6vh] text-center font-bold font-oswald",
-        role: "font-semibold font-oswald text-[3.5vh] leading-[5.5vh] text-center",
-        summary: "font-med text-[2vh] leading-[2vh] mt-[2vh] whitespace-pre-line",
-    };
-
     const MobileExperienceItem = ({
         companyName,
         role,
         summary,
+        yearRange,
         link,
     }: {
         companyName: string;
         role: string;
         summary: string;
+        yearRange: string;
         link: string;
     }) => {
         return (
-            <div className={styles.experienceContainer}>
-                <div className={styles.textContainer}>
-                    <a href={link} className="hover:opacity-80 transition-opacity">
-                        <ScrollReveal
-                            scrollContainerRef={scrollRef}
-                            baseOpacity={0.1}
-                            baseRotation={2}
-                            blurStrength={4}
-                            enableBlur={true}
-                            className={styles.companyName}
-                        >
-                            {companyName}
-                        </ScrollReveal>
-                        <ScrollReveal
-                            scrollContainerRef={scrollRef}
-                            baseOpacity={0.1}
-                            baseRotation={1}
-                            blurStrength={3}
-                            enableBlur={true}
-                            className={styles.role}
-                        >
-                            {role}
-                        </ScrollReveal>
-                        <ScrollReveal
-                            scrollContainerRef={scrollRef}
-                            baseOpacity={0.1}
-                            baseRotation={1}
-                            blurStrength={3}
-                            enableBlur={true}
-                            className={styles.summary}
-                        >
-                            {summary}
-                        </ScrollReveal>
-                    </a>
+            <div className="mb-10">
+                <div className="mb-1">
+                    <span className="font-inter text-[13px] text-foreground opacity-50">{yearRange}</span>
                 </div>
+                <div className="mb-3">
+                    <span className="font-inter text-[15px] text-foreground opacity-70">
+                        <a href={link} className="underline hover:opacity-70 transition-opacity">
+                            {companyName}
+                        </a>
+                        {" · "}
+                        <span className="font-bold">{role}</span>
+                    </span>
+                </div>
+                <p className="font-inter text-[15px] leading-relaxed text-foreground opacity-60">{summary}</p>
             </div>
         );
     };
 
     return (
-        <div className={styles.parentContainer}>
-            <div className={styles.allExperiencesContainer} id="experience">
-                {experiences.map((exp, index) => (
-                    <MobileExperienceItem key={index} {...exp} />
-                ))}
+        <div className="w-[100vw] bg-background text-foreground transition-colors duration-300 px-6 pb-16" id="experience">
+            <div className="flex items-center gap-4 mb-8">
+                <span className="font-inter text-[15px] text-foreground opacity-40 shrink-0">Experience</span>
+                <div className="flex-1 h-px bg-foreground opacity-20" />
             </div>
+            {experiences.map((exp, index) => (
+                <MobileExperienceItem key={index} {...exp} />
+            ))}
         </div>
     );
 };
