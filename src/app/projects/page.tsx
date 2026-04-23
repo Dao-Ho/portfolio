@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { GlobalProvider } from "../../context-providers/global-provider";
 import { AnimatedItem } from "../components/animated-list";
 import GlobalDock from "../components/global-dock";
+import MobileNav from "../components/mobile-nav";
 
 type Project = {
     index: string;
@@ -282,7 +283,8 @@ function DesktopLayout({
 function MobileLayout() {
     return (
         <div className="w-full h-full overflow-y-auto bg-background">
-            <div className="flex flex-col gap-[3vw] px-[3vw] pt-[3vw] pb-[12vh]">
+            <MobileNav />
+            <div className="flex flex-col gap-[3vw] px-[3vw] pt-[18vw] pb-[12vh]">
                 {projects.map((project, i) => (
                     <AnimatedItem key={project.index} index={i} delay={i * 0.06}>
                         <a href={project.link} target="_blank" rel="noopener noreferrer" className="block">
