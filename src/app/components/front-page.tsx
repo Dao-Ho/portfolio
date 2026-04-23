@@ -63,16 +63,24 @@ const mobilePage = () => {
     return (
         <div className="flex flex-col bg-transparent w-[100vw] text-foreground px-6 pt-[15vh] pb-8">
             <p className="font-inter text-[15px] leading-relaxed mb-3">
-                <span className="opacity-60">Xin chào, I&apos;m </span><strong className="opacity-70">Dao</strong><span className="opacity-60">.</span>
+                <span className="opacity-60">Xin chào, I&apos;m </span>
+                <strong className="opacity-70">Dao</strong>
+                <span className="opacity-60">.</span>
             </p>
             <p className="font-inter text-[15px] leading-relaxed mb-3">
-                <span className="opacity-60">I&apos;m a </span><strong className="opacity-70">Software Engineer</strong><span className="opacity-60"> passionate about building the future.</span>
+                <span className="opacity-60">I&apos;m a </span>
+                <strong className="opacity-70">Software Engineer</strong>
+                <span className="opacity-60"> passionate about building the future.</span>
             </p>
             <p className="font-inter text-[15px] leading-relaxed mb-3">
-                <strong className="opacity-70">Northeastern &apos;27</strong><span className="opacity-60">, Computer Science and Finance.</span>
+                <strong className="opacity-70">Northeastern &apos;27</strong>
+                <span className="opacity-60">, Computer Science and Finance.</span>
             </p>
             <p className="font-inter text-[15px] leading-relaxed" onClick={() => router.push(CURRENT_EXPERIENCE_URL)}>
-                <span className="opacity-60">Currently, building </span><strong className="opacity-70 underline cursor-pointer hover:text-[#3c7cff] transition-colors">@{CURRENT_EXPERIENCE}</strong>
+                <span className="opacity-60">Currently, building </span>
+                <strong className="opacity-70 underline cursor-pointer hover:text-[#3c7cff] transition-colors">
+                    @{CURRENT_EXPERIENCE}
+                </strong>
             </p>
         </div>
     );

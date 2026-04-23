@@ -234,7 +234,10 @@ const MobilePage = ({ scrollRef }: { scrollRef: MutableRefObject<null> }) => {
     };
 
     return (
-        <div className="w-[100vw] bg-background text-foreground transition-colors duration-300 px-6 pb-16" id="experience">
+        <div
+            className="w-[100vw] bg-background text-foreground transition-colors duration-300 px-6 pb-16"
+            id="experience"
+        >
             <div className="flex items-center gap-4 mb-8">
                 <span className="font-inter text-[15px] text-foreground opacity-40 shrink-0">Experience</span>
                 <div className="flex-1 h-px bg-foreground opacity-20" />
