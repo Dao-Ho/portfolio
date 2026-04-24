@@ -148,7 +148,7 @@ export default function ProjectsRoute() {
 
     return (
         <div
-            className={`w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground ${isLight ? "light" : "dark"}`}
+            className={`w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground ${isMobile ? (isLight ? "light" : "dark") : "dark"}`}
         >
             {!isMobile && <GlobalDock />}
 
