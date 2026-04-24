@@ -4,6 +4,7 @@ import { useGlobal } from "../../context-providers/global-provider";
 const Footer = () => {
     const { isMobile } = useGlobal();
 
+    if (isMobile === null) return null;
     return isMobile ? mobileNavBar() : desktopNavBar();
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { useGlobal } from "../../context-providers/global-provider";
@@ -98,9 +98,9 @@ function getItemPos(dist: number, vw: number, vh: number) {
 export default function ProjectsRoute() {
     const { isLight, toggleTheme } = useGlobal();
     const [activeIndex, setActiveIndex] = useState(0);
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState<boolean | null>(null);
     const [dims, setDims] = useState({ vw: 0, vh: 0 });
-    useEffect(() => {
+    useLayoutEffect(() => {
         const update = () => {
             setIsMobile(window.innerWidth < 768);
             setDims({ vw: window.innerWidth / 100, vh: window.innerHeight / 100 });
@@ -146,16 +146,19 @@ export default function ProjectsRoute() {
         };
     }, [isMobile]);
 
+    if (isMobile === null) return null;
+
     return (
         <div
             className={`w-[100vw] h-[100vh] overflow-hidden bg-background text-foreground ${isMobile ? (isLight ? "light" : "dark") : "dark"}`}
         >
-            {!isMobile && <GlobalDock />}
-
             {isMobile ? (
                 <MobileLayout isLight={isLight} toggleTheme={toggleTheme} />
             ) : (
-                <DesktopLayout activeIndex={activeIndex} setActiveIndex={setActiveIndex} dims={dims} />
+                <>
+                    <GlobalDock />
+                    <DesktopLayout activeIndex={activeIndex} setActiveIndex={setActiveIndex} dims={dims} />
+                </>
             )}
         </div>
     );

@@ -76,6 +76,7 @@ const ExperiencePage = ({ isLight }: { isLight: boolean }) => {
     const scrollRef = useRef(null);
     const { isMobile } = useGlobal();
 
+    if (isMobile === null) return null;
     return isMobile ? <MobilePage scrollRef={scrollRef} /> : <DesktopPage scrollRef={scrollRef} isLight={isLight} />;
 };
 

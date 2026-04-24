@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 const FrontPage = ({ isLight }: { isLight: boolean }) => {
     const { isMobile } = useGlobal();
 
+    if (isMobile === null) return null;
     return isMobile ? mobilePage() : desktopPage({ isLight: isLight });
 };
 

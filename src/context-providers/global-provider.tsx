@@ -1,9 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useLayoutEffect, useEffect } from "react";
 
 interface GlobalContextType {
-    isMobile: boolean;
+    isMobile: boolean | null;
     isLight: boolean;
     toggleTheme: () => void;
 }
@@ -11,7 +11,7 @@ interface GlobalContextType {
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
-    const [isMobile, setIsMobile] = useState<boolean>(false);
+    const [isMobile, setIsMobile] = useState<boolean | null>(null);
     const [isLight, setIsLight] = useState<boolean>(false);
 
     useEffect(() => {
@@ -27,7 +27,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         });
     };
 
-    const debounce = (func: { (): void; (): void }, delay: number | undefined) => {
+    const debounce = (func: () => void, delay: number | undefined) => {
         let timeoutId: NodeJS.Timeout;
         return () => {
             clearTimeout(timeoutId);
@@ -37,13 +37,9 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         };
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < window.innerHeight) {
-                setIsMobile(true);
-            } else {
-                setIsMobile(false);
-            }
+            setIsMobile(window.innerWidth < window.innerHeight);
         };
 
         const debouncedResize = debounce(handleResize, 200);
@@ -52,7 +48,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         window.addEventListener("resize", debouncedResize);
 
         return () => {
-            window.removeEventListener("resize", handleResize);
+            window.removeEventListener("resize", debouncedResize);
         };
     }, []);
 
