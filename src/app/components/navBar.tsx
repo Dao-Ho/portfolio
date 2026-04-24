@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 const NavBar = ({ isLight, toggleTheme }: { isLight: boolean; toggleTheme: () => void }) => {
     const { isMobile } = useGlobal();
 
+    if (isMobile === null) return null;
     return isMobile ? mobileNavBar({ isLight, toggleTheme }) : desktopNavBar({ isLight, toggleTheme });
 };
 
