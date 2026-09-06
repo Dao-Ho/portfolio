@@ -15,9 +15,9 @@ const experiences = [
     {
         companyName: "Google",
         role: "Software Engineer Intern",
-        duration: "May 2026 - Present",
-        yearRange: "May 2026 → Present",
-        summary: `Inference in Gemini.`,
+        duration: "May 2026 - Aug 2026",
+        yearRange: "May 2026 → Aug 2026",
+        summary: `Citation & Evaluation Infrastructure for Gemini`,
         link: "https://gemini.google.com/",
         logoMap: GoogleLogoMap,
     },
