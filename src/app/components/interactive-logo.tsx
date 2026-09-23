@@ -136,8 +136,8 @@ const InteractiveLogoDots: React.FC<DotGridProps> = ({
 
             const rect = canvas.getBoundingClientRect();
             mouseRef.current = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top,
+                x: ((e.clientX - rect.left) * canvas.width) / rect.width,
+                y: ((e.clientY - rect.top) * canvas.height) / rect.height,
             };
         };
 
@@ -149,8 +149,8 @@ const InteractiveLogoDots: React.FC<DotGridProps> = ({
                 const rect = canvas.getBoundingClientRect();
                 const touch = e.touches[0];
                 mouseRef.current = {
-                    x: touch.clientX - rect.left,
-                    y: touch.clientY - rect.top,
+                    x: ((touch.clientX - rect.left) * canvas.width) / rect.width,
+                    y: ((touch.clientY - rect.top) * canvas.height) / rect.height,
                 };
             }
         };
@@ -307,11 +307,13 @@ const InteractiveLogoDots: React.FC<DotGridProps> = ({
     };
 
     return (
-        <div ref={containerRef} className="flex flex-col gap-4 items-center">
+        <div ref={containerRef} className="flex flex-col gap-4 items-center max-w-full">
             <canvas
                 ref={canvasRef}
                 style={{
                     display: "block",
+                    maxWidth: "100%",
+                    height: "auto",
                 }}
             />
 
