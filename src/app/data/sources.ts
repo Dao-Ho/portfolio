@@ -33,6 +33,26 @@ export type Source = {
 };
 
 export const SOURCES: Record<string, Source> = {
+    generate: {
+        key: "generate",
+        name: "Generate",
+        icon: "/logos/generate.png",
+        iconScale: 1.16,
+        role: "Chief of Software",
+        dates: "Sept 2024–Present",
+        summary: "Student development studio.",
+        href: "https://generatenu.com/",
+    },
+    parcs: {
+        key: "parcs",
+        name: "PARCS Lab",
+        icon: "/logos/parcs.png",
+        iconScale: 1.16,
+        role: "Research Assistant",
+        dates: "Sept 2026–Present",
+        summary: "LLM research.",
+        href: "https://parcslab.fyi/",
+    },
     google: {
         key: "google",
         name: "Google",
@@ -42,6 +62,16 @@ export const SOURCES: Record<string, Source> = {
         dates: "May–Aug 2026",
         summary: "Citation and evaluation infrastructure for Gemini.",
         entry: "Google",
+    },
+    googleIncoming: {
+        key: "googleIncoming",
+        name: "Google",
+        icon: "/logos/google.png",
+        iconScale: 1.16,
+        role: "Software Engineer",
+        dates: "Starting Jan 2027",
+        summary: "Shopping on Gemini.",
+        href: "https://gemini.google.com/",
     },
     agency: {
         key: "agency",

@@ -2,7 +2,6 @@
 import { motion } from "framer-motion";
 import { useGlobal } from "../../context-providers/global-provider";
 import GitHubContributions from "./contribution-graph";
-import { useRouter } from "next/navigation";
 import Cited from "./citation";
 import Container from "./container";
 
@@ -14,8 +13,6 @@ const FrontPage = ({ isLight }: { isLight: boolean }) => {
 };
 
 const desktopPage = ({ isLight }: { isLight: boolean }) => {
-    const CURRENT_EXPERIENCE = "Generate";
-    const CURRENT_EXPERIENCE_URL = "https://generatenu.com/";
     return (
         <Container as="header" className="flex min-h-[85vh] flex-col bg-transparent pt-40 text-foreground">
             <motion.div
@@ -51,15 +48,19 @@ const desktopPage = ({ isLight }: { isLight: boolean }) => {
                 </p>
                 <p className="font-roboto text-[18px]">Northeastern '27, Computer Science and Finance.</p>
                 <p className="font-roboto text-[18px]">
-                    Currently, building {/* Not a citation — this one just goes to the site, as it did before. */}
-                    <a
-                        href={CURRENT_EXPERIENCE_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline cursor-pointer text-foreground hover:text-text-hover"
-                    >
-                        @{CURRENT_EXPERIENCE}
-                    </a>
+                    Currently, building @{" "}
+                    <Cited source="generate" isLight={isLight}>
+                        Generate
+                    </Cited>
+                    , researching @{" "}
+                    <Cited source="parcs" isLight={isLight}>
+                        PARCS Lab
+                    </Cited>
+                    , incoming @{" "}
+                    <Cited source="googleIncoming" isLight={isLight}>
+                        Google
+                    </Cited>
+                    .
                 </p>
             </motion.div>
             <motion.div
@@ -75,9 +76,11 @@ const desktopPage = ({ isLight }: { isLight: boolean }) => {
 };
 
 const mobilePage = () => {
-    const router = useRouter();
-    const CURRENT_EXPERIENCE_URL = "https://www.google.com/";
-    const CURRENT_EXPERIENCE = "Google";
+    const MENTIONS = [
+        { verb: "building", name: "Generate", href: "https://generatenu.com/" },
+        { verb: "researching", name: "PARCS Lab", href: "https://parcslab.fyi/" },
+        { verb: "incoming", name: "Google", href: "https://gemini.google.com/" },
+    ];
     return (
         <Container as="header" className="flex flex-col bg-transparent pb-8 pt-[15vh] text-foreground">
             <h1 className="font-inter text-[15px] leading-relaxed mb-3">
@@ -94,11 +97,19 @@ const mobilePage = () => {
                 <strong className="opacity-70">Northeastern &apos;27</strong>
                 <span className="opacity-60">, Computer Science and Finance.</span>
             </p>
-            <p className="font-inter text-[15px] leading-relaxed" onClick={() => router.push(CURRENT_EXPERIENCE_URL)}>
-                <span className="opacity-60">Currently, building </span>
-                <strong className="opacity-70 underline cursor-pointer hover:text-[#3c7cff] transition-colors">
-                    @{CURRENT_EXPERIENCE}
-                </strong>
+            <p className="font-inter text-[15px] leading-relaxed">
+                <span className="opacity-60">Currently, </span>
+                {MENTIONS.map(({ verb, name, href }, i) => (
+                    <span key={name}>
+                        <span className="opacity-60">{verb} </span>
+                        <a href={href} target="_blank" rel="noopener noreferrer">
+                            <strong className="opacity-70 underline cursor-pointer hover:text-[#3c7cff] transition-colors">
+                                @{name}
+                            </strong>
+                        </a>
+                        <span className="opacity-60">{i < MENTIONS.length - 1 ? ", " : "."}</span>
+                    </span>
+                ))}
             </p>
         </Container>
     );

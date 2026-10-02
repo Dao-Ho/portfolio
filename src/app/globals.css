@@ -28,9 +28,6 @@
     }
     .cited-prose:has(button:hover),
     .cited-prose:has(button:focus-visible),
-    /* @Generate is a plain link, not a citation button. */
-    .cited-prose:has(a:hover),
-    .cited-prose:has(a:focus-visible),
     /* Holds the dim while the cursor sits on an open card. */
     .cited-prose:has([data-cited-open="true"]) {
         color: color-mix(in srgb, var(--foreground-color) 32%, transparent);
