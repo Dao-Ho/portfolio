@@ -46,7 +46,7 @@ const desktopPage = ({ isLight }: { isLight: boolean }) => {
                     </Cited>
                     .
                 </p>
-                <p className="font-roboto text-[18px]">Northeastern '27, Computer Science and Finance.</p>
+                <p className="font-roboto text-[18px]">Northeastern '26, Computer Science and Finance.</p>
                 <p className="font-roboto text-[18px]">
                     Currently, building @{" "}
                     <Cited source="generate" isLight={isLight}>
@@ -94,7 +94,7 @@ const mobilePage = () => {
                 <span className="opacity-60"> passionate about building the future.</span>
             </p>
             <p className="font-inter text-[15px] leading-relaxed mb-3">
-                <strong className="opacity-70">Northeastern &apos;27</strong>
+                <strong className="opacity-70">Northeastern &apos;26</strong>
                 <span className="opacity-60">, Computer Science and Finance.</span>
             </p>
             <p className="font-inter text-[15px] leading-relaxed">
