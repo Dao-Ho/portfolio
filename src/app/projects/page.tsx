@@ -14,7 +14,8 @@ type Project = {
     description: string;
     tech: string[];
     year: string;
-    link: string;
+    /** Omit to show the project without sending anyone anywhere. */
+    link?: string;
     /** Small raster preview, rendered from the original artwork. */
     thumb: string;
 };
@@ -37,7 +38,6 @@ const projects: Project[] = [
             "GitHub notifications, in your notch. Native GitHub notifications living seamlessly in your Mac's Dynamic Island. Never lose track of a review again.",
         tech: ["Swift", "GitHub API"],
         year: "Spring 2026",
-        link: "https://github.com/dao-ho/dynami",
         thumb: "/projects/dynami/dynami-thumb.webp",
     },
     {
@@ -174,16 +174,15 @@ function DesktopRing() {
                         ref={(el) => {
                             tileRefs.current[i] = el;
                         }}
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        // Without a link the tile still previews on hover and focus, it just doesn't navigate.
+                        {...(project.link && { href: project.link, target: "_blank", rel: "noopener noreferrer" })}
                         tabIndex={i < projects.length ? 0 : -1}
-                        aria-label={`${project.name}, opens in a new tab`}
+                        aria-label={project.link ? `${project.name}, opens in a new tab` : project.name}
                         onMouseEnter={() => setHovered(index)}
                         onMouseLeave={() => setHovered(null)}
                         onFocus={() => setHovered(index)}
                         onBlur={() => setHovered(null)}
-                        className="absolute left-1/2 top-1/2 block overflow-hidden rounded-[4px] outline-none transition-[filter,opacity] duration-300 focus-visible:ring-1 focus-visible:ring-foreground"
+                        className={`absolute left-1/2 top-1/2 block overflow-hidden rounded-[4px] outline-none ${project.link ? "" : "cursor-default"} transition-[filter,opacity] duration-300 focus-visible:ring-1 focus-visible:ring-foreground`}
                         style={{
                             width: "clamp(200px, 19vw, 300px)",
                             aspectRatio: "3 / 2",
@@ -264,16 +263,17 @@ function MobileLayout({ isLight, toggleTheme }: { isLight: boolean; toggleTheme:
                             <p className="font-inter text-[17px] text-foreground">{project.year}</p>
                         </div>
 
-                        {/* View project button */}
-                        <a
-                            href={project.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-5 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-12/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
-                            style={{ background: "color-mix(in srgb, var(--foreground-color) 8%, transparent)" }}
-                        >
-                            View project
-                        </a>
+                        {project.link && (
+                            <a
+                                href={project.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-5 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-12/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
+                                style={{ background: "color-mix(in srgb, var(--foreground-color) 8%, transparent)" }}
+                            >
+                                View project
+                            </a>
+                        )}
                     </article>
                 ))}
             </Container>
