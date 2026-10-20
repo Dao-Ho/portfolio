@@ -1,28 +1,29 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useGlobal } from "../context-providers/global-provider";
 
 import MobileNav from "./components/mobile-nav";
 import FrontPage from "./components/front-page";
 import ExperiencePage from "./components/experience";
-import GlobalDock from "./components/global-dock";
+import KoiPond, { type PondStats } from "./components/koi-pond/koi-pond";
 
 export default function Home() {
     const { isLight, isMobile, toggleTheme } = useGlobal();
+    const [stats, setStats] = useState<PondStats>({ koi: 0, pellets: 0 });
 
     if (isMobile === null) return null;
 
     return (
         <div
             id="mainPage"
-            className={`min-h-screen w-full bg-background transition-colors duration-300 ${isLight ? "light" : "dark"}`}
+            className={`relative min-h-screen w-full bg-background transition-colors duration-300 ${isLight ? "light" : "dark"}`}
         >
+            <KoiPond isLight={isLight} onStats={setStats} className="absolute inset-x-0 top-0 h-[100svh] w-full" />
             {isMobile && <MobileNav isLight={isLight} toggleTheme={toggleTheme} />}
             <main className="relative z-20 flex flex-col">
-                <FrontPage isLight={isLight} />
+                <FrontPage isLight={isLight} stats={stats} />
                 <ExperiencePage isLight={isLight} />
             </main>
-            {!isMobile && <GlobalDock isLight={isLight} toggleTheme={toggleTheme} />}
         </div>
     );
 }

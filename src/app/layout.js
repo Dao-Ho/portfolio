@@ -8,6 +8,7 @@ import {
     Source_Sans_3,
     Playfair_Display,
 } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { GlobalProvider } from "../context-providers/global-provider";
@@ -59,6 +60,11 @@ const fontPlayfairDisplay = Playfair_Display({
     weight: "400",
 });
 
+const fontGeistMono = localFont({
+    src: "./fonts/geist-mono-latin-400-normal.woff2",
+    variable: "--font-geist-mono",
+});
+
 export const metadata = {
     title: "Dao Ho",
     description: "Design Portfolio by Dao Ho",
@@ -68,7 +74,7 @@ export default function RootLayout({ children }) {
     return (
         <html lang="en">
             <body
-                className={`${inter.variable} ${fontbebas.variable} ${fontlibre.variable} ${fontroboto.variable} ${fontRobotoCondensed.variable} ${fontOswald.variable} ${fontSourceSansPro.variable} ${fontPlayfairDisplay.variable} scroll-smooth overflow-x-clip`}
+                className={`${inter.variable} ${fontbebas.variable} ${fontlibre.variable} ${fontroboto.variable} ${fontRobotoCondensed.variable} ${fontOswald.variable} ${fontSourceSansPro.variable} ${fontPlayfairDisplay.variable} ${fontGeistMono.variable} scroll-smooth overflow-x-clip`}
             >
                 <GlobalProvider>{children}</GlobalProvider>
             </body>

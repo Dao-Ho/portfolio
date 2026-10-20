@@ -1,53 +1,76 @@
 "use client";
 import { motion } from "framer-motion";
 import { useGlobal } from "../../context-providers/global-provider";
-import GitHubContributions from "./contribution-graph";
 import Cited from "./citation";
 import Container from "./container";
+import type { PondStats } from "./koi-pond/koi-pond";
 
-const FrontPage = ({ isLight }: { isLight: boolean }) => {
+const FrontPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats }) => {
     const { isMobile } = useGlobal();
 
     if (isMobile === null) return null;
-    return isMobile ? mobilePage() : desktopPage({ isLight: isLight });
+    return isMobile ? mobilePage() : desktopPage({ isLight, stats });
 };
 
-const desktopPage = ({ isLight }: { isLight: boolean }) => {
+const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats }) => {
     return (
-        <Container as="header" className="flex min-h-[85vh] flex-col bg-transparent pt-40 text-foreground">
+        <Container
+            as="header"
+            className="relative flex h-[100svh] flex-col justify-end gap-10 bg-transparent pb-32 pt-32 text-foreground"
+        >
+            {stats.koi > 0 && (
+                <div
+                    data-koi-avoid
+                    aria-hidden="true"
+                    className="absolute right-6 top-8 font-geistMono text-[11px] leading-relaxed tabular-nums opacity-[0.32] lg:right-[20vw]"
+                >
+                    <div>{stats.koi}</div>
+                    <div>{stats.pellets}</div>
+                </div>
+            )}
+            <motion.blockquote
+                data-koi-avoid
+                className="font-geistMono text-[14px] lowercase leading-relaxed tracking-[0.02em]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.6 }}
+                transition={{ duration: 0.4 }}
+            >
+                Because if we don't,
+                <br />
+                who will?
+                <span
+                    aria-hidden="true"
+                    className="ml-1 inline-block h-[1em] w-[0.55em] translate-y-[0.15em] animate-blink bg-foreground motion-reduce:animate-none"
+                />
+            </motion.blockquote>
             <motion.div
-                className="cited-prose leading-[3vh]"
+                data-koi-avoid
+                className="cited-prose max-w-[54rem] font-geistMono text-[15px] leading-[3vh]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
             >
-                <h1 className="font-roboto text-[18px]">Xin chào, I'm Dao.</h1>
-                <p className="font-roboto text-[18px]">I'm a Software Engineer passionate about building the future.</p>
-                <p className="font-roboto text-[18px]">
+                <h1>Xin chào, I'm Dao.</h1>
+                <p>
+                    Software Engineer @{" "}
+                    <Cited source="googleIncoming" isLight={isLight}>
+                        Google
+                    </Cited>
+                    , passionate about building the future.
+                </p>
+                <p>
                     Previously @{" "}
                     <Cited source="google" isLight={isLight}>
                         Google
-                    </Cited>
-                    ,{" "}
+                    </Cited>{" "}
+                    and{" "}
                     <Cited source="agency" isLight={isLight}>
                         Agency
                     </Cited>
-                    ,{" "}
-                    <Cited source="designai" isLight={isLight}>
-                        DesignAI
-                    </Cited>
-                    ,{" "}
-                    <Cited source="paynalli" isLight={isLight}>
-                        Paynalli
-                    </Cited>
-                    , and{" "}
-                    <Cited source="khoury" isLight={isLight}>
-                        Khoury
-                    </Cited>
                     .
                 </p>
-                <p className="font-roboto text-[18px]">Northeastern '26, Computer Science and Finance.</p>
-                <p className="font-roboto text-[18px]">
+                <p>Northeastern '26, Computer Science and Finance.</p>
+                <p>
                     Currently, building @{" "}
                     <Cited source="generate" isLight={isLight}>
                         Generate
@@ -56,20 +79,8 @@ const desktopPage = ({ isLight }: { isLight: boolean }) => {
                     <Cited source="parcs" isLight={isLight}>
                         PARCS Lab
                     </Cited>
-                    , incoming @{" "}
-                    <Cited source="googleIncoming" isLight={isLight}>
-                        Google
-                    </Cited>
                     .
                 </p>
-            </motion.div>
-            <motion.div
-                className="mt-20"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.25 }}
-            >
-                <GitHubContributions userName="Dao-Ho" isLight={isLight} />
             </motion.div>
         </Container>
     );
@@ -83,21 +94,21 @@ const mobilePage = () => {
     ];
     return (
         <Container as="header" className="flex flex-col bg-transparent pb-8 pt-[15vh] text-foreground">
-            <h1 className="font-inter text-[15px] leading-relaxed mb-3">
+            <h1 data-koi-avoid className="font-inter text-[15px] leading-relaxed mb-3">
                 <span className="opacity-60">Xin chào, I&apos;m </span>
                 <strong className="opacity-70">Dao</strong>
                 <span className="opacity-60">.</span>
             </h1>
-            <p className="font-inter text-[15px] leading-relaxed mb-3">
+            <p data-koi-avoid className="font-inter text-[15px] leading-relaxed mb-3">
                 <span className="opacity-60">I&apos;m a </span>
                 <strong className="opacity-70">Software Engineer</strong>
                 <span className="opacity-60"> passionate about building the future.</span>
             </p>
-            <p className="font-inter text-[15px] leading-relaxed mb-3">
+            <p data-koi-avoid className="font-inter text-[15px] leading-relaxed mb-3">
                 <strong className="opacity-70">Northeastern &apos;26</strong>
                 <span className="opacity-60">, Computer Science and Finance.</span>
             </p>
-            <p className="font-inter text-[15px] leading-relaxed">
+            <p data-koi-avoid className="font-inter text-[15px] leading-relaxed">
                 <span className="opacity-60">Currently, </span>
                 {MENTIONS.map(({ verb, name, href }, i) => (
                     <span key={name}>
