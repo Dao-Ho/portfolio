@@ -18,7 +18,7 @@ export default function Home() {
             id="mainPage"
             className={`relative min-h-screen w-full bg-background transition-colors duration-300 ${isLight ? "light" : "dark"}`}
         >
-            <KoiPond isLight={isLight} onStats={setStats} className="absolute inset-x-0 top-0 h-[100svh] w-full" />
+            <KoiPond isLight={isLight} onStats={setStats} className="absolute inset-0 h-full w-full" />
             {isMobile ? (
                 <MobileNav isLight={isLight} toggleTheme={toggleTheme} />
             ) : (

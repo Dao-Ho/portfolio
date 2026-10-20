@@ -22,7 +22,7 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
     return (
         <Container
             as="header"
-            className="relative flex h-[100svh] flex-col justify-end gap-10 bg-transparent pb-32 pt-32 text-foreground"
+            className="relative flex min-h-[100svh] flex-col justify-end gap-10 bg-transparent pb-32 pt-32 text-foreground"
         >
             {stats.koi > 0 && (
                 <div
@@ -51,7 +51,7 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
             </motion.blockquote>
             <motion.div
                 data-koi-avoid
-                className="cited-prose max-w-[54rem] font-geistMono text-[15px] leading-[3vh]"
+                className="cited-prose max-w-[54rem] font-geistMono text-[15px] leading-[max(22px,3vh)]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
