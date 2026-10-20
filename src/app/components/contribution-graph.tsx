@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronRight, ArrowRight, IterationCw } from "lucide-react";
-import ElasticSlider from "./elastic-slider";
+import RadiusDial from "./radius-dial";
 
 interface ContributionDay {
     contributionCount: number;
@@ -306,14 +306,14 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
                     </div>
                 ))}
             </div>
-            <div className="flex items-end justify-end mt-12 gap-8">
-                <ElasticSlider
+            <div className="flex items-center justify-end mt-12 gap-8">
+                <RadiusDial
                     startingValue={0}
                     defaultValue={DEFAULT_MOUSE_RADIUS}
                     maxValue={200}
-                    isStepped
                     stepSize={10}
                     isLight={isLight}
+                    label="Cursor radius"
                     onChange={setMouseRadius}
                 />
                 <span
