@@ -1,4 +1,4 @@
-import { classify, FLAG_BARBEL, FLAG_EYE, FLAG_FIN, type ShapeHit } from "./shape";
+import { bodyHalfWidth, classify, FLAG_BARBEL, FLAG_EYE, FLAG_FIN, type ShapeHit } from "./shape";
 import { clamp, hash3, KOI_NODES, RIPPLE_SPEED, rippleLife, smoothstep, type Box, type Koi, type World } from "./world";
 
 type Rgb = [number, number, number];
@@ -464,7 +464,16 @@ export class KoiRenderer {
                 // Points from the cell centre toward the covered side, i.e. across the outline into the koi.
                 let gx = 0;
                 let gy = 0;
-                for (let q = 0; q < SUBSAMPLES.length; q += 2) {
+                // Cells well inside the body can't have a sub-sample outside it, so skip straight to full coverage.
+                const deepInside =
+                    centerHit &&
+                    flag !== FLAG_FIN &&
+                    flag !== FLAG_BARBEL &&
+                    s > 0.04 &&
+                    s < 0.72 &&
+                    bodyHalfWidth(s) * L - this.hitDist > diag * 0.35;
+                if (deepInside) hits = 5;
+                for (let q = 0; !deepInside && q < SUBSAMPLES.length; q += 2) {
                     if (!this.sample(x + SUBSAMPLES[q] * cw, y + SUBSAMPLES[q + 1] * ch, L, from, to)) continue;
                     gx += (SUBSAMPLES[q] - 0.5) * cw;
                     gy += (SUBSAMPLES[q + 1] - 0.5) * ch;
