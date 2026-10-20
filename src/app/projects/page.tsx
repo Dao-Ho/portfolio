@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { useGlobal } from "../../context-providers/global-provider";
-import { AnimatedItem } from "../components/animated-list";
-import GlobalDock from "../components/global-dock";
 import MobileNav from "../components/mobile-nav";
+import TopNav from "../components/top-nav";
 import Container from "../components/container";
 
 type Project = {
@@ -16,7 +15,8 @@ type Project = {
     tech: string[];
     year: string;
     link: string;
-    background?: string;
+    /** Small raster preview, rendered from the original artwork. */
+    thumb: string;
 };
 
 const projects: Project[] = [
@@ -28,7 +28,7 @@ const projects: Project[] = [
         tech: ["Next.js", "TypeScript", "Go"],
         year: "Spring 2026",
         link: "https://github.com/GenerateNU/selfserve",
-        background: "/projects/selfserve/selfserve-background.svg",
+        thumb: "/projects/selfserve/selfserve-thumb.webp",
     },
     {
         index: "02",
@@ -38,7 +38,7 @@ const projects: Project[] = [
         tech: ["Swift", "GitHub API"],
         year: "Spring 2026",
         link: "https://github.com/dao-ho/dynami",
-        background: "/projects/dynami/dynami-background.svg",
+        thumb: "/projects/dynami/dynami-thumb.webp",
     },
     {
         index: "03",
@@ -48,7 +48,7 @@ const projects: Project[] = [
         tech: ["Next.js", "TypeScript", "PostgreSQL"],
         year: "Spring 2025",
         link: "https://www.vetruly.com/",
-        background: "/projects/vetruly/vetruly-background.svg",
+        thumb: "/projects/vetruly/vetruly-thumb.webp",
     },
     {
         index: "04",
@@ -58,234 +58,178 @@ const projects: Project[] = [
         tech: ["React Native", "Go", "AWS"],
         year: "Fall 2024",
         link: "https://generatenu.com/",
-        background: "/projects/3-stones/3-stones-background.svg",
+        thumb: "/projects/3-stones/3-stones-thumb.webp",
     },
 ];
 
-// Layout constants (all in viewport units, converted to px at runtime)
-// Deliberately full-bleed: content hugs the left, so no shared container here.
-const CONTENT_X_VW = 5; // left offset of active content from edge
-const ACTIVE_HALF_H_VH = 14; // half-height of expanded active card
-const PILL_H_VH = 5; // pill height
-const PILL_GAP_VH = 2; // gap between active card edge and first pill, and between pills
-
-function getItemPos(dist: number, vw: number, vh: number) {
-    const absDist = Math.abs(dist);
-    const isActive = dist === 0;
-    const contentX = CONTENT_X_VW * vw;
-
-    if (isActive) {
-        return {
-            x: contentX,
-            y: -ACTIVE_HALF_H_VH * vh,
-            opacity: 1,
-            scale: 1,
-        };
-    }
-
-    const sign = dist > 0 ? 1 : -1;
-    const pillHalf = (PILL_H_VH / 2) * vh;
-    // first pill center is just outside the active card, subsequent ones stack with gap
-    const pillCenterY =
-        sign * (ACTIVE_HALF_H_VH + PILL_GAP_VH + PILL_H_VH / 2 + (absDist - 1) * (PILL_H_VH + PILL_GAP_VH)) * vh;
-
-    return {
-        x: contentX - (absDist - 1) * 2.5 * vw,
-        y: pillCenterY - pillHalf,
-        opacity: absDist === 1 ? 0.6 : absDist === 2 ? 0.3 : 0,
-        scale: absDist === 1 ? 0.97 : 0.92,
-    };
-}
+// The ring repeats the projects so it reads as a full loop; only the first lap is in the tab order.
+const LAPS = 3;
+const SPIN = 0.035; // radians per second
+const TILT = (-14 * Math.PI) / 180; // the ring leans so it reads as a loop seen at an angle
+const WHEEL_KICK = 0.012; // radians per second added per pixel scrolled
+const WHEEL_FRICTION = 2.2; // how quickly a flick spins down
 
 export default function ProjectsRoute() {
     const { isLight, isMobile, toggleTheme } = useGlobal();
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [dims, setDims] = useState({ vw: 0, vh: 0 });
-    useLayoutEffect(() => {
-        const update = () => {
-            setDims({ vw: window.innerWidth / 100, vh: window.innerHeight / 100 });
-        };
-        update();
-        window.addEventListener("resize", update);
-        return () => window.removeEventListener("resize", update);
-    }, []);
-
-    useEffect(() => {
-        const handleKey = (e: KeyboardEvent) => {
-            if (e.key === "ArrowDown") {
-                e.preventDefault();
-                setActiveIndex((i) => Math.min(i + 1, projects.length - 1));
-            } else if (e.key === "ArrowUp") {
-                e.preventDefault();
-                setActiveIndex((i) => Math.max(i - 1, 0));
-            }
-        };
-        let accumulated = 0;
-        let cooldown = false;
-        const handleWheel = (e: WheelEvent) => {
-            if (isMobile) return;
-            e.preventDefault();
-            if (cooldown) return;
-            accumulated += e.deltaY;
-            if (Math.abs(accumulated) >= 80) {
-                if (accumulated > 0) setActiveIndex((i) => Math.min(i + 1, projects.length - 1));
-                else setActiveIndex((i) => Math.max(i - 1, 0));
-                accumulated = 0;
-                cooldown = true;
-                setTimeout(() => {
-                    cooldown = false;
-                    accumulated = 0;
-                }, 600);
-            }
-        };
-        window.addEventListener("keydown", handleKey);
-        window.addEventListener("wheel", handleWheel, { passive: false });
-        return () => {
-            window.removeEventListener("keydown", handleKey);
-            window.removeEventListener("wheel", handleWheel);
-        };
-    }, [isMobile]);
 
     if (isMobile === null) return null;
 
     return (
-        <div
-            className={`h-screen w-full overflow-hidden bg-background text-foreground ${isMobile ? (isLight ? "light" : "dark") : "dark"}`}
-        >
+        <div className={`h-screen w-full overflow-hidden bg-background text-foreground ${isLight ? "light" : "dark"}`}>
             {isMobile ? (
                 <MobileLayout isLight={isLight} toggleTheme={toggleTheme} />
             ) : (
                 <>
-                    <GlobalDock />
-                    <DesktopLayout activeIndex={activeIndex} setActiveIndex={setActiveIndex} dims={dims} />
+                    <TopNav isLight={isLight} toggleTheme={toggleTheme} />
+                    <DesktopRing />
                 </>
             )}
         </div>
     );
 }
 
-function DesktopLayout({
-    activeIndex,
-    setActiveIndex,
-    dims,
-}: {
-    activeIndex: number;
-    setActiveIndex: (i: number) => void;
-    dims: { vw: number; vh: number };
-}) {
-    const active = projects[activeIndex];
-    const dragStartY = useRef<number | null>(null);
-    const [grabbing, setGrabbing] = useState(false);
-    const ready = dims.vw > 0;
+/** Project previews orbit the page on a slow ellipse; hovering one dims the rest and names it in the centre. */
+function DesktopRing() {
+    const [hovered, setHovered] = useState<number | null>(null);
+    const ringRef = useRef<HTMLDivElement>(null);
+    const tileRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+    const hoveredRef = useRef<number | null>(null);
+    hoveredRef.current = hovered;
 
-    const onMouseDown = (e: React.MouseEvent) => {
-        dragStartY.current = e.clientY;
-        setGrabbing(true);
-    };
-    const onMouseMove = (e: React.MouseEvent) => {
-        if (dragStartY.current === null) return;
-        const delta = e.clientY - dragStartY.current;
-        if (Math.abs(delta) > 50) {
-            dragStartY.current = e.clientY;
-            if (delta > 0) setActiveIndex(Math.min(activeIndex + 1, projects.length - 1));
-            else setActiveIndex(Math.max(activeIndex - 1, 0));
-        }
-    };
-    const onMouseUp = () => {
-        dragStartY.current = null;
-        setGrabbing(false);
-    };
+    useEffect(() => {
+        const ring = ringRef.current;
+        if (!ring) return;
+        const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let angle = 0;
+        let speed = SPIN;
+        let flick = 0;
+        let last = performance.now();
+        let raf = 0;
+        const count = projects.length * LAPS;
+
+        const place = () => {
+            const { width, height } = ring.getBoundingClientRect();
+            const rx = Math.min(width * 0.34, 520);
+            const ry = Math.min(height * 0.31, 300);
+            const cos = Math.cos(TILT);
+            const sin = Math.sin(TILT);
+            tileRefs.current.forEach((tile, i) => {
+                if (!tile) return;
+                const a = angle + (i / count) * Math.PI * 2;
+                const ex = Math.cos(a) * rx;
+                const ey = Math.sin(a) * ry;
+                // depth runs 0 at the far side of the loop to 1 at the near side.
+                const depth = (Math.sin(a) + 1) / 2;
+                const hovered = hoveredRef.current === i % projects.length;
+                const scale = (0.82 + 0.22 * depth) * (hovered ? 1.08 : 1);
+                tile.style.transform = `translate(-50%, -50%) translate(${ex * cos - ey * sin}px, ${ex * sin + ey * cos}px) scale(${scale})`;
+                // Near tiles sit in front of far ones.
+                tile.style.zIndex = String(hovered ? 1000 : Math.round(depth * 900));
+            });
+        };
+
+        const frame = (now: number) => {
+            const dt = Math.min(0.05, (now - last) / 1000);
+            last = now;
+            // Ease to a stop while something is hovered, so the preview holds still.
+            const cruise = still || hoveredRef.current !== null ? 0 : SPIN;
+            speed += (cruise - speed) * Math.min(1, dt * 4);
+            flick *= Math.exp(-dt * WHEEL_FRICTION);
+            angle += (speed + flick) * dt;
+            place();
+            raf = requestAnimationFrame(frame);
+        };
+
+        // Scrolling flicks the ring around; the spin carries on and eases off on its own.
+        const onWheel = (e: WheelEvent) => {
+            e.preventDefault();
+            const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+            const px = e.deltaMode === 1 ? delta * 16 : delta;
+            flick = Math.max(-5, Math.min(5, flick + px * WHEEL_KICK));
+        };
+
+        place();
+        raf = requestAnimationFrame(frame);
+        const onResize = () => place();
+        window.addEventListener("resize", onResize);
+        ring.addEventListener("wheel", onWheel, { passive: false });
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener("resize", onResize);
+            ring.removeEventListener("wheel", onWheel);
+        };
+    }, []);
+
+    const active = hovered === null ? null : projects[hovered];
 
     return (
-        <div
-            className="relative h-full overflow-hidden select-none"
-            style={{ cursor: grabbing ? "grabbing" : "grab" }}
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
-            onMouseLeave={onMouseUp}
-        >
-            {/* Full-screen background */}
-            <AnimatePresence>
-                {active.background && (
+        <main ref={ringRef} className="relative h-full font-geistMono">
+            {Array.from({ length: projects.length * LAPS }, (_, i) => {
+                const index = i % projects.length;
+                const project = projects[index];
+                const dimmed = hovered !== null && hovered !== index;
+                return (
+                    <a
+                        key={i}
+                        ref={(el) => {
+                            tileRefs.current[i] = el;
+                        }}
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        tabIndex={i < projects.length ? 0 : -1}
+                        aria-label={`${project.name}, opens in a new tab`}
+                        onMouseEnter={() => setHovered(index)}
+                        onMouseLeave={() => setHovered(null)}
+                        onFocus={() => setHovered(index)}
+                        onBlur={() => setHovered(null)}
+                        className="absolute left-1/2 top-1/2 block overflow-hidden rounded-[4px] outline-none transition-[filter,opacity] duration-300 focus-visible:ring-1 focus-visible:ring-foreground"
+                        style={{
+                            width: "clamp(200px, 19vw, 300px)",
+                            aspectRatio: "3 / 2",
+                            filter: dimmed ? "grayscale(1) brightness(0.55)" : "none",
+                            opacity: dimmed ? 0.7 : 1,
+                        }}
+                    >
+                        <Image src={project.thumb} alt="" fill sizes="300px" className="object-cover" />
+                    </a>
+                );
+            })}
+
+            {/* Centre label: the section name at rest, the hovered project's name while previewing. */}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                <AnimatePresence mode="wait">
                     <motion.div
-                        key={active.background}
+                        key={active?.name ?? "projects"}
+                        initial={{ opacity: 0, y: 3 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -3 }}
+                        transition={{ duration: 0.15 }}
+                        className="flex flex-col items-center gap-1"
+                    >
+                        <span className={`text-[15px] ${active ? "" : "lowercase opacity-60"}`}>
+                            {active?.name ?? "projects"}
+                        </span>
+                        {active && <span className="text-[11px] opacity-40">{active.year}</span>}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+            <AnimatePresence>
+                {active && (
+                    <motion.div
+                        key={active.name}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                        className="absolute inset-0 z-0 pointer-events-none"
+                        transition={{ duration: 0.15 }}
+                        className="pointer-events-none absolute bottom-8 right-8 max-w-[26rem] font-geistSans text-[16px] leading-[1.55] [text-wrap:pretty]"
                     >
-                        <Image
-                            src={active.background}
-                            alt=""
-                            fill
-                            className="object-cover"
-                            quality={100}
-                            priority={true}
-                        />
+                        <p className="opacity-80">{active.description}</p>
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* Origin: left edge, vertical center */}
-            <div className="absolute left-0 top-1/2 z-10">
-                {ready &&
-                    projects.map((project, i) => {
-                        const dist = i - activeIndex;
-                        const pos = getItemPos(dist, dims.vw, dims.vh);
-                        const isActive = dist === 0;
-
-                        return (
-                            <motion.div
-                                key={i}
-                                className="absolute"
-                                style={{ left: 0, top: 0, cursor: isActive ? "default" : "pointer" }}
-                                animate={{ x: pos.x, y: pos.y, opacity: pos.opacity, scale: pos.scale }}
-                                transition={{ type: "spring", stiffness: 240, damping: 28 }}
-                                onClick={() => !isActive && setActiveIndex(i)}
-                            >
-                                {isActive ? (
-                                    <AnimatePresence mode="wait">
-                                        <motion.div
-                                            key={activeIndex}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="flex flex-col"
-                                            style={{ gap: "1.2vh", width: "28vw" }}
-                                        >
-                                            <span className="font-oswald text-[0.85vw] text-foreground/30">
-                                                {project.index}
-                                            </span>
-                                            <h2 className="font-playfairDisplay font-bold text-[3.5vw] leading-[4vw]">
-                                                {project.name}
-                                            </h2>
-                                            <p className="font-sourceSans3 text-[1.05vw] leading-[1.7vw] text-foreground/60 w-full">
-                                                {project.description}
-                                            </p>
-                                        </motion.div>
-                                    </AnimatePresence>
-                                ) : (
-                                    <div
-                                        className="rounded-xl backdrop-blur-md border border-foreground/10 flex items-center px-[1.2vw]"
-                                        style={{
-                                            width: "22vw",
-                                            height: "5vh",
-                                            background: "color-mix(in srgb, var(--foreground-color) 5%, transparent)",
-                                        }}
-                                    >
-                                        <span className="font-playfairDisplay font-bold text-[1vw] leading-none text-foreground whitespace-nowrap">
-                                            {project.name}
-                                        </span>
-                                    </div>
-                                )}
-                            </motion.div>
-                        );
-                    })}
-            </div>
-        </div>
+        </main>
     );
 }
 
@@ -298,16 +242,14 @@ function MobileLayout({ isLight, toggleTheme }: { isLight: boolean; toggleTheme:
                     <article key={project.index} className="flex flex-col pb-[16vw]">
                         {/* Image */}
                         <div className="relative w-full rounded-2xl overflow-hidden" style={{ height: "65vw" }}>
-                            {project.background && (
-                                <Image
-                                    src={project.background}
-                                    alt={project.name}
-                                    fill
-                                    className="object-cover"
-                                    priority={i === 0}
-                                    loading={i === 0 ? "eager" : "lazy"}
-                                />
-                            )}
+                            <Image
+                                src={project.thumb}
+                                alt={project.name}
+                                fill
+                                sizes="100vw"
+                                className="object-cover"
+                                priority={i === 0}
+                            />
                         </div>
 
                         {/* Name */}
