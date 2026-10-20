@@ -23,6 +23,8 @@ interface Palette {
     depthFloor: number;
     /** How much skin colour a tile carries, from shadow (0) to lit (1); the rest is page background. */
     tile: [number, number];
+    /** Hi (the red-orange of koi markings) from deep shadow to a lit highlight, so patches shade across hues. */
+    hi: Rgb[];
     /** Glyph brightness relative to the tile under it. */
     ink: number;
 }
@@ -41,6 +43,14 @@ const DARK: Palette = {
     alpha: 0.8,
     depthFloor: 0.4,
     tile: [0.68, 0.98],
+    hi: [
+        [112, 22, 24],
+        [168, 34, 28],
+        [214, 58, 30],
+        [240, 96, 34],
+        [250, 138, 52],
+        [255, 178, 96],
+    ],
     ink: 0.42,
 };
 
@@ -59,6 +69,14 @@ const LIGHT: Palette = {
     alpha: 0.9,
     depthFloor: 0.55,
     tile: [0.78, 0.55],
+    hi: [
+        [138, 24, 22],
+        [184, 38, 24],
+        [222, 62, 28],
+        [238, 100, 38],
+        [244, 140, 66],
+        [248, 176, 116],
+    ],
     ink: 0.45,
 };
 
@@ -127,6 +145,13 @@ function koiMarkings(k: Koi): Markings {
 }
 
 const packRgb = (c: Rgb) => (c[0] << 16) | (c[1] << 8) | c[2];
+/** Sample a colour ramp at t in [0, 1]. */
+function ramp(stops: Rgb[], t: number): Rgb {
+    const x = clamp(t, 0, 1) * (stops.length - 1);
+    const i = Math.min(stops.length - 2, Math.floor(x));
+    return mix(stops[i], stops[i + 1], x - i);
+}
+
 const mix = (a: Rgb, b: Rgb, k: number): Rgb => [
     (a[0] + (b[0] - a[0]) * k) | 0,
     (a[1] + (b[1] - a[1]) * k) | 0,
@@ -491,7 +516,18 @@ export class KoiRenderer {
                     const skin = this.skin(k, s, v, across);
                     const facing = side * (0.6 * ty - 0.8 * tx) * across;
                     const lum = clamp(0.22 + 0.5 * Math.sqrt(1 - across * across) + 0.18 * facing, 0, 1);
-                    tile = mix(palette.bg, skin, tile0 + (tile1 - tile0) * lum);
+                    if (skin === palette.red) {
+                        // Red patches run the full hi ramp: crimson in shadow, vermilion across the back, orange
+                        // to amber where the light hits. Each koi leans a little redder or more orange, and a
+                        // slow body-pinned noise varies the hue within a patch, like real pigment.
+                        const lean = (hash3(k.id, 5, 17) - 0.5) * 0.3;
+                        const grain = (valueNoise(s * 9 + k.id, (v / L) * 18, k.id + 21) - 0.5) * 0.25;
+                        // A band of shine travels down the body, like light sliding over wet scales.
+                        const sheen = Math.max(0, Math.sin(s * 11 - t * 1.8 + k.id) - 0.7) / 0.3;
+                        tile = ramp(palette.hi, 0.15 + 0.8 * lum + lean + grain + sheen * 0.35);
+                    } else {
+                        tile = mix(palette.bg, skin, tile0 + (tile1 - tile0) * lum);
+                    }
                     if (hits === 5) {
                         const sc = c + shadowDc;
                         const sr = r + shadowDr;
