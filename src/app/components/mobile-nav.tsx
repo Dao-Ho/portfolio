@@ -13,7 +13,7 @@ const navLinks = [
 
 const secondaryLinks = [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/dao-ho/" },
-    { label: "GitHub", href: "https://github.com/daoh/" },
+    { label: "GitHub", href: "https://github.com/Dao-Ho" },
 ];
 
 interface MobileNavProps {
