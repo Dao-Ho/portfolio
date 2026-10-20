@@ -6,8 +6,9 @@ import Container from "./container";
 import type { PondStats } from "./koi-pond/koi-pond";
 
 const SOCIALS = [
-    { label: "linkedin", href: "https://www.linkedin.com/in/dao-ho/" },
     { label: "github", href: "https://github.com/Dao-Ho" },
+    { label: "linkedin", href: "https://www.linkedin.com/in/dao-ho/" },
+    { label: "x", href: "https://x.com/daoho04" },
 ];
 
 const FrontPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats }) => {
@@ -55,22 +56,7 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
             >
-                <div>
-                    <h1 className="inline">Xin chào, I'm Dao.</h1>
-                    {SOCIALS.map(({ label, href }) => (
-                        <span key={label}>
-                            <span className="opacity-40"> / </span>
-                            <a
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="underline decoration-[color-mix(in_srgb,var(--foreground-color)_35%,transparent)] decoration-1 underline-offset-[5px] opacity-60 outline-none transition-opacity duration-150 hover:decoration-foreground hover:opacity-100 focus-visible:decoration-foreground focus-visible:opacity-100"
-                            >
-                                {label}
-                            </a>
-                        </span>
-                    ))}
-                </div>
+                <h1>Xin chào, I'm Dao.</h1>
                 <p>
                     Software Engineer @{" "}
                     <Cited source="googleIncoming" isLight={isLight}>
@@ -79,17 +65,20 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
                     , passionate about building the future.
                 </p>
                 <p>
-                    Previously @{" "}
+                    Before that,{" "}
                     <Cited source="google" isLight={isLight}>
                         Google
                     </Cited>{" "}
-                    and{" "}
+                    (intern),{" "}
                     <Cited source="agency" isLight={isLight}>
                         Agency
                     </Cited>
+                    , and a few{" "}
+                    <Cited source="startups" isLight={isLight}>
+                        early-stage startups
+                    </Cited>
                     .
                 </p>
-                <p>Northeastern '26, Computer Science and Finance.</p>
                 <p>
                     Currently, building @{" "}
                     <Cited source="generate" isLight={isLight}>
@@ -100,6 +89,21 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
                         PARCS Lab
                     </Cited>
                     .
+                </p>
+                <p className="mt-[1.5vh]">
+                    {SOCIALS.map(({ label, href }, i) => (
+                        <span key={label}>
+                            {i > 0 && <span className="opacity-40"> / </span>}
+                            <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline decoration-[color-mix(in_srgb,var(--foreground-color)_35%,transparent)] decoration-1 underline-offset-[5px] opacity-60 outline-none transition-opacity duration-150 hover:decoration-foreground hover:opacity-100 focus-visible:decoration-foreground focus-visible:opacity-100"
+                            >
+                                {label}
+                            </a>
+                        </span>
+                    ))}
                 </p>
             </motion.div>
         </Container>

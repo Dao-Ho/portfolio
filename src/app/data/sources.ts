@@ -1,11 +1,4 @@
-/**
- * Sources for the landing page's @-mentions.
- *
- * A mention points at its source rather than reproducing it, so these carry
- * only what the hover chip shows — a role and a one-line summary — plus where
- * a click lands. The substance stays in the experience list (by entry name) or on
- * another page of the site (by href).
- */
+/** Sources for the landing page's @-mentions: what the hover card shows, plus where a click lands. */
 
 export type Source = {
     key: string;
@@ -24,12 +17,10 @@ export type Source = {
     dates: string;
     /** One line on the work itself. */
     summary: string;
-    /** companyName of the matching experience entry, for an in-page jump.
-     *  Keyed by name rather than array index so reordering or removing an
-     *  entry can't silently point a mention at the wrong company. */
-    entry?: string;
-    /** In-app path (or external URL) for a source that lives on its own page. */
+    /** Where a click lands: an in-app path or an external URL. */
     href?: string;
+    /** Keys of other sources this one rolls up; the card lists each of them instead of one role. */
+    group?: string[];
 };
 
 export const SOURCES: Record<string, Source> = {
@@ -61,7 +52,7 @@ export const SOURCES: Record<string, Source> = {
         role: "Software Engineer Intern",
         dates: "May–Aug 2026",
         summary: "Citation and evaluation infrastructure for Gemini.",
-        entry: "Google",
+        href: "https://gemini.google.com/",
     },
     googleIncoming: {
         key: "googleIncoming",
@@ -77,10 +68,10 @@ export const SOURCES: Record<string, Source> = {
         key: "agency",
         name: "Agency (Acquired by Klaviyo)",
         icon: "/logos/agency.png",
-        role: "Member of Technical Staff",
+        role: "Member of Technical Staff Co-op",
         dates: "May–Dec 2025",
         summary: "Shipped to production daily. Tracer bullets, velocity, and what it takes to scale them.",
-        entry: "Agency",
+        href: "https://www.agency.inc/",
     },
     designai: {
         key: "designai",
@@ -89,7 +80,7 @@ export const SOURCES: Record<string, Source> = {
         role: "Software Engineer Intern",
         dates: "Sept 2024–Jan 2025",
         summary: "An image platform interior designers search, organize, and work out of.",
-        entry: "DesignAI",
+        href: "https://www.designai.co/",
     },
     paynalli: {
         key: "paynalli",
@@ -98,7 +89,15 @@ export const SOURCES: Record<string, Source> = {
         role: "Software Engineer Intern",
         dates: "July–Sept 2024",
         summary: "RAG search over embeddings and vector stores for recruiter–candidate matching.",
-        entry: "Paynalli Systems",
+        href: "https://paynalli.com/",
+    },
+    startups: {
+        key: "startups",
+        name: "Early-stage startups",
+        role: "DesignAI and Paynalli",
+        dates: "2024–2025",
+        summary: "Two early-stage startup internships.",
+        group: ["designai", "paynalli"],
     },
     khoury: {
         key: "khoury",
@@ -107,7 +106,7 @@ export const SOURCES: Record<string, Source> = {
         role: "Discrete Math Teaching Assistant",
         dates: "Sept 2023–May 2024",
         summary: "Took the course while in high school, TA'd first semester of college.",
-        entry: "Northeastern University",
+        href: "https://www.khoury.northeastern.edu/home/aloupis/discrete-math/resources.html",
     },
     paint: {
         key: "paint",

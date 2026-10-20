@@ -4,7 +4,6 @@ import { useGlobal } from "../context-providers/global-provider";
 
 import MobileNav from "./components/mobile-nav";
 import FrontPage from "./components/front-page";
-import ExperiencePage from "./components/experience";
 import KoiPond, { type PondStats } from "./components/koi-pond/koi-pond";
 import TopNav from "./components/top-nav";
 
@@ -27,7 +26,6 @@ export default function Home() {
             )}
             <main className="relative z-20 flex flex-col">
                 <FrontPage isLight={isLight} stats={stats} />
-                <ExperiencePage isLight={isLight} />
             </main>
         </div>
     );

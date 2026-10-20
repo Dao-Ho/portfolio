@@ -1,4 +1,4 @@
-import { classify, FLAG_DORSAL, FLAG_EYE, FLAG_FIN, type ShapeHit } from "./shape";
+import { classify, FLAG_BARBEL, FLAG_EYE, FLAG_FIN, type ShapeHit } from "./shape";
 import { clamp, hash3, KOI_NODES, RIPPLE_SPEED, rippleLife, smoothstep, type Box, type Koi, type World } from "./world";
 
 type Rgb = [number, number, number];
@@ -7,6 +7,8 @@ type Rgb = [number, number, number];
 const DIM_UNDER_CONTENT = 0.15;
 
 interface Palette {
+    /** Page background, which tiles are mixed toward. */
+    bg: Rgb;
     white: Rgb;
     red: Rgb;
     black: Rgb;
@@ -16,39 +18,52 @@ interface Palette {
     pellet: Rgb;
     shadow: Rgb;
     shadowAlpha: number;
-
     alpha: number;
+    /** How much a deep koi fades, as the alpha it keeps at the bottom of the pond. */
+    depthFloor: number;
+    /** How much skin colour a tile carries, from shadow (0) to lit (1); the rest is page background. */
+    tile: [number, number];
+    /** Glyph brightness relative to the tile under it. */
+    ink: number;
 }
 
 const DARK: Palette = {
+    bg: [26, 25, 33],
     white: [236, 228, 218],
     red: [232, 96, 56],
     black: [92, 90, 108],
     fin: [214, 206, 198],
-    eye: [60, 58, 70],
+    eye: [20, 20, 26],
     water: [255, 247, 240],
     shadow: [0, 0, 0],
     shadowAlpha: 0.55,
-
     pellet: [196, 140, 92],
-    alpha: 0.55,
+    alpha: 0.8,
+    depthFloor: 0.4,
+    tile: [0.68, 0.98],
+    ink: 0.42,
 };
 
+// Paper page: tiles are pale washes of the skin colour with dark glyphs etched on top.
 const LIGHT: Palette = {
-    white: [152, 144, 136],
-    red: [218, 82, 42],
-    black: [44, 42, 50],
-    fin: [168, 158, 148],
+    bg: [245, 244, 241],
+    white: [112, 108, 104],
+    red: [204, 62, 28],
+    black: [36, 33, 40],
+    fin: [138, 132, 126],
     eye: [24, 22, 26],
     water: [38, 37, 35],
-    shadow: [70, 56, 44],
-    shadowAlpha: 0.16,
-
+    shadow: [60, 58, 56],
+    shadowAlpha: 0.2,
     pellet: [138, 94, 58],
-    alpha: 0.6,
+    alpha: 0.9,
+    depthFloor: 0.55,
+    tile: [0.78, 0.55],
+    ink: 0.45,
 };
 
-const SKIN_RAMP = " .:-=+*#%@";
+// Dense glyphs etched into each skin tile, sparse where it catches the light.
+const TILE_GLYPHS = "t%SX8@#";
 const SUBSAMPLES = [0.25, 0.25, 0.75, 0.25, 0.25, 0.75, 0.75, 0.75];
 
 // A line glyph that follows a direction in screen space, for fin rays and ripple rings.
@@ -57,12 +72,6 @@ function lineGlyph(dx: number, dy: number) {
     if (Math.abs(dy) < 0.38 * d) return "-";
     if (Math.abs(dx) < 0.38 * d) return "|";
     return dx * dy > 0 ? "\\" : "/";
-}
-
-// A scale seen from above: an arc bulging toward the tail, so rows of them read as (((( or )))).
-function scaleGlyph(tailX: number, tailY: number) {
-    if (Math.abs(tailX) > Math.abs(tailY) * 0.9) return tailX > 0 ? ")" : "(";
-    return tailY > 0 ? "v" : "^";
 }
 
 function valueNoise(x: number, y: number, seed: number) {
@@ -77,7 +86,52 @@ function valueNoise(x: number, y: number, seed: number) {
     return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
 }
 
+/** A marking in body space: centred at (s, v) along and across the spine, as fractions of length. */
+type Patch = { s: number; v: number; rs: number; rv: number };
+type Markings = { red: Patch[]; black: Patch[] };
+
+function inPatch(m: Patch, s: number, vn: number, wobble: number) {
+    return ((s - m.s) / m.rs) ** 2 + ((vn - m.v) / m.rv) ** 2 < 1 + wobble;
+}
+
+/**
+ * Each koi gets a fixed set of markings, seeded by its id, so every fish carries a clear pattern:
+ * kohaku a red head and two or three red saddles on white, sanke the same plus small black spots,
+ * tancho a single red disc on the crown.
+ */
+function koiMarkings(k: Koi): Markings {
+    const r = (j: number) => hash3(k.id, j, 41);
+    if (k.variety === "tancho") return { red: [{ s: 0.11, v: 0, rs: 0.05, rv: 0.055 }], black: [] };
+
+    const red: Patch[] = [];
+    if (r(0) < 0.75) red.push({ s: 0.1, v: (r(1) - 0.5) * 0.03, rs: 0.055 + r(2) * 0.03, rv: 0.11 });
+    const saddles = 2 + Math.floor(r(3) * 2);
+    for (let j = 0; j < saddles; j++) {
+        const span = 0.42 / saddles;
+        red.push({
+            s: 0.25 + span * (j + 0.5) + (r(10 + j) - 0.5) * span * 0.3,
+            v: (r(20 + j) - 0.5) * 0.05,
+            rs: span * (0.32 + r(30 + j) * 0.12),
+            rv: 0.09 + r(40 + j) * 0.05,
+        });
+    }
+
+    const black: Patch[] = [];
+    if (k.variety === "sanke") {
+        const spots = 4 + Math.floor(r(50) * 3);
+        for (let j = 0; j < spots; j++) {
+            black.push({ s: 0.24 + r(60 + j) * 0.44, v: (r(70 + j) - 0.5) * 0.16, rs: 0.022, rv: 0.026 });
+        }
+    }
+    return { red, black };
+}
+
 const packRgb = (c: Rgb) => (c[0] << 16) | (c[1] << 8) | c[2];
+const mix = (a: Rgb, b: Rgb, k: number): Rgb => [
+    (a[0] + (b[0] - a[0]) * k) | 0,
+    (a[1] + (b[1] - a[1]) * k) | 0,
+    (a[2] + (b[2] - a[2]) * k) | 0,
+];
 const shade = (c: Rgb, k: number): Rgb => [
     Math.min(255, c[0] * k) | 0,
     Math.min(255, c[1] * k) | 0,
@@ -93,6 +147,7 @@ export class KoiRenderer {
     private rows = 0;
     private palette = DARK;
     private styles = new Map<number, string>();
+    private markingCache = new Map<number, Markings>();
     private fontFamily = "ui-monospace, SFMono-Regular, Menlo, monospace";
 
     private energy = new Float32Array(0);
@@ -100,6 +155,8 @@ export class KoiRenderer {
     private cellGlyph = new Uint16Array(0);
     private cellColor = new Uint32Array(0);
     private cellAlpha = new Float32Array(0);
+    private cellTile = new Uint32Array(0);
+    private cellTileAlpha = new Float32Array(0);
     private cellDim = new Float32Array(0);
     /** Cells under a koi's shadow on the pond floor. */
     private cellShadow = new Uint8Array(0);
@@ -130,8 +187,9 @@ export class KoiRenderer {
 
     resize(width: number, height: number, dpr: number) {
         this.dpr = dpr;
-        this.cw = clamp(Math.round(width / 240), 5, 7);
-        this.ch = Math.round(this.cw * 1.5);
+        // Near-square tiles, large enough to read each etched glyph.
+        this.cw = clamp(Math.round(width / 125), 8, 12);
+        this.ch = this.cw + 2;
         this.cols = Math.ceil(width / this.cw);
         this.rows = Math.ceil(height / this.ch);
         this.ctx.canvas.width = Math.round(width * dpr);
@@ -143,6 +201,8 @@ export class KoiRenderer {
         this.cellGlyph = new Uint16Array(n);
         this.cellColor = new Uint32Array(n);
         this.cellAlpha = new Float32Array(n);
+        this.cellTile = new Uint32Array(n);
+        this.cellTileAlpha = new Float32Array(n);
         this.cellDim = new Float32Array(n).fill(1);
         this.cellShadow = new Uint8Array(n);
     }
@@ -177,16 +237,17 @@ export class KoiRenderer {
         if (cols === 0) return;
 
         this.cellGlyph.fill(0);
+        this.cellTileAlpha.fill(0);
         this.cellShadow.fill(0);
         // Deeper koi first, so the ones near the surface glide over them.
-        for (const k of [...world.koi].sort((a, b) => a.depth - b.depth)) this.rasterizeKoi(k);
+        for (const k of [...world.koi].sort((a, b) => a.depth - b.depth)) this.rasterizeKoi(k, world.time);
         this.depositWake(world);
         this.diffuse(dt);
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.font = `600 ${Math.round(this.ch * 0.85)}px ${this.fontFamily}`;
+        ctx.font = `600 ${Math.round(this.ch * 0.72)}px ${this.fontFamily}`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
@@ -230,6 +291,8 @@ export class KoiRenderer {
         let bestS = 0;
         let bestSign = 1;
         let past = 0;
+        let ahead = 0;
+        let lateral = 0;
         for (let n = from; n <= to; n++) {
             const ax = spine[n * 2];
             const ay = spine[n * 2 + 1];
@@ -245,6 +308,8 @@ export class KoiRenderer {
                 bestS = (arc[n] + u * len) / this.arcTotal;
                 bestSign = sx * (py - ay) - sy * (px - ax) >= 0 ? 1 : -1;
                 past = n === KOI_NODES - 2 ? Math.max(0, raw - 1) * len : 0;
+                ahead = n === 0 ? Math.max(0, -raw) * len : 0;
+                lateral = Math.abs(sx * (py - ay) - sy * (px - ax)) / len;
                 this.hitTx = sx / len;
                 this.hitTy = sy / len;
                 this.hitSeg = n;
@@ -255,36 +320,43 @@ export class KoiRenderer {
         this.hitDist = a;
         this.hitS = bestS;
         this.hitV = a * bestSign;
-        return classify(bestS, a / L, past / L, bestSign > 0 ? this.flareLeft : this.flareRight, this.hit);
+        return classify(
+            bestS,
+            a / L,
+            past / L,
+            bestSign > 0 ? this.flareLeft : this.flareRight,
+            this.hit,
+            ahead / L,
+            lateral / L
+        );
     }
 
-    /** Screen-space glyph for a fin ray, rotating the body-space ray onto the spine. */
-    private rayGlyph(du: number, da: number, side: number) {
-        const tx = this.hitTx;
-        const ty = this.hitTy;
-        return lineGlyph(tx * du - ty * da * side, ty * du + tx * da * side);
-    }
-
-    /** Skin colour for a body point, from the variety's pattern pinned to body coordinates. */
+    /** Skin colour for a body point, from the koi's own markings pinned to body coordinates. */
     private skin(k: Koi, s: number, v: number, across: number): Rgb {
         const p = this.palette;
         const vn = v / k.length;
-        const n = valueNoise(s * 7 + k.id * 3.1, vn * 16 + k.id * 1.7, k.id);
-        switch (k.variety) {
-            case "kohaku":
-                return across < 0.85 && s > 0.03 && s < 0.74 && n + (s < 0.2 ? 0.12 : 0) > 0.5 ? p.red : p.white;
-            case "sanke": {
-                const spot = valueNoise(s * 18 + k.id, vn * 34, k.id + 9);
-                if (s > 0.2 && spot > 0.74) return p.black;
-                return across < 0.85 && s > 0.03 && s < 0.72 && n > 0.52 ? p.red : p.white;
-            }
-            case "tancho":
-                return Math.hypot((s - 0.12) * k.length, v) < k.length * 0.055 ? p.red : p.white;
-        }
+        // Belly edges and the tail stalk stay white on every variety, which frames the markings.
+        if (across > 0.9 || s > 0.74) return p.white;
+        // Ragged edges, so patches read as painted markings rather than ellipses.
+        const wobble = (valueNoise(s * 14 + k.id, vn * 30, k.id + 3) - 0.5) * 0.6;
+        const markings = this.markings(k);
+        for (const m of markings.black) if (inPatch(m, s, vn, wobble)) return p.black;
+        for (const m of markings.red) if (inPatch(m, s, vn, wobble)) return p.red;
+        return p.white;
     }
 
-    private rasterizeKoi(k: Koi) {
-        const { spine, arc, cw, ch, cols, rows, cellGlyph, cellColor, cellAlpha, palette } = this;
+    private markings(k: Koi) {
+        let m = this.markingCache.get(k.id);
+        if (!m) {
+            m = koiMarkings(k);
+            this.markingCache.set(k.id, m);
+        }
+        return m;
+    }
+
+    private rasterizeKoi(k: Koi, t: number) {
+        const { spine, arc, cw, ch, cols, rows, cellGlyph, cellColor, cellAlpha, cellTile, cellTileAlpha, palette } =
+            this;
         const L = k.length;
         const nodes = k.nodes;
         // The body only undulates while the tail is beating; coasting koi hold almost straight.
@@ -339,7 +411,8 @@ export class KoiRenderer {
         // Near the surface a koi is brighter and its shadow falls farther away on the floor.
         const shadowDc = Math.round((L * 0.07 * k.depth) / cw) + 1;
         const shadowDr = Math.round((L * 0.05 * k.depth) / ch) + 1;
-        const dim = palette.alpha * (0.35 + 0.65 * k.depth);
+        const dim = palette.alpha * (palette.depthFloor + (1 - palette.depthFloor) * k.depth);
+        const [tile0, tile1] = palette.tile;
         const hit = this.hit;
 
         for (let r = r0; r <= r1; r++) {
@@ -356,7 +429,7 @@ export class KoiRenderer {
                 // Sub-samples sit within a cell of the centre, so only the neighbouring segments can be nearest.
                 const from = Math.max(0, this.hitSeg - 2);
                 const to = Math.min(KOI_NODES - 2, this.hitSeg + 2);
-                let { flag, across, du, da } = hit;
+                let { flag, across } = hit;
                 let s = this.hitS;
                 let v = this.hitV;
                 let tx = this.hitTx;
@@ -371,7 +444,7 @@ export class KoiRenderer {
                     gx += (SUBSAMPLES[q] - 0.5) * cw;
                     gy += (SUBSAMPLES[q + 1] - 0.5) * ch;
                     if (hits === 0) {
-                        ({ flag, across, du, da } = hit);
+                        ({ flag, across } = hit);
                         s = this.hitS;
                         v = this.hitV;
                         tx = this.hitTx;
@@ -393,49 +466,61 @@ export class KoiRenderer {
                 let glyph = " ";
                 let rgb: Rgb = palette.fin;
                 let alpha = dim;
-                if (flag === FLAG_EYE && solid) {
+                let tile: Rgb | null = null;
+                let tileAlpha = 0;
+                if (flag === FLAG_BARBEL) {
+                    // Drawn along the whisker: forward from the mouth and angled out to its side.
+                    glyph = lineGlyph(-tx - side * ty * 0.7, -ty + side * tx * 0.7);
+                    rgb = shade(mix(palette.bg, palette.fin, 0.9), palette.ink + 0.3);
+                } else if (flag === FLAG_EYE && solid) {
+                    tile = mix(palette.bg, palette.eye, 0.85);
+                    tileAlpha = dim;
                     glyph = "o";
-                    rgb = palette.eye;
+                    rgb = mix(palette.bg, palette.white, 0.9);
                 } else if (flag === FLAG_FIN) {
-                    // Fins are a faint veil with a few rays, so they never compete with the body.
-                    const onRay = solid && Math.floor(Math.atan2(da, du) * 7 + 21) % 3 === 0;
-                    if (onRay) {
-                        glyph = this.rayGlyph(du, da, side);
-                        alpha *= 0.5;
-                    } else if (key % 3 === 0) {
+                    // Fins are a pale veil of tiles flecked with dots, so they never compete with the body.
+                    tile = mix(palette.bg, palette.fin, 0.55);
+                    tileAlpha = dim * 0.45 * coverage;
+                    if (key % 2 === 0) {
                         glyph = ".";
-                        alpha *= 0.35 * coverage;
+                        alpha *= 0.6 * coverage;
                     }
                 } else {
-                    // Line-art outline where the silhouette crosses the cell, shaded ASCII inside it:
-                    // a rounded back lit from the top-left, denser where it catches the light.
+                    // Each skin cell is a tile washed in the skin colour, shaded like a rounded back lit from
+                    // the top-left, with a dense glyph etched on top. Edge cells get a paler, empty tile.
                     const skin = this.skin(k, s, v, across);
-                    const interior = hits === 5;
-                    if (interior) {
-                        // The pond floor sits below and to the right of the light.
+                    const facing = side * (0.6 * ty - 0.8 * tx) * across;
+                    const lum = clamp(0.22 + 0.5 * Math.sqrt(1 - across * across) + 0.18 * facing, 0, 1);
+                    tile = mix(palette.bg, skin, tile0 + (tile1 - tile0) * lum);
+                    if (hits === 5) {
                         const sc = c + shadowDc;
                         const sr = r + shadowDr;
                         if (sc < cols && sr < rows) this.cellShadow[sr * cols + sc] = 1;
-                        const facing = side * (0.6 * ty - 0.8 * tx) * across;
-                        const lum = clamp(0.22 + 0.5 * Math.sqrt(1 - across * across) + 0.18 * facing, 0, 1);
+                        tileAlpha = dim;
                         if (s < 0.035 && across < 0.6 && k.gulp > 0.5) {
                             glyph = "o";
                             rgb = palette.eye;
-                        } else if (s > 0.17 && s < 0.7 && across < 0.78) {
-                            // Rows of scales, opening toward the tail; the light comes through in their colour.
-                            glyph = scaleGlyph(tx, ty);
-                            rgb = shade(skin, 0.7 + 0.5 * lum);
                         } else {
-                            glyph = SKIN_RAMP[Math.round(lum * (SKIN_RAMP.length - 1))];
-                            rgb = shade(skin, 0.85 + 0.3 * lum);
+                            const jitter = (key >>> 4) % 3;
+                            glyph = TILE_GLYPHS[clamp(Math.round((1 - lum) * 4) + jitter, 0, TILE_GLYPHS.length - 1)];
+                            rgb = shade(tile, palette.ink);
+                            // White skin is etched lightly so the red and black patches carry the pattern.
+                            if (skin === palette.white) alpha *= 0.6;
+                            // Scales glint on a staggered clock.
+                            const tick = Math.floor(t * 1.4 + (key % 997) / 97);
+                            if (hash3(key, tick, 7) < 0.03) tile = mix(tile, palette.bg, 0.45);
                         }
                     } else {
-                        glyph = Math.hypot(gx, gy) > cw * 0.2 ? lineGlyph(-gy, gx) : ".";
-                        rgb = skin;
-                        alpha *= 0.6 + 0.4 * coverage;
+                        tileAlpha = dim * coverage * 0.55;
+                        if (Math.hypot(gx, gy) > cw * 0.2 && key % 3 === 0) {
+                            glyph = ".";
+                            rgb = shade(tile, palette.ink);
+                        }
                     }
                 }
-                if (glyph === " ") continue;
+                if (glyph === " " && tileAlpha === 0) continue;
+                cellTile[i] = tile ? packRgb(tile) : 0;
+                cellTileAlpha[i] = tileAlpha;
                 cellGlyph[i] = glyph.charCodeAt(0);
                 cellColor[i] = packRgb(rgb);
                 cellAlpha[i] = alpha;
@@ -444,13 +529,21 @@ export class KoiRenderer {
     }
 
     private drawCells() {
-        const { ctx, cw, ch, cols, cellGlyph, cellColor, cellAlpha, cellDim } = this;
+        const { ctx, cw, ch, cols, cellGlyph, cellColor, cellAlpha, cellTile, cellTileAlpha, cellDim } = this;
         for (let i = 0; i < cellGlyph.length; i++) {
             const code = cellGlyph[i];
             if (!code) continue;
+            const x = (i % cols) * cw;
+            const y = ((i / cols) | 0) * ch;
+            if (cellTileAlpha[i] > 0) {
+                ctx.globalAlpha = cellTileAlpha[i] * cellDim[i];
+                ctx.fillStyle = this.style(cellTile[i]);
+                ctx.fillRect(x + 1, y + 1, cw - 1, ch - 1);
+            }
+            if (code === 32) continue;
             ctx.globalAlpha = cellAlpha[i] * cellDim[i];
             ctx.fillStyle = this.style(cellColor[i]);
-            ctx.fillText(String.fromCharCode(code), (i % cols) * cw + cw / 2, ((i / cols) | 0) * ch + ch / 2);
+            ctx.fillText(String.fromCharCode(code), x + cw / 2, y + ch / 2 + 1);
         }
     }
 
@@ -501,7 +594,7 @@ export class KoiRenderer {
         for (let i = 0; i < energy.length; i++) {
             const e = energy[i];
             if (e < 0.22 || cellGlyph[i] || cellShadow[i]) continue;
-            this.glyphAt(i, e > 0.6 ? "~" : ".", palette.water, Math.min(1, (e - 0.22) * 1.4) * 0.3);
+            this.glyphAt(i, e > 0.5 ? "-" : ".", palette.water, Math.min(1, (e - 0.22) * 1.4) * 0.35);
         }
     }
 

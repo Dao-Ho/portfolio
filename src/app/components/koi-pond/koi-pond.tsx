@@ -9,7 +9,7 @@ export type PondStats = { koi: number; pellets: number };
 
 const STEP = 1 / 60;
 const MAX_STEPS = 4;
-const INTERACTIVE = "a, button, input, textarea, select, label, [role='button']";
+const INTERACTIVE = "a, button, input, textarea, select, label, [role='button'], [data-koi-ignore]";
 // Content over the pond carries this attribute; koi steer around it and fade beneath it.
 const AVOID_TARGETS = "[data-koi-avoid]";
 // Re-measure the content boxes this often, in frames, to follow layout shifts and entrance animations.

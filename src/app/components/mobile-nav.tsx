@@ -27,7 +27,7 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
     const fg = isLight ? "#262523" : "#fff7f0";
     const fgDim = isLight ? "rgba(38,37,35,0.35)" : "rgba(255,247,240,0.35)";
     const fgIcon = isLight ? "rgba(38,37,35,0.5)" : "rgba(255,247,240,0.5)";
-    const bg = isLight ? "#fff7f0" : "#1a1921";
+    const bg = isLight ? "#f5f4f1" : "#1a1921";
     const pillBg = isLight ? "rgba(38,37,35,0.06)" : "rgba(255,247,240,0.06)";
 
     return (

@@ -143,7 +143,7 @@ export class World {
     private seed() {
         const { width: W, height: H } = this;
         const minSide = Math.min(W, H);
-        const baseLength = clamp(minSide * 0.42, 150, 360);
+        const baseLength = clamp(minSide * 0.5, 170, 420);
         const count = clamp(Math.round((W * H) / 240000), 3, 6);
         // Wide screens also get a couple of young koi that keep to the deep water, for a sense of depth.
         const young = W >= 1024 ? 2 : 0;

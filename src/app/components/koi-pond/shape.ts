@@ -4,6 +4,7 @@ export const FLAG_BODY = 1;
 export const FLAG_FIN = 2;
 export const FLAG_EYE = 3;
 export const FLAG_DORSAL = 4;
+export const FLAG_BARBEL = 5;
 
 /** Where a point landed on the koi; `du`/`da` give the fin-ray direction in body space. */
 export interface ShapeHit {
@@ -48,11 +49,20 @@ function inFin(s: number, a: number, rootS: number, angle: number, reach: number
  * `s` along the spine (0 snout, 1 tail tip), `a` distance from it, and
  * `past` how far it sits beyond the tail tip. `flare` spreads the fins.
  */
-export function classify(s: number, a: number, past: number, flare: number, out: ShapeHit) {
+export function classify(s: number, a: number, past: number, flare: number, out: ShapeHit, ahead = 0, lateral = 0) {
     out.flag = 0;
     out.across = 1;
     out.du = 1;
     out.da = 0;
+
+    // Barbels: a short whisker angling out from each corner of the mouth, the tell that this is a koi.
+    if (ahead > 0) {
+        if (ahead < 0.05 && Math.abs(lateral - (0.045 + ahead * 0.7)) < 0.016) {
+            out.flag = FLAG_BARBEL;
+            return true;
+        }
+        return false;
+    }
 
     const w = bodyHalfWidth(s);
     if (s <= BODY_END && a <= w) {
