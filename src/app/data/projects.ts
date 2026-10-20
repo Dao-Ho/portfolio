@@ -17,6 +17,10 @@ export type Project = {
         about: string;
         video: string;
         poster: string;
+        /** Wide banner across the top of the page, like a Notion cover. */
+        cover?: string;
+        /** 1200×630 card for link previews when the page is shared. */
+        share?: string;
         /** How the project got here, as prose with the clips placed between paragraphs. */
         story?: StoryBlock[];
     };
@@ -26,7 +30,8 @@ export type Project = {
 export type StoryBlock =
     | { kind: "heading"; text: string }
     | { kind: "text"; parts: (string | { text: string; href: string })[] }
-    | { kind: "clip"; src: string; poster?: string; label: string };
+    | { kind: "clip"; src: string; poster?: string; label: string }
+    | { kind: "image"; src: string; alt: string; width: number; height: number };
 
 export const projects: Project[] = [
     {
@@ -48,12 +53,14 @@ export const projects: Project[] = [
             "A developer's Dynamic Island for the Mac notch. Agent permission prompts, pull request reviews and your calendar, glanceable and actionable without leaving what you're working on.",
         tech: ["Swift", "SwiftUI", "GitHub API"],
         year: "Spring 2026",
-        thumb: "/projects/dynami/dynami-thumb.webp",
+        thumb: "/projects/dynami/dynami-cover.webp",
         page: {
             tagline: "The Dynamic Island, for developers.",
             about: "Dynami lives in your Mac's notch and keeps the things that need your attention within reach while you work, from agent permission prompts and pull request activity to the next meeting on your calendar.",
             video: "/projects/dynami/dynami-demo.mp4",
             poster: "/projects/dynami/dynami-demo-poster.webp",
+            cover: "/projects/dynami/dynami-header.webp",
+            share: "/projects/dynami/dynami-og.jpg",
             story: [
                 { kind: "heading", text: "Waiting on other people" },
                 {
@@ -106,6 +113,13 @@ export const projects: Project[] = [
                     parts: [
                         "Since then, Dynami has grown from a notification into a small workspace. Coding agents such as Claude pause to request permission before running commands, so that prompt now appears in the notch, where I can approve or deny it without leaving the editor. GitHub has a dedicated tab, Home holds my calendar and what's currently playing, and the demo above shows where the project stands today.",
                     ],
+                },
+                {
+                    kind: "image",
+                    src: "/projects/dynami/dynami-cover.webp",
+                    alt: "Four Dynami views in the notch: an approved pull request, a Claude permission prompt, the GitHub tab, and the Home tab with music and calendar",
+                    width: 1280,
+                    height: 720,
                 },
             ],
         },

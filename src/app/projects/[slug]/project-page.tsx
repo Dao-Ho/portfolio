@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -25,6 +26,23 @@ export default function ProjectPage({ slug }: { slug: string }) {
         setStill(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     }, []);
 
+    // The nav switches to light text while it sits over the cover, and back once the cover scrolls past it.
+    const coverRef = useRef<HTMLDivElement>(null);
+    const [overCover, setOverCover] = useState(false);
+    const hasCover = Boolean(project?.page?.cover);
+    useEffect(() => {
+        const cover = coverRef.current;
+        if (!hasCover || !cover) return;
+        const update = () => setOverCover(cover.getBoundingClientRect().bottom > 56);
+        update();
+        window.addEventListener("scroll", update, { passive: true });
+        window.addEventListener("resize", update);
+        return () => {
+            window.removeEventListener("scroll", update);
+            window.removeEventListener("resize", update);
+        };
+    }, [hasCover, isMobile]);
+
     if (isMobile === null || !project?.page) return null;
     const { page } = project;
 
@@ -33,13 +51,30 @@ export default function ProjectPage({ slug }: { slug: string }) {
             {isMobile ? (
                 <MobileNav isLight={isLight} toggleTheme={toggleTheme} />
             ) : (
-                <TopNav isLight={isLight} toggleTheme={toggleTheme} />
+                <TopNav isLight={isLight} toggleTheme={toggleTheme} overCover={overCover} />
+            )}
+            {page.cover && (
+                // Full-bleed cover. On desktop it runs to the top edge with the nav over it; on mobile it sits under the
+                // nav pill (padding, not margin, so the page colour shows above it). The lower edge fades into the page.
+                <div className="pt-20 lg:pt-0">
+                    <div ref={coverRef} className="relative h-[clamp(180px,26vw,440px)] w-full overflow-hidden">
+                        <Image
+                            src={page.cover}
+                            alt=""
+                            fill
+                            priority
+                            sizes="100vw"
+                            className="object-cover object-[78%_center]"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(to_bottom,transparent,var(--background-color))]" />
+                    </div>
+                </div>
             )}
             <motion.main
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-                className={`${FRAME} px-6 pb-40 pt-28 font-geistSans lg:box-content lg:pt-40`}
+                className={`${FRAME} px-6 pb-40 font-geistSans lg:box-content ${page.cover ? "pt-10 lg:pt-14" : "pt-28 lg:pt-40"}`}
             >
                 <header>
                     <Link
@@ -88,6 +123,19 @@ function Story({ blocks, still }: { blocks: StoryBlock[]; still: boolean }) {
                         >
                             {block.text}
                         </h2>
+                    );
+                }
+                if (block.kind === "image") {
+                    return (
+                        <Image
+                            key={i}
+                            src={block.src}
+                            alt={block.alt}
+                            width={block.width}
+                            height={block.height}
+                            sizes="(min-width: 1024px) 40rem, 100vw"
+                            className="my-6 h-auto w-full rounded-[6px] border border-[color-mix(in_srgb,var(--foreground-color)_10%,transparent)]"
+                        />
                     );
                 }
                 if (block.kind === "clip") {
