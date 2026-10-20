@@ -65,6 +65,8 @@ export interface Koi {
     depthMax: number;
     nextDive: number;
     nextSurface: number;
+    /** When a koi swimming near the surface next sends a small ring off its tail. */
+    nextWake: number;
     /** Tail-beat intensity: koi swim in bursts of beats, then coast with the tail still. */
     beat: number;
     burstUntil: number;
@@ -178,6 +180,7 @@ export class World {
                 depthMax,
                 nextDive: rand(6, 18),
                 nextSurface: rand(3, 14),
+                nextWake: rand(0, 2),
                 beat: 0,
                 burstUntil: 0,
                 nextBurst: rand(0, 3),
@@ -319,6 +322,12 @@ export class World {
         }
         const bursting = fleeing || chasing || time < k.burstUntil;
         k.beat += ((bursting ? 1 : 0) - k.beat) * Math.min(1, dt * 3);
+        // Tail beats near the surface push small rings out behind the koi; gliding or deep koi leave none.
+        if (k.beat > 0.6 && k.depth > 0.65 && time > k.nextWake) {
+            const tail = (KOI_NODES - 3) * 2;
+            this.ripples.push({ x: nodes[tail], y: nodes[tail + 1], born: time, strength: 0.25 + 0.2 * k.depth });
+            k.nextWake = time + rand(0.8, 1.6) / k.beat;
+        }
         const cruise = 12 + L * 0.05;
         const target = fleeing
             ? cruise * 3.2
