@@ -5,6 +5,11 @@ import Cited from "./citation";
 import Container from "./container";
 import type { PondStats } from "./koi-pond/koi-pond";
 
+const SOCIALS = [
+    { label: "linkedin", href: "https://www.linkedin.com/in/dao-ho/" },
+    { label: "github", href: "https://github.com/Dao-Ho" },
+];
+
 const FrontPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats }) => {
     const { isMobile } = useGlobal();
 
@@ -50,7 +55,22 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
             >
-                <h1>Xin chào, I'm Dao.</h1>
+                <div>
+                    <h1 className="inline">Xin chào, I'm Dao.</h1>
+                    {SOCIALS.map(({ label, href }) => (
+                        <span key={label}>
+                            <span className="opacity-40"> / </span>
+                            <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline decoration-[color-mix(in_srgb,var(--foreground-color)_35%,transparent)] decoration-1 underline-offset-[5px] opacity-60 outline-none transition-opacity duration-150 hover:decoration-foreground hover:opacity-100 focus-visible:decoration-foreground focus-visible:opacity-100"
+                            >
+                                {label}
+                            </a>
+                        </span>
+                    ))}
+                </div>
                 <p>
                     Software Engineer @{" "}
                     <Cited source="googleIncoming" isLight={isLight}>

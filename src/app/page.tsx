@@ -6,6 +6,7 @@ import MobileNav from "./components/mobile-nav";
 import FrontPage from "./components/front-page";
 import ExperiencePage from "./components/experience";
 import KoiPond, { type PondStats } from "./components/koi-pond/koi-pond";
+import TopNav from "./components/top-nav";
 
 export default function Home() {
     const { isLight, isMobile, toggleTheme } = useGlobal();
@@ -19,7 +20,11 @@ export default function Home() {
             className={`relative min-h-screen w-full bg-background transition-colors duration-300 ${isLight ? "light" : "dark"}`}
         >
             <KoiPond isLight={isLight} onStats={setStats} className="absolute inset-x-0 top-0 h-[100svh] w-full" />
-            {isMobile && <MobileNav isLight={isLight} toggleTheme={toggleTheme} />}
+            {isMobile ? (
+                <MobileNav isLight={isLight} toggleTheme={toggleTheme} />
+            ) : (
+                <TopNav isLight={isLight} toggleTheme={toggleTheme} />
+            )}
             <main className="relative z-20 flex flex-col">
                 <FrontPage isLight={isLight} stats={stats} />
                 <ExperiencePage isLight={isLight} />
