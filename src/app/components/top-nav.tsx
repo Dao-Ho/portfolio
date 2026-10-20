@@ -7,6 +7,7 @@ const LINKS = [
     { label: "pond", href: "/" },
     { label: "projects", href: "/projects" },
     { label: "gallery", href: "/gallery" },
+    { label: "blog", href: "/blog" },
 ];
 
 const ITEM = "transition-opacity duration-150 hover:opacity-100 focus-visible:opacity-100 outline-none";
