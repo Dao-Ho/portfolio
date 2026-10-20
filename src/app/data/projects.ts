@@ -60,7 +60,7 @@ export const projects: Project[] = [
             video: "/projects/dynami/dynami-demo.mp4",
             poster: "/projects/dynami/dynami-demo-poster.webp",
             cover: "/projects/dynami/dynami-header.webp",
-            share: "/projects/dynami/dynami-og.jpg",
+            share: "/projects/dynami/dynami-og.png",
             story: [
                 { kind: "heading", text: "Waiting on other people" },
                 {
