@@ -1,66 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { useGlobal } from "../../context-providers/global-provider";
 import MobileNav from "../components/mobile-nav";
 import TopNav from "../components/top-nav";
 import Container from "../components/container";
-
-type Project = {
-    index: string;
-    name: string;
-    description: string;
-    tech: string[];
-    year: string;
-    /** Omit to show the project without sending anyone anywhere. */
-    link?: string;
-    /** Small raster preview, rendered from the original artwork. */
-    thumb: string;
-};
-
-const projects: Project[] = [
-    {
-        index: "01",
-        name: "Selfserve",
-        description:
-            "Jira for hotel operations. Designed and shipped an internal platform that gives hotel staff a self-serve dashboard to manage tasks, track requests, and streamline day-to-day operations.",
-        tech: ["Next.js", "TypeScript", "Go"],
-        year: "Spring 2026",
-        link: "https://github.com/GenerateNU/selfserve",
-        thumb: "/projects/selfserve/selfserve-thumb.webp",
-    },
-    {
-        index: "02",
-        name: "Dynami",
-        description:
-            "GitHub notifications, in your notch. Native GitHub notifications living seamlessly in your Mac's Dynamic Island. Never lose track of a review again.",
-        tech: ["Swift", "GitHub API"],
-        year: "Spring 2026",
-        thumb: "/projects/dynami/dynami-thumb.webp",
-    },
-    {
-        index: "03",
-        name: "Vetruly",
-        description:
-            "Full-stack platform connecting pet owners with vetted care providers. Led a team of 5 engineers from concept to production.",
-        tech: ["Next.js", "TypeScript", "PostgreSQL"],
-        year: "Spring 2025",
-        link: "https://www.vetruly.com/",
-        thumb: "/projects/vetruly/vetruly-thumb.webp",
-    },
-    {
-        index: "04",
-        name: "Three Stones",
-        description:
-            "Mobile application allowing retail investors to crowdfund real estate projects. Built authentication and core user flows end-to-end.",
-        tech: ["React Native", "Go", "AWS"],
-        year: "Fall 2024",
-        link: "https://generatenu.com/",
-        thumb: "/projects/3-stones/3-stones-thumb.webp",
-    },
-];
+import { isExternal, projectHref, projects } from "../data/projects";
 
 // The ring repeats the projects so it reads as a full loop; only the first lap is in the tab order.
 const LAPS = 3;
@@ -91,6 +39,7 @@ export default function ProjectsRoute() {
 /** Project previews orbit the page on a slow ellipse; hovering one dims the rest and names it in the centre. */
 function DesktopRing() {
     const [hovered, setHovered] = useState<number | null>(null);
+    const router = useRouter();
     const ringRef = useRef<HTMLDivElement>(null);
     const tileRefs = useRef<(HTMLAnchorElement | null)[]>([]);
     const hoveredRef = useRef<number | null>(null);
@@ -167,6 +116,8 @@ function DesktopRing() {
             {Array.from({ length: projects.length * LAPS }, (_, i) => {
                 const index = i % projects.length;
                 const project = projects[index];
+                const href = projectHref(project);
+                const external = href !== undefined && isExternal(href);
                 const dimmed = hovered !== null && hovered !== index;
                 return (
                     <a
@@ -175,14 +126,20 @@ function DesktopRing() {
                             tileRefs.current[i] = el;
                         }}
                         // Without a link the tile still previews on hover and focus, it just doesn't navigate.
-                        {...(project.link && { href: project.link, target: "_blank", rel: "noopener noreferrer" })}
+                        {...(href && { href })}
+                        {...(external && { target: "_blank", rel: "noopener noreferrer" })}
+                        onClick={(e) => {
+                            if (!href || external) return;
+                            e.preventDefault();
+                            router.push(href);
+                        }}
                         tabIndex={i < projects.length ? 0 : -1}
-                        aria-label={project.link ? `${project.name}, opens in a new tab` : project.name}
+                        aria-label={external ? `${project.name}, opens in a new tab` : project.name}
                         onMouseEnter={() => setHovered(index)}
                         onMouseLeave={() => setHovered(null)}
                         onFocus={() => setHovered(index)}
                         onBlur={() => setHovered(null)}
-                        className={`absolute left-1/2 top-1/2 block overflow-hidden rounded-[4px] outline-none ${project.link ? "" : "cursor-default"} transition-[filter,opacity] duration-300 focus-visible:ring-1 focus-visible:ring-foreground`}
+                        className={`absolute left-1/2 top-1/2 block overflow-hidden rounded-[4px] outline-none ${href ? "" : "cursor-default"} transition-[filter,opacity] duration-300 focus-visible:ring-1 focus-visible:ring-foreground`}
                         style={{
                             width: "clamp(200px, 19vw, 300px)",
                             aspectRatio: "3 / 2",
@@ -263,11 +220,13 @@ function MobileLayout({ isLight, toggleTheme }: { isLight: boolean; toggleTheme:
                             <p className="font-inter text-[17px] text-foreground">{project.year}</p>
                         </div>
 
-                        {project.link && (
+                        {projectHref(project) && (
                             <a
-                                href={project.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                href={projectHref(project)}
+                                {...(isExternal(projectHref(project) ?? "") && {
+                                    target: "_blank",
+                                    rel: "noopener noreferrer",
+                                })}
                                 className="mt-5 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-12/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
                                 style={{ background: "color-mix(in srgb, var(--foreground-color) 8%, transparent)" }}
                             >

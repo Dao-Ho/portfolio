@@ -13,6 +13,8 @@ const ITEM = "transition-opacity duration-150 hover:opacity-100 focus-visible:op
 
 export default function TopNav({ isLight, toggleTheme }: { isLight: boolean; toggleTheme: () => void }) {
     const pathname = usePathname();
+    // A project's own page still counts as being in projects.
+    const active = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
     return (
         <nav
@@ -24,8 +26,8 @@ export default function TopNav({ isLight, toggleTheme }: { isLight: boolean; tog
                 <Link
                     key={href}
                     href={href}
-                    aria-current={pathname === href ? "page" : undefined}
-                    className={`${ITEM} ${pathname === href ? "opacity-100" : "opacity-50"}`}
+                    aria-current={active(href) ? "page" : undefined}
+                    className={`${ITEM} ${active(href) ? "opacity-100" : "opacity-50"}`}
                 >
                     {label}
                 </Link>

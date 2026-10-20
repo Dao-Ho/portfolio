@@ -32,4 +32,24 @@
     .cited-prose:has([data-cited-open="true"]) {
         color: color-mix(in srgb, var(--foreground-color) 32%, transparent);
     }
+
+    /* Inline prose link: a faint underline that firms up on hover or focus. */
+    .ink-link {
+        color: var(--foreground-color);
+        text-decoration-line: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 4px;
+        text-decoration-color: color-mix(in srgb, var(--foreground-color) 28%, transparent);
+        transition: text-decoration-color 150ms ease;
+        outline: none;
+    }
+    .ink-link:hover,
+    .ink-link:focus-visible {
+        text-decoration-color: currentColor;
+    }
+    .ink-link:focus-visible {
+        outline: 1px solid color-mix(in srgb, var(--foreground-color) 28%, transparent);
+        outline-offset: 3px;
+        border-radius: 2px;
+    }
 }

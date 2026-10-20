@@ -61,7 +61,10 @@ const fontPlayfairDisplay = Playfair_Display({
 });
 
 const fontGeistSans = localFont({
-    src: "./fonts/geist-sans-latin-400-normal.woff2",
+    src: [
+        { path: "./fonts/geist-sans-latin-400-normal.woff2", weight: "400" },
+        { path: "./fonts/geist-sans-latin-500-normal.woff2", weight: "500" },
+    ],
     variable: "--font-geist-sans",
 });
 
