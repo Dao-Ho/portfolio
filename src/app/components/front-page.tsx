@@ -17,9 +17,9 @@ const UNDERLINE =
 
 const QuoteLines = () => (
     <>
-        because if we don&apos;t,
+        in an ocean of gluttony,
         <br />
-        who will?
+        taste wisely.
         <span
             aria-hidden="true"
             className="ml-1 inline-block h-[1em] w-[0.55em] translate-y-[0.15em] animate-blink bg-foreground motion-reduce:animate-none"
