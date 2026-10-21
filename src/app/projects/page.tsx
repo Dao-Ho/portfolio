@@ -18,7 +18,7 @@ const WHEEL_KICK = 0.012; // radians per second added per pixel scrolled
 const WHEEL_FRICTION = 2.2; // how quickly a flick spins down
 // On arrival the ring is already spinning fast and winds down to the drift, the same way a scroll flick does,
 // so the first thing you see is that the wheel spins.
-const INTRO_SPIN = 3.2; // radians per second
+const INTRO_SPIN = 6.5; // radians per second
 
 export default function ProjectsRoute() {
     const { isLight, isMobile, toggleTheme } = useGlobal();
