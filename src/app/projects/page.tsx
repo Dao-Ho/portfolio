@@ -16,6 +16,9 @@ const SPIN = 0.035; // radians per second
 const TILT = (-14 * Math.PI) / 180; // the ring leans so it reads as a loop seen at an angle
 const WHEEL_KICK = 0.012; // radians per second added per pixel scrolled
 const WHEEL_FRICTION = 2.2; // how quickly a flick spins down
+// On arrival the ring is already spinning fast and winds down to the drift, the same way a scroll flick does,
+// so the first thing you see is that the wheel spins.
+const INTRO_SPIN = 3.2; // radians per second
 
 export default function ProjectsRoute() {
     const { isLight, isMobile, toggleTheme } = useGlobal();
@@ -51,7 +54,7 @@ function DesktopRing() {
         const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         let angle = 0;
         let speed = SPIN;
-        let flick = 0;
+        let flick = still ? 0 : INTRO_SPIN;
         let last = performance.now();
         let raf = 0;
         const count = projects.length * LAPS;
