@@ -170,6 +170,7 @@ function Story({ blocks, still }: { blocks: StoryBlock[]; still: boolean }) {
 }
 
 const HOVER_INTENT_MS = 150;
+const PEEK_MS = 700;
 
 /** A captioned still, framed like a small widget: the image, then a short title and one line under it. */
 function ShotCard({ shot, sizes }: { shot: Shot; sizes: string }) {
@@ -206,11 +207,42 @@ function Gallery({ title, shots, start = 0 }: { title?: string; shots: Shot[]; s
     const cancelHover = () => clearTimeout(intent.current);
     useEffect(() => () => clearTimeout(intent.current), []);
 
+    // The first time the row scrolls into view, the next panel nudges open and back, hinting that the slivers move.
+    const row = useRef<HTMLDivElement>(null);
+    const [peek, setPeek] = useState<number | null>(null);
+    useEffect(() => {
+        const el = row.current;
+        if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        let timer: ReturnType<typeof setTimeout>;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) return;
+                observer.disconnect();
+                timer = setTimeout(() => {
+                    setPeek((start + 1) % shots.length);
+                    timer = setTimeout(() => setPeek(null), PEEK_MS);
+                }, 400);
+            },
+            { threshold: 0.6 }
+        );
+        observer.observe(el);
+        return () => {
+            observer.disconnect();
+            clearTimeout(timer);
+        };
+    }, [start, shots.length]);
+
     return (
         <section aria-label={title} className="my-12 flex flex-col gap-4">
-            {title && <span className={`font-geistMono text-[13px] ${MUTED}`}>{title.toLowerCase()}</span>}
+            <div className="flex items-baseline justify-between font-geistMono text-[13px]">
+                {title && <span className={MUTED}>{title.toLowerCase()}</span>}
+                <span className={`hidden tabular-nums lg:inline ${MUTED}`}>
+                    {active + 1} / {shots.length}
+                </span>
+            </div>
 
-            <div className="hidden h-[26rem] gap-2 lg:flex">
+            {/* Hovering the row lifts every sliver a little, so the whole strip reads as interactive. */}
+            <div ref={row} className="group/row hidden h-[26rem] gap-2 lg:flex">
                 {shots.map((shot, i) => {
                     const open = i === active;
                     return (
@@ -227,7 +259,7 @@ function Gallery({ title, shots, start = 0 }: { title?: string; shots: Shot[]; s
                                 setActive(i);
                             }}
                             className={`group relative h-full min-w-0 overflow-hidden rounded-[10px] bg-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--foreground-color)_8%,transparent)] outline-none transition-[flex-grow] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] focus-visible:ring-1 focus-visible:ring-foreground motion-reduce:transition-none ${
-                                open ? "grow-[8]" : "grow"
+                                open ? "grow-[8]" : i === peek ? "grow-[2.2]" : "grow"
                             }`}
                             style={{ flexBasis: 0 }}
                         >
@@ -237,7 +269,9 @@ function Gallery({ title, shots, start = 0 }: { title?: string; shots: Shot[]; s
                                 fill
                                 sizes="(min-width: 1024px) 48rem, 1px"
                                 className={`object-cover object-[50%_35%] transition-[filter,opacity] duration-500 motion-reduce:transition-none ${
-                                    open ? "" : "opacity-30 grayscale"
+                                    open
+                                        ? ""
+                                        : "opacity-30 grayscale group-hover/row:opacity-45 group-hover:!opacity-70"
                                 }`}
                             />
                             <span
