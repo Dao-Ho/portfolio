@@ -64,7 +64,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
                             fill
                             priority
                             sizes="100vw"
-                            className="object-cover object-[78%_center]"
+                            className="object-cover object-[78%_top]"
                         />
                         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(to_bottom,transparent,var(--background-color))]" />
                     </div>

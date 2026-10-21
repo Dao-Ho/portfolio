@@ -62,7 +62,110 @@ export const projects: Project[] = [
         tech: ["Next.js", "TypeScript", "Go"],
         year: "Spring 2026",
         link: "https://github.com/GenerateNU/selfserve",
-        thumb: "/projects/selfserve/selfserve-thumb.webp",
+        thumb: "/projects/selfserve/selfserve-preview.webp",
+        page: {
+            tagline: "Jira for hotel operations.",
+            about: [
+                { text: "SelfServe", href: "https://www.selfserve.tech/" },
+                " is a VC-backed startup that already had a client-facing app working with hotels. They came to ",
+                { text: "Generate Product Development", href: "https://generatenu.com/" },
+                " to build the hotel side from 0 to 1, an MVP that streamlines day-to-day operations for hotel staff. As a technical lead at Generate, I led the team of 6 engineers.",
+            ],
+            poster: "/projects/selfserve/selfserve-hero.webp",
+            cover: "/projects/selfserve/selfserve-header.webp",
+            share: "/projects/selfserve/selfserve-og.png",
+            story: [
+                { kind: "heading", text: "One board for the entire property" },
+                {
+                    kind: "text",
+                    parts: [
+                        "Every task in the hotel lives on one board, organized by department or by team member. New work can be written in plain language; the assistant interprets it and fills in the details.",
+                    ],
+                },
+                {
+                    kind: "text",
+                    parts: [
+                        "Views that follow you. Inspired by Linear, saved views keep each person's sorting and filters, stay the same across pages, and are there the next time they log in.",
+                    ],
+                },
+                {
+                    kind: "gallery",
+                    title: "Web",
+                    shots: [
+                        {
+                            src: "/projects/selfserve/board.webp",
+                            frame: "/projects/selfserve/board.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "The SelfServe home board with columns for Food & Beverage, Maintenance, Room Flipping and Front Desk, and a Restock bar inventory card lifted out",
+                            title: "Home",
+                            caption:
+                                "Every open task by department, with the deadline, assignees and location on each card.",
+                        },
+                        {
+                            src: "/projects/selfserve/ai-web.webp",
+                            frame: "/projects/selfserve/ai-web.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "A request to the assistant to restock bar inventory in the lobby by 2pm for Rohan and Jolin, next to the task it filled in",
+                            title: "Task creation",
+                            caption:
+                                "Describe a task in a sentence, then review the assignees, deadline, priority and department before saving.",
+                        },
+                        {
+                            src: "/projects/selfserve/rooms-web.webp",
+                            frame: "/projects/selfserve/rooms-web.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "The Rooms page listing Room 100 with tags like High Priority, Needs Cleaning and Late Checkout, and a side panel of its open guest issues",
+                            title: "Rooms",
+                            caption: "Each room's status at a glance, with open issues to resolve from the side panel.",
+                        },
+                    ],
+                },
+                { kind: "heading", text: "On the floor" },
+                {
+                    kind: "text",
+                    parts: [
+                        "Staff carry the same tasks on their phones. They pick up unassigned work, mark it done, and look up a room or a guest's needs.",
+                    ],
+                },
+                {
+                    kind: "gallery",
+                    title: "Mobile",
+                    shots: [
+                        {
+                            src: "/projects/selfserve/tasks-mobile.webp",
+                            frame: "/projects/selfserve/tasks-mobile.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "Three phones showing My Tasks, the Clean Up Spill task with a Mark as Done button, and a Task completed toast",
+                            title: "Tasks",
+                            caption: "My tasks and unassigned tasks, each a tap away from done.",
+                        },
+                        {
+                            src: "/projects/selfserve/ai-mobile.webp",
+                            frame: "/projects/selfserve/ai-mobile.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "Task creation on a phone, where a request for high priority steam towels on floor 4 becomes a suggested task with a deadline, recurrence and department",
+                            title: "Task creation",
+                            caption: "The same assistant on mobile, with the suggested task to edit before confirming.",
+                        },
+                        {
+                            src: "/projects/selfserve/rooms-mobile.webp",
+                            frame: "/projects/selfserve/rooms-mobile.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "Phones showing the rooms on Floor 1, Room 100's issues and tasks, and Lucy's guest profile with her Suite 401 booking and needs like wheelchair access and a peanut allergy",
+                            title: "Rooms and guests",
+                            caption:
+                                "Rooms by floor, and guest profiles with bookings and needs like accessibility or allergies.",
+                        },
+                    ],
+                },
+            ],
+        },
     },
     {
         index: "02",
