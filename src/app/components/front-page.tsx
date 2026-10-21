@@ -56,7 +56,7 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
     return (
         <Container
             as="header"
-            className="relative flex min-h-[100svh] flex-col justify-end gap-10 bg-transparent pb-32 pt-32 text-foreground"
+            className="relative flex h-full flex-col justify-end gap-10 bg-transparent pb-32 pt-32 text-foreground [@media(max-height:720px)]:gap-6 [@media(max-height:720px)]:pb-12 [@media(max-height:720px)]:pt-20"
         >
             {stats.koi > 0 && (
                 <div
@@ -136,7 +136,7 @@ const mobilePage = () => {
         // Top padding clears the floating nav pill.
         <Container
             as="header"
-            className="flex min-h-[100svh] flex-col justify-end gap-8 bg-transparent pb-12 pt-28 font-geistMono text-foreground"
+            className="flex h-full flex-col justify-end gap-8 bg-transparent pb-12 pt-28 font-geistMono text-foreground [@media(max-height:640px)]:gap-5 [@media(max-height:640px)]:pb-8"
         >
             <motion.blockquote
                 data-koi-avoid
