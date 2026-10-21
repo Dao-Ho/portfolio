@@ -8,7 +8,7 @@ import { useGlobal } from "../../../context-providers/global-provider";
 import MobileNav from "../../components/mobile-nav";
 import TopNav from "../../components/top-nav";
 import InlineLink from "../../components/inline-link";
-import { projects, type Shot, type StoryBlock } from "../../data/projects";
+import { projects, type Prose, type Shot, type StoryBlock } from "../../data/projects";
 
 /** One centred frame holds everything, so text and media share both edges. */
 const FRAME = "mx-auto w-full max-w-[56rem]";
@@ -85,7 +85,9 @@ export default function ProjectPage({ slug }: { slug: string }) {
                     </Link>
                     <h1 className="mt-10 text-[28px] font-medium leading-[1.2] tracking-[-0.015em]">{project.name}</h1>
                     <p className={`mt-1 text-[16px] ${MUTED}`}>{page.tagline}</p>
-                    <p className={`${BODY} mt-8`}>{page.about}</p>
+                    <p className={`${BODY} mt-8`}>
+                        <Parts parts={page.about} />
+                    </p>
                     {project.link && (
                         <p className="mt-4 text-[14px]">
                             <InlineLink href={project.link}>
@@ -172,19 +174,23 @@ function Story({ blocks, still }: { blocks: StoryBlock[]; still: boolean }) {
                         key={i}
                         className={`${BODY} text-[color-mix(in_srgb,var(--foreground-color)_72%,transparent)] [p+&]:mt-5`}
                     >
-                        {block.parts.map((part, j) =>
-                            typeof part === "string" ? (
-                                part
-                            ) : (
-                                <InlineLink key={j} href={part.href}>
-                                    {part.text}
-                                </InlineLink>
-                            )
-                        )}
+                        <Parts parts={block.parts} />
                     </p>
                 );
             })}
         </div>
+    );
+}
+
+function Parts({ parts }: { parts: Prose }) {
+    return parts.map((part, i) =>
+        typeof part === "string" ? (
+            part
+        ) : (
+            <InlineLink key={i} href={part.href}>
+                {part.text}
+            </InlineLink>
+        )
     );
 }
 

@@ -14,7 +14,7 @@ export type Project = {
     page?: {
         tagline: string;
         /** The write-up under the tagline, so the page doesn't repeat it. */
-        about: string;
+        about: Prose;
         /** Omit for a project without a demo; the poster then stands alone as the lead image. */
         video?: string;
         poster: string;
@@ -27,10 +27,13 @@ export type Project = {
     };
 };
 
+/** Plain text with inline links. */
+export type Prose = (string | { text: string; href: string })[];
+
 /** A paragraph is plain text with inline links; a clip is a short muted video. */
 export type StoryBlock =
     | { kind: "heading"; text: string }
-    | { kind: "text"; parts: (string | { text: string; href: string })[] }
+    | { kind: "text"; parts: Prose }
     | { kind: "clip"; src: string; poster?: string; label: string }
     | { kind: "image"; src: string; alt: string; width: number; height: number }
     /** `start` is the panel open before anyone interacts; lead with the strongest shot. */
@@ -72,7 +75,9 @@ export const projects: Project[] = [
         thumb: "/projects/dynami/dynami-cover.webp",
         page: {
             tagline: "The Dynamic Island, for developers.",
-            about: "Dynami lives in your Mac's notch and keeps the things that need your attention within reach while you work, from agent permission prompts and pull request activity to the next meeting on your calendar.",
+            about: [
+                "Dynami lives in your Mac's notch and keeps the things that need your attention within reach while you work, from agent permission prompts and pull request activity to the next meeting on your calendar.",
+            ],
             video: "/projects/dynami/dynami-demo.mp4",
             poster: "/projects/dynami/dynami-demo-poster.webp",
             cover: "/projects/dynami/dynami-header.webp",
@@ -215,7 +220,13 @@ export const projects: Project[] = [
         thumb: "/projects/vetruly/vetruly-preview.webp",
         page: {
             tagline: "Trusted vet care for recovering and medically complex pets.",
-            about: "Vetruly helps owners of pets recovering from surgery or living with complex conditions find vetted providers for post-op care, integrative care, specialty boarding and drop-in visits. Katlyn brought the idea to Generate Product Development, and we built it from 0 to 1 as an MVP. I led the team of 5 engineers, and it's now a deployed product with pet owners and licensed providers using it.",
+            about: [
+                "Vetruly helps owners of pets recovering from surgery or living with complex conditions find vetted providers for post-op care, integrative care, specialty boarding and drop-in visits. ",
+                { text: "Katlyn", href: "https://www.vetruly.com/about" },
+                " brought the idea to ",
+                { text: "Generate Product Development", href: "https://generatenu.com/" },
+                ", and we built it from 0 to 1 as an MVP. I led the team of 5 engineers, and it's now a deployed product with pet owners and licensed providers using it.",
+            ],
             poster: "/projects/vetruly/vetruly-hero.webp",
             cover: "/projects/vetruly/vetruly-header.webp",
             share: "/projects/vetruly/vetruly-og.png",
