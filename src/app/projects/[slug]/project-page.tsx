@@ -13,7 +13,7 @@ import { projects, type Prose, type Shot, type StoryBlock } from "../../data/pro
 /** One centred frame holds everything, so text and media share both edges. */
 const FRAME = "mx-auto w-full max-w-[56rem]";
 const BODY = "text-[16px] leading-[1.7] [text-wrap:pretty]";
-const MUTED = "text-[color-mix(in_srgb,var(--foreground-color)_50%,transparent)]";
+const MUTED = "text-[var(--muted-color)]";
 const MEDIA =
     "block aspect-video h-auto w-full rounded-[6px] bg-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--foreground-color)_8%,transparent)]";
 

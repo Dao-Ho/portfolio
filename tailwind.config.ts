@@ -23,7 +23,7 @@ module.exports = {
             "light-foreground": "#262523",
             "light-background": "#f5f4f1",
             "dark-foreground": "#fff7f0",
-            "dark-background": "#1a1921",
+            "dark-background": "#1a1917",
             "text-hover": "#3c7cff",
             background: "var(--background-color)",
             foreground: "var(--foreground-color)",
@@ -66,13 +66,16 @@ module.exports = {
         require("tailwindcss-animate"),
         function ({ addBase, theme }: { addBase: any; theme: any }) {
             addBase({
+                // Dark text on a light page needs a heavier mix to read as clearly (both land near 4.5:1).
                 ":root": {
                     "--background-color": theme("colors.light-background"),
                     "--foreground-color": theme("colors.light-foreground"),
+                    "--muted-color": "color-mix(in srgb, var(--foreground-color) 64%, transparent)",
                 },
                 ".dark": {
                     "--background-color": theme("colors.dark-background"),
                     "--foreground-color": theme("colors.dark-foreground"),
+                    "--muted-color": "color-mix(in srgb, var(--foreground-color) 50%, transparent)",
                 },
             });
         },
