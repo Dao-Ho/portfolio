@@ -447,13 +447,7 @@ export const projects: Project[] = [
                 {
                     kind: "text",
                     parts: [
-                        "Sign-in runs on Supabase Auth. I kept the session and access token in a React context, so any screen could call the Go backend as the signed-in investor, and Supabase renewed expired tokens on its own.",
-                    ],
-                },
-                {
-                    kind: "text",
-                    parts: [
-                        "The home screen opens on the investor's portfolio value and their investments. Search starts from a bar on Explore, goes to a Go endpoint that queries projects, and lists the results on their own screen. Along the way I wrote the endpoints for investing in a project and loading an investor's profile, and wrapped every API route in a typed function the frontend could call.",
+                        "I built sign-in, the home screen and search, from the screens down to the backend. Home is the first thing investors see, with their portfolio value and how each investment is doing. Search is how they find new projects from the Explore tab.",
                     ],
                 },
                 {
