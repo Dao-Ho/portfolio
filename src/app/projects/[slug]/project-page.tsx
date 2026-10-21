@@ -86,22 +86,41 @@ export default function ProjectPage({ slug }: { slug: string }) {
                     <h1 className="mt-10 text-[28px] font-medium leading-[1.2] tracking-[-0.015em]">{project.name}</h1>
                     <p className={`mt-1 text-[16px] ${MUTED}`}>{page.tagline}</p>
                     <p className={`${BODY} mt-8`}>{page.about}</p>
+                    {project.link && (
+                        <p className="mt-4 text-[14px]">
+                            <InlineLink href={project.link}>
+                                {new URL(project.link).hostname.replace(/^www\./, "")}
+                            </InlineLink>
+                        </p>
+                    )}
                 </header>
 
                 <div className="mt-16">
-                    {/* Muted autoplay loops like a gif; with reduced motion it waits for the viewer to press play. */}
-                    <video
-                        src={page.video}
-                        poster={page.poster}
-                        autoPlay={!still}
-                        controls={still}
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        aria-label={`${project.name} demo`}
-                        className={MEDIA}
-                    />
+                    {page.video ? (
+                        // Muted autoplay loops like a gif; with reduced motion it waits for the viewer to press play.
+                        <video
+                            src={page.video}
+                            poster={page.poster}
+                            autoPlay={!still}
+                            controls={still}
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata"
+                            aria-label={`${project.name} demo`}
+                            className={MEDIA}
+                        />
+                    ) : (
+                        <Image
+                            src={page.poster}
+                            alt={`${project.name}, ${page.tagline}`}
+                            width={1920}
+                            height={1080}
+                            priority
+                            sizes="(min-width: 1024px) 56rem, 100vw"
+                            className={MEDIA}
+                        />
+                    )}
                 </div>
 
                 {page.story && <Story blocks={page.story} still={still} />}
