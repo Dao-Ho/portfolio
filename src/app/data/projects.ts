@@ -215,7 +215,7 @@ export const projects: Project[] = [
         thumb: "/projects/vetruly/vetruly-preview.webp",
         page: {
             tagline: "Trusted vet care for recovering and medically complex pets.",
-            about: "Vetruly helps owners of pets recovering from surgery or living with complex conditions find vetted providers for post-op care, integrative care, specialty boarding and drop-in visits. I led a team of five engineers taking it from concept to production.",
+            about: "Vetruly helps owners of pets recovering from surgery or living with complex conditions find vetted providers for post-op care, integrative care, specialty boarding and drop-in visits. Katlyn brought the idea to Generate Product Development, and we built it from 0 to 1 as an MVP. I led the team of 5 engineers, and it's now a deployed product with pet owners and licensed providers using it.",
             poster: "/projects/vetruly/vetruly-hero.webp",
             cover: "/projects/vetruly/vetruly-header.webp",
             share: "/projects/vetruly/vetruly-og.png",
