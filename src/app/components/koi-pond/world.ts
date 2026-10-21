@@ -67,6 +67,10 @@ export interface Koi {
     nextSurface: number;
     /** When a koi swimming near the surface next sends a small ring off its tail. */
     nextWake: number;
+    /** 1 just after food hits the water nearby, fading: the koi sprints and turns harder while it lasts. */
+    rush: number;
+    /** The pellet this koi is going for. It sticks with it so a burst of clicks doesn't yank it around. */
+    food: Pellet | null;
     /** Tail-beat intensity: koi swim in bursts of beats, then coast with the tail still. */
     beat: number;
     burstUntil: number;
@@ -82,6 +86,19 @@ export interface Koi {
 }
 
 export interface Pellet {
+    x: number;
+    y: number;
+    born: number;
+    /** Seconds after `born` that it hits the water; until then it's falling and koi can't eat it. */
+    landAt: number;
+    landed: boolean;
+    /** Slow drift once it's floating. */
+    vx: number;
+    vy: number;
+}
+
+/** The moment a koi takes a pellet, drawn as a brief flash where it happened. */
+export interface Bite {
     x: number;
     y: number;
     born: number;
@@ -120,7 +137,13 @@ function repel(boxes: Box[], x: number, y: number, margin: number, out: { x: num
     return out;
 }
 
-const PELLET_LIFE = 14;
+export const PELLET_LIFE = 14;
+export const BITE_LIFE = 0.45;
+const RUSH_RANGE = 650;
+const FEED_CALM = 2;
+/** Uneaten pellets start to sink this many seconds in, fading out by PELLET_LIFE. */
+export const PELLET_SINK = 9;
+const THROW_RADIUS = 34;
 const STARTLE_SPEED = 1100;
 const MAX_PELLETS = 24;
 
@@ -130,6 +153,9 @@ export class World {
     time = 0;
     koi: Koi[] = [];
     pellets: Pellet[] = [];
+    bites: Bite[] = [];
+    /** Moving the mouse to throw food isn't a threat, so swipes don't startle koi for a moment after a throw. */
+    private lastFeed = -Infinity;
     ripples: Ripple[] = [];
     pointer = { x: 0, y: 0, speed: 0, active: false };
     /** Page content the koi steer around, in canvas space. */
@@ -182,6 +208,8 @@ export class World {
                 nextSurface: rand(3, 14),
                 nextWake: rand(0, 2),
                 beat: 0,
+                rush: 0,
+                food: null,
                 burstUntil: 0,
                 nextBurst: rand(0, 3),
                 finPhase: rand(0, TAU),
@@ -193,12 +221,26 @@ export class World {
         }
     }
 
+    /** A loose handful thrown at (x, y): each pellet lands a beat apart with its own splash, then drifts and sinks. */
     feed(x: number, y: number) {
-        this.ripples.push({ x, y, born: this.time, strength: 1 });
-        for (let k = 0; k < 4; k++) {
-            this.pellets.push({ x: x + rand(-20, 20), y: y + rand(-14, 14), born: this.time });
+        this.lastFeed = this.time;
+        this.ripples.push({ x, y, born: this.time, strength: 0.35 });
+        // A full pond takes no more food, rather than dropping old pellets out from under koi already going for them.
+        const count = Math.min(5 + Math.floor(Math.random() * 3), MAX_PELLETS - this.pellets.length);
+        for (let k = 0; k < count; k++) {
+            const a = rand(0, TAU);
+            const r = Math.sqrt(Math.random()) * THROW_RADIUS;
+            const drift = rand(2, 6);
+            this.pellets.push({
+                x: x + Math.cos(a) * r * 1.3,
+                y: y + Math.sin(a) * r,
+                born: this.time,
+                landAt: rand(0.15, 0.45),
+                landed: false,
+                vx: Math.cos(a) * drift,
+                vy: Math.sin(a) * drift,
+            });
         }
-        if (this.pellets.length > MAX_PELLETS) this.pellets.splice(0, this.pellets.length - MAX_PELLETS);
     }
 
     step(dt: number) {
@@ -207,7 +249,25 @@ export class World {
         for (const k of this.koi) this.stepKoi(k, dt);
         const t = this.time;
         this.pellets = this.pellets.filter((p) => t - p.born < PELLET_LIFE);
+        for (const p of this.pellets) {
+            if (!p.landed) {
+                if (t - p.born < p.landAt) continue;
+                p.landed = true;
+                this.ripples.push({ x: p.x, y: p.y, born: t, strength: 0.1 });
+                // The splash is what koi react to: every koi in range turns and bolts for it at once.
+                for (const k of this.koi) {
+                    if (Math.hypot(k.nodes[0] - p.x, k.nodes[1] - p.y) < RUSH_RANGE) k.rush = 1;
+                }
+                continue;
+            }
+            const damp = Math.exp(-dt * 0.2);
+            p.vx *= damp;
+            p.vy *= damp;
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+        }
         this.ripples = this.ripples.filter((r) => t - r.born < rippleLife(r));
+        this.bites = this.bites.filter((b) => t - b.born < BITE_LIFE);
     }
 
     private stepKoi(k: Koi, dt: number) {
@@ -224,17 +284,20 @@ export class World {
         dx += Math.cos(k.heading + k.wander) * 0.6;
         dy += Math.sin(k.heading + k.wander) * 0.6;
 
+        const food = this.pickFood(k, hx, hy, Math.max(L * 1.6 + 220, k.rush > 0 ? RUSH_RANGE : 0));
+
         // A fast swipe close by spooks a koi: it bolts away, then calms down over a couple of seconds.
+        // A koi already going for food ignores it; feeding beats fear, and clicking to feed moves the mouse fast.
         const pointerD = Math.hypot(pointer.x - hx, pointer.y - hy);
-        if (pointer.active && pointer.speed > STARTLE_SPEED && pointerD < L * 0.9) {
+        const feeding = time - this.lastFeed < FEED_CALM;
+        if (!food && !feeding && pointer.active && pointer.speed > STARTLE_SPEED && pointerD < L * 0.9) {
             k.startle = 1;
             k.fleeX = pointer.x;
             k.fleeY = pointer.y;
         }
         k.startle = Math.max(0, k.startle - dt * 0.6);
-        const fleeing = k.startle > 0.3;
+        const fleeing = k.startle > 0.3 && !food;
 
-        const food = fleeing ? null : this.nearestPellet(hx, hy, L * 1.6 + 220);
         let chasing = false;
         let curious = false;
         let closing = 0;
@@ -276,7 +339,8 @@ export class World {
                 const ox = hx - other.nodes[n * 2];
                 const oy = hy - other.nodes[n * 2 + 1];
                 const d = Math.hypot(ox, oy);
-                const range = (L + other.length) * 0.28;
+                // Koi going for food jostle in close, so personal space shrinks and never outweighs the pull.
+                const range = (L + other.length) * (food ? 0.12 : 0.28);
                 if (d < range && d > 1e-3) {
                     const w = (1 - d / range) * 2.4;
                     dx += (ox / d) * w;
@@ -308,7 +372,9 @@ export class World {
 
         const desired = Math.atan2(dy, dx);
         // Long bodies can't pivot on the spot: the turning circle grows with length.
-        const agility = Math.min(fleeing ? 3 : chasing ? 1.9 + closing : curious ? 1.2 : 0.7, (k.speed / L) * 4);
+        const agility =
+            (1 + k.rush * 0.6) *
+            Math.min(fleeing ? 3 : chasing ? 1.9 + closing : curious ? 1.2 : 0.7, (k.speed / L) * 4);
         const maxTurn = agility * dt;
         const turned = clamp(angleDiff(k.heading, desired), -maxTurn, maxTurn);
         k.heading += turned;
@@ -328,15 +394,18 @@ export class World {
             this.ripples.push({ x: nodes[tail], y: nodes[tail + 1], born: time, strength: 0.25 + 0.2 * k.depth });
             k.nextWake = time + rand(0.8, 1.6) / k.beat;
         }
+        k.rush = Math.max(0, k.rush - dt * 0.7);
         const cruise = 12 + L * 0.05;
-        const target = fleeing
-            ? cruise * 3.2
-            : chasing
-              ? cruise * (1.9 + closing)
-              : bursting
-                ? cruise * (curious ? 1.6 : 1.35)
-                : cruise * 0.45;
-        k.speed += (target - k.speed) * Math.min(1, dt * (bursting ? 1.6 : 0.35));
+        const target =
+            (1 + k.rush * 0.8) *
+            (fleeing
+                ? cruise * 3.2
+                : chasing
+                  ? cruise * (1.9 + closing)
+                  : bursting
+                    ? cruise * (curious ? 1.6 : 1.35)
+                    : cruise * 0.45);
+        k.speed += (target - k.speed) * Math.min(1, dt * (bursting ? 1.6 + k.rush * 3 : 0.35));
         k.phase += dt * (0.6 + k.beat * (2.2 + k.speed / 11));
         k.finPhase += dt * 2.4;
         k.gulp += ((chasing && closing > 0.55 ? 1 : 0) - k.gulp) * Math.min(1, dt * 6);
@@ -366,9 +435,12 @@ export class World {
 
         const mouthR = L * 0.08 + 6;
         const before = this.pellets.length;
-        this.pellets = this.pellets.filter((p) => (p.x - nodes[0]) ** 2 + (p.y - nodes[1]) ** 2 > mouthR * mouthR);
+        this.pellets = this.pellets.filter(
+            (p) => !p.landed || (p.x - nodes[0]) ** 2 + (p.y - nodes[1]) ** 2 > mouthR * mouthR
+        );
         if (this.pellets.length < before) {
-            this.ripples.push({ x: nodes[0], y: nodes[1], born: time, strength: 0.45 });
+            this.ripples.push({ x: nodes[0], y: nodes[1], born: time, strength: 0.6 });
+            this.bites.push({ x: nodes[0], y: nodes[1], born: time });
             k.nextSurface = time + rand(6, 16);
         } else if (time > k.nextSurface) {
             this.ripples.push({ x: nodes[0], y: nodes[1], born: time, strength: 0.3 });
@@ -376,10 +448,22 @@ export class World {
         }
     }
 
+    /** Keep the current target while it lasts; only switch for a pellet less than half as far away. */
+    private pickFood(k: Koi, x: number, y: number, range: number) {
+        if (k.food && !this.pellets.includes(k.food)) k.food = null;
+        const nearest = this.nearestPellet(x, y, range);
+        if (!k.food) return (k.food = nearest);
+        const current = Math.hypot(k.food.x - x, k.food.y - y);
+        if (current > range * 1.3) k.food = nearest;
+        else if (nearest && Math.hypot(nearest.x - x, nearest.y - y) < current * 0.5) k.food = nearest;
+        return k.food;
+    }
+
     private nearestPellet(x: number, y: number, range: number) {
         let best: Pellet | null = null;
         let bestD = range * range;
         for (const p of this.pellets) {
+            if (!p.landed) continue;
             const d = (p.x - x) ** 2 + (p.y - y) ** 2;
             if (d < bestD) {
                 bestD = d;

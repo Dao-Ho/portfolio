@@ -1,5 +1,18 @@
 import { bodyHalfWidth, classify, FLAG_BARBEL, FLAG_EYE, FLAG_FIN, type ShapeHit } from "./shape";
-import { clamp, hash3, KOI_NODES, RIPPLE_SPEED, rippleLife, smoothstep, type Box, type Koi, type World } from "./world";
+import {
+    clamp,
+    hash3,
+    BITE_LIFE,
+    KOI_NODES,
+    PELLET_LIFE,
+    PELLET_SINK,
+    RIPPLE_SPEED,
+    rippleLife,
+    smoothstep,
+    type Box,
+    type Koi,
+    type World,
+} from "./world";
 
 type Rgb = [number, number, number];
 
@@ -39,7 +52,7 @@ const DARK: Palette = {
     water: [255, 247, 240],
     shadow: [0, 0, 0],
     shadowAlpha: 0.55,
-    pellet: [196, 140, 92],
+    pellet: [236, 170, 92],
     alpha: 0.8,
     depthFloor: 0.4,
     tile: [0.68, 0.98],
@@ -65,7 +78,7 @@ const LIGHT: Palette = {
     water: [38, 37, 35],
     shadow: [60, 58, 56],
     shadowAlpha: 0.2,
-    pellet: [138, 94, 58],
+    pellet: [176, 108, 40],
     alpha: 0.9,
     depthFloor: 0.55,
     tile: [0.78, 0.55],
@@ -281,6 +294,7 @@ export class KoiRenderer {
         this.drawRipples(world);
         this.drawPellets(world);
         this.drawCells();
+        this.drawBites(world);
         ctx.globalAlpha = 1;
     }
 
@@ -675,13 +689,36 @@ export class KoiRenderer {
         }
     }
 
+    /** A bite flashes * over the koi's mouth, settling to + then a dot as the splash takes over. */
+    private drawBites(world: World) {
+        const { palette } = this;
+        for (const b of world.bites) {
+            const i = this.cellIndex(b.x, b.y);
+            if (i < 0) continue;
+            const t = (world.time - b.born) / BITE_LIFE;
+            const glyph = t < 0.35 ? "*" : t < 0.7 ? "+" : ".";
+            this.glyphAt(i, glyph, palette.pellet, Math.min(1, palette.alpha * 1.6) * (1 - t * t));
+        }
+    }
+
+    /** Pellets fall in (' then .), land as o with a splash, bob while floating, then dim to . as they sink. */
     private drawPellets(world: World) {
-        const { cellGlyph, palette } = this;
+        const { cellGlyph, palette, ch } = this;
         for (const p of world.pellets) {
+            const age = world.time - p.born;
+            if (!p.landed) {
+                const fall = age / p.landAt;
+                // Drawn a little above where it will land, closing in as it drops.
+                const i = this.cellIndex(p.x, p.y - (1 - fall) * ch * 1.5);
+                if (i < 0 || cellGlyph[i]) continue;
+                this.glyphAt(i, fall < 0.5 ? "'" : ".", palette.pellet, palette.alpha * (0.5 + 0.4 * fall));
+                continue;
+            }
             const i = this.cellIndex(p.x, p.y);
             if (i < 0 || cellGlyph[i]) continue;
-            const bob = 0.75 + 0.25 * Math.sin((world.time - p.born) * 3 + p.x);
-            this.glyphAt(i, "o", palette.pellet, palette.alpha * bob);
+            const sink = smoothstep(PELLET_SINK, PELLET_LIFE, age);
+            const bob = 0.8 + 0.2 * Math.sin(age * 3 + p.x);
+            this.glyphAt(i, sink > 0.55 ? "." : "o", palette.pellet, palette.alpha * bob * (1 - 0.85 * sink));
         }
     }
 }

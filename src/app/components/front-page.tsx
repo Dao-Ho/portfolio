@@ -62,10 +62,18 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
                 <div
                     data-koi-avoid
                     aria-hidden="true"
-                    className="absolute right-6 top-8 font-geistMono text-[11px] leading-relaxed tabular-nums opacity-[0.32] lg:right-[20vw]"
+                    className="absolute right-6 top-8 font-geistMono text-[11px] leading-relaxed tabular-nums lg:right-[20vw]"
                 >
-                    <div>{stats.koi}</div>
-                    <div>{stats.pellets}</div>
+                    <div className="opacity-[0.32]">{stats.koi}</div>
+                    {/* The pellet count flashes each time it changes, tying a click or a bite to the number. */}
+                    <motion.div
+                        key={stats.pellets}
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 0.32 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                    >
+                        {stats.pellets}
+                    </motion.div>
                 </div>
             )}
             <motion.blockquote
