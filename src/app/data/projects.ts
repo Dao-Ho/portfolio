@@ -31,7 +31,22 @@ export type StoryBlock =
     | { kind: "heading"; text: string }
     | { kind: "text"; parts: (string | { text: string; href: string })[] }
     | { kind: "clip"; src: string; poster?: string; label: string }
-    | { kind: "image"; src: string; alt: string; width: number; height: number };
+    | { kind: "image"; src: string; alt: string; width: number; height: number }
+    /** `start` is the panel open before anyone interacts; lead with the strongest shot. */
+    | { kind: "gallery"; title?: string; shots: Shot[]; start?: number };
+
+/** A captioned still of the product, shown on its own or in a gallery grid. */
+export type Shot = {
+    /** Tight crop of the UI, for the swipeable cards on small screens. */
+    src: string;
+    /** The full 16:9 frame, for the accordion panels on desktop. */
+    frame: string;
+    alt: string;
+    title: string;
+    caption: string;
+    width: number;
+    height: number;
+};
 
 export const projects: Project[] = [
     {
@@ -111,15 +126,78 @@ export const projects: Project[] = [
                 {
                     kind: "text",
                     parts: [
-                        "Since then, Dynami has grown from a notification into a small workspace. Coding agents such as Claude pause to request permission before running commands, so that prompt now appears in the notch, where I can approve or deny it without leaving the editor. GitHub has a dedicated tab, Home holds my calendar and what's currently playing, and the demo above shows where the project stands today.",
+                        "Since then, Dynami has grown from a notification into a small workspace. Coding agents such as Claude pause to request permission before running commands, so that prompt now appears in the notch, where I can approve or deny it without leaving the editor. GitHub has a dedicated tab, and Home holds my calendar and what's currently playing.",
                     ],
                 },
                 {
-                    kind: "image",
-                    src: "/projects/dynami/dynami-cover.webp",
-                    alt: "Four Dynami views in the notch: an approved pull request, a Claude permission prompt, the GitHub tab, and the Home tab with music and calendar",
-                    width: 1280,
-                    height: 720,
+                    kind: "gallery",
+                    title: "In the notch",
+                    start: 2,
+                    shots: [
+                        {
+                            src: "/projects/dynami/notch-collapsed-crop.webp",
+                            frame: "/projects/dynami/notch-collapsed-frame.webp",
+                            width: 1160,
+                            height: 420,
+                            alt: "Dynami collapsed into a small pill around the MacBook notch, with a green dot on the left and a music waveform on the right",
+                            title: "At rest",
+                            caption:
+                                "A small pill around the notch. The green dot means a Claude session finished, and the waveform means music is playing.",
+                        },
+                        {
+                            src: "/projects/dynami/notch-pr-alert-crop.webp",
+                            frame: "/projects/dynami/notch-pr-alert-frame.webp",
+                            width: 1160,
+                            height: 420,
+                            alt: "An alert under the notch for pull request 58, feat: swipeable day slider with drift, approved by Sam Rivera",
+                            title: "PR alert",
+                            caption:
+                                "The same alert as the first version, now showing the reviewer and the outcome at a glance.",
+                        },
+                        {
+                            src: "/projects/dynami/notch-claude-prompt-crop.webp",
+                            frame: "/projects/dynami/notch-claude-prompt-frame.webp",
+                            width: 1160,
+                            height: 420,
+                            alt: "A permission prompt under the notch reading dynami wants to use Bash, git push origin feat/day-slider, with Deny and Allow buttons",
+                            title: "Permission prompt",
+                            caption: "Deny or Allow here answers Claude Code directly.",
+                        },
+                    ],
+                },
+                {
+                    kind: "gallery",
+                    title: "The panel",
+                    shots: [
+                        {
+                            src: "/projects/dynami/notch-home-tab-crop.webp",
+                            frame: "/projects/dynami/notch-home-tab-frame.webp",
+                            width: 1200,
+                            height: 550,
+                            alt: "The Dynami panel on the Home tab, with Glitter by 070 Shake playing next to a calendar showing Friday the 23rd",
+                            title: "Home",
+                            caption: "What's playing next to the calendar, with a day slider and a Today button.",
+                        },
+                        {
+                            src: "/projects/dynami/notch-github-tab-crop.webp",
+                            frame: "/projects/dynami/notch-github-tab-frame.webp",
+                            width: 1200,
+                            height: 550,
+                            alt: "The Dynami panel on the GitHub tab, listing pull request 58 approved, 61 with a review requested, and 55 with failing checks",
+                            title: "GitHub",
+                            caption:
+                                "My pull requests and review requests. The count turns red when something needs attention.",
+                        },
+                        {
+                            src: "/projects/dynami/notch-claude-tab-crop.webp",
+                            frame: "/projects/dynami/notch-claude-tab-frame.webp",
+                            width: 1200,
+                            height: 550,
+                            alt: "The Dynami panel on the Claude tab, listing the dynami session running git push and the portfolio session finished",
+                            title: "Agent",
+                            caption: "Live sessions and what each one is doing.",
+                        },
+                    ],
                 },
             ],
         },

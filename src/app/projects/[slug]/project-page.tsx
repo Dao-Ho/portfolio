@@ -8,7 +8,7 @@ import { useGlobal } from "../../../context-providers/global-provider";
 import MobileNav from "../../components/mobile-nav";
 import TopNav from "../../components/top-nav";
 import InlineLink from "../../components/inline-link";
-import { projects, type StoryBlock } from "../../data/projects";
+import { projects, type Shot, type StoryBlock } from "../../data/projects";
 
 /** One centred frame holds everything, so text and media share both edges. */
 const FRAME = "mx-auto w-full max-w-[56rem]";
@@ -125,6 +125,9 @@ function Story({ blocks, still }: { blocks: StoryBlock[]; still: boolean }) {
                         </h2>
                     );
                 }
+                if (block.kind === "gallery") {
+                    return <Gallery key={i} title={block.title} shots={block.shots} start={block.start} />;
+                }
                 if (block.kind === "image") {
                     return (
                         <Image
@@ -163,6 +166,116 @@ function Story({ blocks, still }: { blocks: StoryBlock[]; still: boolean }) {
                 );
             })}
         </div>
+    );
+}
+
+const HOVER_INTENT_MS = 150;
+
+/** A captioned still, framed like a small widget: the image, then a short title and one line under it. */
+function ShotCard({ shot, sizes }: { shot: Shot; sizes: string }) {
+    return (
+        <figure className="flex min-w-0 flex-col gap-3">
+            <Image
+                src={shot.src}
+                alt={shot.alt}
+                width={shot.width}
+                height={shot.height}
+                sizes={sizes}
+                className="h-auto w-full rounded-[10px] bg-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--foreground-color)_8%,transparent)]"
+            />
+            <figcaption className="text-[14px] leading-[1.55] [text-wrap:pretty]">
+                <span className="font-medium">{shot.title}.</span> <span className={MUTED}>{shot.caption}</span>
+            </figcaption>
+        </figure>
+    );
+}
+
+/**
+ * A group of shots. On desktop it's an accordion: panels share one row, the active one opens wide in colour and the
+ * rest fold into grey slivers. On smaller screens it's a row of cards that scrolls sideways.
+ */
+function Gallery({ title, shots, start = 0 }: { title?: string; shots: Shot[]; start?: number }) {
+    const [active, setActive] = useState(start);
+    const current = shots[active];
+    // Hover only opens a panel once the cursor settles, so sweeping past the row on the way down does nothing.
+    const intent = useRef<ReturnType<typeof setTimeout>>();
+    const hoverOpen = (i: number) => {
+        clearTimeout(intent.current);
+        intent.current = setTimeout(() => setActive(i), HOVER_INTENT_MS);
+    };
+    const cancelHover = () => clearTimeout(intent.current);
+    useEffect(() => () => clearTimeout(intent.current), []);
+
+    return (
+        <section aria-label={title} className="my-12 flex flex-col gap-4">
+            {title && <span className={`font-geistMono text-[13px] ${MUTED}`}>{title.toLowerCase()}</span>}
+
+            <div className="hidden h-[26rem] gap-2 lg:flex">
+                {shots.map((shot, i) => {
+                    const open = i === active;
+                    return (
+                        <button
+                            key={shot.frame}
+                            type="button"
+                            aria-label={shot.title}
+                            aria-pressed={open}
+                            onMouseEnter={() => hoverOpen(i)}
+                            onMouseLeave={cancelHover}
+                            onFocus={() => setActive(i)}
+                            onClick={() => {
+                                cancelHover();
+                                setActive(i);
+                            }}
+                            className={`group relative h-full min-w-0 overflow-hidden rounded-[10px] bg-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--foreground-color)_8%,transparent)] outline-none transition-[flex-grow] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] focus-visible:ring-1 focus-visible:ring-foreground motion-reduce:transition-none ${
+                                open ? "grow-[8]" : "grow"
+                            }`}
+                            style={{ flexBasis: 0 }}
+                        >
+                            <Image
+                                src={shot.frame}
+                                alt={open ? shot.alt : ""}
+                                fill
+                                sizes="(min-width: 1024px) 48rem, 1px"
+                                className={`object-cover object-[50%_35%] transition-[filter,opacity] duration-500 motion-reduce:transition-none ${
+                                    open ? "" : "opacity-30 grayscale"
+                                }`}
+                            />
+                            <span
+                                className={`absolute bottom-4 left-4 flex items-center gap-2 font-geistMono text-[13px] text-dark-foreground transition-opacity duration-300 ${
+                                    open ? "opacity-100 delay-200" : "opacity-0"
+                                }`}
+                            >
+                                <span className="h-3.5 w-[2px] bg-dark-foreground" />
+                                {shot.title.toLowerCase()}
+                            </span>
+                            {/* Folded panels say what's inside them, so the hidden states invite a look. */}
+                            <span
+                                aria-hidden="true"
+                                className={`absolute inset-0 flex items-end justify-center pb-4 font-geistMono text-[13px] text-dark-foreground transition-opacity duration-300 ${
+                                    open ? "opacity-0" : "opacity-80 group-hover:opacity-100"
+                                }`}
+                            >
+                                <span className="whitespace-nowrap [writing-mode:vertical-rl] rotate-180">
+                                    {shot.title.toLowerCase()}
+                                </span>
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+            {/* Two lines reserved, so a longer caption never pushes the page down. */}
+            <p className={`hidden min-h-[3.1em] text-[14px] leading-[1.55] lg:block ${MUTED}`} aria-live="polite">
+                <span className="font-medium text-foreground">{current.title}.</span> {current.caption}
+            </p>
+
+            <div className="-mx-6 flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto px-6 [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden">
+                {shots.map((shot) => (
+                    <div key={shot.src} className="w-[88%] shrink-0 snap-start">
+                        <ShotCard shot={shot} sizes="90vw" />
+                    </div>
+                ))}
+            </div>
+        </section>
     );
 }
 
