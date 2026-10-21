@@ -427,11 +427,112 @@ export const projects: Project[] = [
         slug: "three-stones",
         name: "Three Stones",
         description:
-            "Mobile application allowing retail investors to crowdfund real estate projects. Built authentication and core user flows end-to-end.",
-        tech: ["React Native", "Go", "AWS"],
+            "Mobile app where everyday investors crowdfund real estate projects. Built sign-in, the home screen and search on a team of 5 engineers.",
+        tech: ["React Native", "Go", "Supabase"],
         year: "Fall 2024",
-        link: "https://generatenu.com/",
-        thumb: "/projects/3-stones/3-stones-thumb.webp",
+        link: "https://github.com/GenerateNU/3stones",
+        thumb: "/projects/3-stones/3-stones-preview.webp",
+        page: {
+            tagline: "Real estate crowdfunding for everyday investors.",
+            about: [
+                "3 Stones is a mobile app where real estate developers raise money for their projects from everyday investors. Investors browse listings, put in small amounts, and build a portfolio that pays out when a property sells. It was a ",
+                { text: "Generate Product Development", href: "https://generatenu.com/" },
+                " project and one of my first full-stack projects, which made it a big learning experience. I was one of 5 software engineers working with 2 technical leads, and as an individual contributor I built sign-in, the home screen and search.",
+            ],
+            poster: "/projects/3-stones/3-stones-hero.webp",
+            cover: "/projects/3-stones/3-stones-header.webp",
+            share: "/projects/3-stones/3-stones-og.png",
+            story: [
+                { kind: "heading", text: "What I built" },
+                {
+                    kind: "text",
+                    parts: [
+                        "Sign-in runs on Supabase Auth. I kept the session and access token in a React context, so any screen could call the Go backend as the signed-in investor, and Supabase renewed expired tokens on its own.",
+                    ],
+                },
+                {
+                    kind: "text",
+                    parts: [
+                        "The home screen opens on the investor's portfolio value and their investments. Search starts from a bar on Explore, goes to a Go endpoint that queries projects, and lists the results on their own screen. Along the way I wrote the endpoints for investing in a project and loading an investor's profile, and wrapped every API route in a typed function the frontend could call.",
+                    ],
+                },
+                {
+                    kind: "gallery",
+                    title: "My flows",
+                    shots: [
+                        {
+                            src: "/projects/3-stones/discover-crop.webp",
+                            frame: "/projects/3-stones/discover-frame.webp",
+                            width: 1200,
+                            height: 749,
+                            alt: "Three phones showing the Explore tab with recommended and popular projects, search results for commercial development, and the project page for 931 1st Street",
+                            title: "Search",
+                            caption:
+                                "Explore, then search results with the expected return and timeline for each project.",
+                        },
+                        {
+                            src: "/projects/3-stones/portfolio-crop.webp",
+                            frame: "/projects/3-stones/portfolio-frame.webp",
+                            width: 1200,
+                            height: 749,
+                            alt: "The home screen welcoming Michael back with a $12,345.67 portfolio value and a list of his investments, next to the Your Portfolio screen",
+                            title: "Home",
+                            caption:
+                                "The investor's portfolio value up top, with their investments and how each one is doing.",
+                        },
+                    ],
+                },
+                { kind: "heading", text: "The rest of the app" },
+                {
+                    kind: "text",
+                    parts: [
+                        "The rest of the team built the other flows: investing in a project, following its updates, voting on an offer to sell, and withdrawing funds.",
+                    ],
+                },
+                {
+                    kind: "gallery",
+                    title: "Team flows",
+                    shots: [
+                        {
+                            src: "/projects/3-stones/invest-crop.webp",
+                            frame: "/projects/3-stones/invest-frame.webp",
+                            width: 1200,
+                            height: 749,
+                            alt: "A project's image gallery of a residential complex, next to a Payment Successful receipt with the transaction ID, date and total",
+                            title: "Invest",
+                            caption: "A project's photos and plans, then a receipt once the investment goes through.",
+                        },
+                        {
+                            src: "/projects/3-stones/updates-crop.webp",
+                            frame: "/projects/3-stones/updates-frame.webp",
+                            width: 1200,
+                            height: 749,
+                            alt: "A list of project updates, next to an update for 333 Market Street with a construction photo and the developer's contact details",
+                            title: "Project updates",
+                            caption: "Updates from the developer, each with photos and who to contact.",
+                        },
+                        {
+                            src: "/projects/3-stones/vote-crop.webp",
+                            frame: "/projects/3-stones/vote-frame.webp",
+                            width: 1200,
+                            height: 749,
+                            alt: "A project page with a Vote Required banner, next to the Vote on Sale screen with the offer price, closing date and the developer's note",
+                            title: "Vote on sale",
+                            caption: "When a developer gets an offer, investors read the terms and vote on the sale.",
+                        },
+                        {
+                            src: "/projects/3-stones/withdraw-crop.webp",
+                            frame: "/projects/3-stones/withdraw-frame.webp",
+                            width: 1200,
+                            height: 749,
+                            alt: "Three phones showing a profile with a connected Chase account, a withdrawal of $700 of available cash, and the pending transfer's details",
+                            title: "Withdraw",
+                            caption: "Move available cash to a connected bank and follow the pending transfer.",
+                        },
+                    ],
+                },
+            ],
+        },
     },
 ];
 
