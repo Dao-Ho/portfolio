@@ -528,6 +528,121 @@ export const projects: Project[] = [
             ],
         },
     },
+    {
+        index: "05",
+        slug: "kairos",
+        name: "Kairos",
+        description:
+            "An automated job application bot. Send it a job link and it fills out the application, leaving only the few fields that need you before you submit.",
+        tech: [],
+        year: "Fall 2026",
+        thumb: "/projects/kairos/kairos-preview.webp",
+        page: {
+            tagline: "Job applications, filled for you.",
+            about: [
+                "Kairos is an automated job application bot I built. Press ⌥J on a job posting and it fills out the application in the background, drafting written answers with a language model and leaving only what needs you for review. Nothing is submitted until you click Submit. It's still a work in progress, and I ",
+                { text: "shared an early prototype on X", href: "https://x.com/daoho04/status/2105051635902984354" },
+                ".",
+            ],
+            poster: "/projects/kairos/kairos-hero.webp",
+            cover: "/projects/kairos/kairos-header.webp",
+            share: "/projects/kairos/kairos-og.png",
+            story: [
+                { kind: "heading", text: "From a link" },
+                {
+                    kind: "text",
+                    parts: [
+                        "On a job posting, ⌥J sends the link to Kairos and it starts filling the application in the background. Written answers are drafted by a language model, either locally with Ollama or via API.",
+                    ],
+                },
+                {
+                    kind: "image",
+                    src: "/projects/kairos/hero-layers.webp",
+                    alt: "The Figma application form, the Kairos review panel and the link card stacked as tilted layers over a dark gradient",
+                    width: 1600,
+                    height: 900,
+                },
+                {
+                    kind: "gallery",
+                    title: "Filling",
+                    shots: [
+                        {
+                            src: "/projects/kairos/send-link.webp",
+                            frame: "/projects/kairos/send-link.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "A Greenhouse posting for Product Designer, New Grad at Figma open in Chrome, with a Kairos card showing the job's link and a Fill button",
+                            title: "Send a link",
+                            caption:
+                                "⌥J on a job page pulls the link from Chrome. Press Fill and Kairos takes it from there.",
+                        },
+                        {
+                            src: "/projects/kairos/language-model.webp",
+                            frame: "/projects/kairos/language-model.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "Kairos settings with the language model set to Google Gemini and gemini-2.5-flash, an API key field, and a Draft required written answers checkbox",
+                            title: "Language model",
+                            caption:
+                                "Choose what drafts the written answers, a local model with Ollama or one via API.",
+                        },
+                    ],
+                },
+                { kind: "heading", text: "Only what needs you" },
+                {
+                    kind: "text",
+                    parts: [
+                        "Kairos only asks for what it can't fill. The review panel sits on the page with the fields left for you, and nothing is submitted until you click Submit.",
+                    ],
+                },
+                {
+                    kind: "image",
+                    src: "/projects/kairos/hero-macro.webp",
+                    alt: "A close, tilted crop of the Kairos review panel listing 3 fields that need you, next to the filled Figma form",
+                    width: 1600,
+                    height: 900,
+                },
+                { kind: "heading", text: "Review, then next" },
+                {
+                    kind: "text",
+                    parts: [
+                        "Applications are grouped by whether they're ready, need attention or are still in progress. Once one is submitted, the next is ready to open.",
+                    ],
+                },
+                {
+                    kind: "image",
+                    src: "/projects/kairos/hero-lifted.webp",
+                    alt: "The Kairos application drawer for Figma lifted at an angle over the applications list, with Queued and Submitted Figma toasts beside it",
+                    width: 1600,
+                    height: 900,
+                },
+                {
+                    kind: "gallery",
+                    title: "Reviewing",
+                    shots: [
+                        {
+                            src: "/projects/kairos/applications.webp",
+                            frame: "/projects/kairos/applications.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "The Kairos app listing applications under Ready for you, Needs attention and In progress, with a panel for Figma showing 21 fields filled, 3 that need you and 14 seconds to fill",
+                            title: "All applications",
+                            caption: "Every application by status, with how much was filled and what still needs you.",
+                        },
+                        {
+                            src: "/projects/kairos/queue-next.webp",
+                            frame: "/projects/kairos/queue-next.webp",
+                            width: 1600,
+                            height: 900,
+                            alt: "A Kairos link card above a Queued toast for the Figma application and a Submitted Figma toast with a button to open the next one, at Linear",
+                            title: "Queue and next",
+                            caption: "Queue one, keep going, and open the next application once the last is submitted.",
+                        },
+                    ],
+                },
+            ],
+        },
+    },
 ];
 
 /** Where a project's tile or button leads: its own page, its outside link, or nowhere. */

@@ -14,6 +14,8 @@ import { projects, type Prose, type Shot, type StoryBlock } from "../../data/pro
 const FRAME = "mx-auto w-full max-w-[56rem]";
 const BODY = "text-[16px] leading-[1.7] [text-wrap:pretty]";
 const MUTED = "text-[var(--muted-color)]";
+// Next re-encodes at 75 by default, which smears the small UI text in screenshots.
+const IMAGE_QUALITY = 90;
 const MEDIA =
     "block aspect-video h-auto w-full rounded-[6px] bg-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--foreground-color)_8%,transparent)]";
 
@@ -64,6 +66,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
                             fill
                             priority
                             sizes="100vw"
+                            quality={IMAGE_QUALITY}
                             className="object-cover object-[78%_top]"
                         />
                         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(to_bottom,transparent,var(--background-color))]" />
@@ -120,6 +123,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
                             height={1080}
                             priority
                             sizes="(min-width: 1024px) 56rem, 100vw"
+                            quality={IMAGE_QUALITY}
                             className={MEDIA}
                         />
                     )}
@@ -158,6 +162,7 @@ function Story({ blocks, still }: { blocks: StoryBlock[]; still: boolean }) {
                             width={block.width}
                             height={block.height}
                             sizes="(min-width: 1024px) 40rem, 100vw"
+                            quality={IMAGE_QUALITY}
                             className="my-6 h-auto w-full rounded-[6px] border border-[color-mix(in_srgb,var(--foreground-color)_10%,transparent)]"
                         />
                     );
@@ -207,6 +212,7 @@ function ShotCard({ shot, sizes }: { shot: Shot; sizes: string }) {
                 width={shot.width}
                 height={shot.height}
                 sizes={sizes}
+                quality={IMAGE_QUALITY}
                 className="h-auto w-full rounded-[10px] bg-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--foreground-color)_8%,transparent)]"
             />
             <figcaption className="text-[14px] leading-[1.55] [text-wrap:pretty]">
@@ -293,6 +299,7 @@ function Gallery({ title, shots, start = 0 }: { title?: string; shots: Shot[]; s
                                 alt={open ? shot.alt : ""}
                                 fill
                                 sizes="(min-width: 1024px) 48rem, 1px"
+                                quality={IMAGE_QUALITY}
                                 className={`object-cover object-[50%_35%] transition-[filter,opacity] duration-500 motion-reduce:transition-none ${
                                     open
                                         ? ""
