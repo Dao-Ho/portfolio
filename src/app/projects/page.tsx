@@ -1,27 +1,26 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
+import { finishTransition, isTransitioning, pushWithTransition } from "../../lib/view-transition";
 import { useGlobal } from "../../context-providers/global-provider";
 import MobileNav from "../components/mobile-nav";
 import TopNav from "../components/top-nav";
 import Container from "../components/container";
-import { isExternal, projectHref, projects } from "../data/projects";
+import { isExternal, LAST_PROJECT_KEY, projectHref, projects, projectsByDate, type Project } from "../data/projects";
 
-// The ring repeats the projects so it reads as a full loop; only the first lap is in the tab order.
-const LAPS = 3;
-const SPIN = 0.035; // radians per second
-const TILT = (-14 * Math.PI) / 180; // the ring leans so it reads as a loop seen at an angle
-const WHEEL_KICK = 0.012; // radians per second added per pixel scrolled
-const WHEEL_FRICTION = 2.2; // how quickly a flick spins down
-// On arrival the ring is already spinning fast and winds down to the drift, the same way a scroll flick does,
-// so the first thing you see is that the wheel spins.
-const INTRO_SPIN = 6.5; // radians per second
+const GLIDE = 0.18; // share of the remaining distance the strip covers each frame when scrolled with a wheel
 
 export default function ProjectsRoute() {
     const { isLight, isMobile, toggleTheme } = useGlobal();
+
+    // Coming back from a project, the slide plays once the page has rendered (and the strip has restored its place,
+    // since a child's effects run before this one).
+    useEffect(() => {
+        if (isMobile !== null) finishTransition();
+    }, [isMobile]);
 
     if (isMobile === null) return null;
 
@@ -32,163 +31,151 @@ export default function ProjectsRoute() {
             ) : (
                 <>
                     <TopNav isLight={isLight} toggleTheme={toggleTheme} />
-                    <DesktopRing />
+                    <DesktopStrip />
                 </>
             )}
         </div>
     );
 }
 
-/** Project previews orbit the page on a slow ellipse; hovering one dims the rest and names it in the centre. */
-function DesktopRing() {
-    const [hovered, setHovered] = useState<number | null>(null);
-    const router = useRouter();
-    const ringRef = useRef<HTMLDivElement>(null);
-    const tileRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-    const hoveredRef = useRef<number | null>(null);
-    hoveredRef.current = hovered;
+/**
+ * Projects side by side in one strip that starts on the page's left column and runs off the right edge. Scrolling
+ * anywhere on the page moves it sideways; trackpads can also swipe it directly.
+ */
+function DesktopStrip() {
+    const stripRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const ring = ringRef.current;
-        if (!ring) return;
+        const strip = stripRef.current;
+        if (!strip) return;
         const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        let angle = 0;
-        let speed = SPIN;
-        let flick = still ? 0 : INTRO_SPIN;
-        let last = performance.now();
+        // Back from a project, the strip opens on the last one viewed (lined up with the column's left edge), so the
+        // slide lands on it even after stepping through others with previous and next.
+        const last =
+            isTransitioning() && strip.querySelector(`[data-slug="${sessionStorage.getItem(LAST_PROJECT_KEY)}"]`);
+        if (last) {
+            const inset = parseFloat(getComputedStyle(strip).paddingLeft);
+            strip.scrollLeft += last.getBoundingClientRect().left - strip.getBoundingClientRect().left - inset;
+        }
+        let target = strip.scrollLeft;
         let raf = 0;
-        const count = projects.length * LAPS;
 
-        const place = () => {
-            const { width, height } = ring.getBoundingClientRect();
-            const rx = Math.min(width * 0.34, 520);
-            const ry = Math.min(height * 0.31, 300);
-            const cos = Math.cos(TILT);
-            const sin = Math.sin(TILT);
-            tileRefs.current.forEach((tile, i) => {
-                if (!tile) return;
-                const a = angle + (i / count) * Math.PI * 2;
-                const ex = Math.cos(a) * rx;
-                const ey = Math.sin(a) * ry;
-                // depth runs 0 at the far side of the loop to 1 at the near side.
-                const depth = (Math.sin(a) + 1) / 2;
-                const hovered = hoveredRef.current === i % projects.length;
-                const scale = (0.82 + 0.22 * depth) * (hovered ? 1.08 : 1);
-                tile.style.transform = `translate(-50%, -50%) translate(${ex * cos - ey * sin}px, ${ex * sin + ey * cos}px) scale(${scale})`;
-                // Near tiles sit in front of far ones.
-                tile.style.zIndex = String(hovered ? 1000 : Math.round(depth * 900));
-            });
+        const glide = () => {
+            const gap = target - strip.scrollLeft;
+            if (Math.abs(gap) < 0.5) {
+                strip.scrollLeft = target;
+                raf = 0;
+                return;
+            }
+            strip.scrollLeft += gap * GLIDE;
+            raf = requestAnimationFrame(glide);
         };
 
-        const frame = (now: number) => {
-            const dt = Math.min(0.05, (now - last) / 1000);
-            last = now;
-            // Ease to a stop while something is hovered, so the preview holds still.
-            const cruise = still || hoveredRef.current !== null ? 0 : SPIN;
-            speed += (cruise - speed) * Math.min(1, dt * 4);
-            flick *= Math.exp(-dt * WHEEL_FRICTION);
-            angle += (speed + flick) * dt;
-            place();
-            raf = requestAnimationFrame(frame);
-        };
-
-        // Scrolling flicks the ring around; the spin carries on and eases off on its own.
+        // Scrolling anywhere on the page moves the strip: a vertical wheel turns into a sideways glide. A sideways
+        // swipe over the strip is left to the browser; anywhere else it glides the strip too.
         const onWheel = (e: WheelEvent) => {
+            const sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+            if (sideways && strip.contains(e.target as Node)) return;
             e.preventDefault();
-            const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-            const px = e.deltaMode === 1 ? delta * 16 : delta;
-            flick = Math.max(-5, Math.min(5, flick + px * WHEEL_KICK));
+            const delta = sideways ? e.deltaX : e.deltaY;
+            const max = strip.scrollWidth - strip.clientWidth;
+            if (!raf) target = strip.scrollLeft;
+            target = Math.max(0, Math.min(max, target + (e.deltaMode === 1 ? delta * 16 : delta)));
+            if (still) strip.scrollLeft = target;
+            else if (!raf) raf = requestAnimationFrame(glide);
         };
 
-        place();
-        raf = requestAnimationFrame(frame);
-        const onResize = () => place();
-        window.addEventListener("resize", onResize);
-        ring.addEventListener("wheel", onWheel, { passive: false });
+        window.addEventListener("wheel", onWheel, { passive: false });
         return () => {
             cancelAnimationFrame(raf);
-            window.removeEventListener("resize", onResize);
-            ring.removeEventListener("wheel", onWheel);
+            window.removeEventListener("wheel", onWheel);
         };
     }, []);
 
-    const active = hovered === null ? null : projects[hovered];
-
     return (
-        <main ref={ringRef} className="relative h-full font-geistMono">
-            {Array.from({ length: projects.length * LAPS }, (_, i) => {
-                const index = i % projects.length;
-                const project = projects[index];
-                const href = projectHref(project);
-                const external = href !== undefined && isExternal(href);
-                const dimmed = hovered !== null && hovered !== index;
-                return (
-                    <a
-                        key={i}
-                        ref={(el) => {
-                            tileRefs.current[i] = el;
-                        }}
-                        // Without a link the tile still previews on hover and focus, it just doesn't navigate.
-                        {...(href && { href })}
-                        {...(external && { target: "_blank", rel: "noopener noreferrer" })}
-                        onClick={(e) => {
-                            if (!href || external) return;
-                            e.preventDefault();
-                            router.push(href);
-                        }}
-                        tabIndex={i < projects.length ? 0 : -1}
-                        aria-label={external ? `${project.name}, opens in a new tab` : project.name}
-                        onMouseEnter={() => setHovered(index)}
-                        onMouseLeave={() => setHovered(null)}
-                        onFocus={() => setHovered(index)}
-                        onBlur={() => setHovered(null)}
-                        className={`absolute left-1/2 top-1/2 block overflow-hidden rounded-[4px] outline-none ${href ? "" : "cursor-default"} transition-[filter,opacity] duration-300 focus-visible:ring-1 focus-visible:ring-foreground`}
-                        style={{
-                            width: "clamp(200px, 19vw, 300px)",
-                            aspectRatio: "3 / 2",
-                            filter: dimmed ? "grayscale(1) brightness(0.55)" : "none",
-                            opacity: dimmed ? 0.7 : 1,
-                        }}
-                    >
-                        <Image src={project.thumb} alt="" fill sizes="300px" className="object-cover" />
-                    </a>
-                );
-            })}
-
-            {/* Centre label: the section name at rest, the hovered project's name while previewing. */}
-            <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={active?.name ?? "projects"}
-                        initial={{ opacity: 0, y: 3 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -3 }}
-                        transition={{ duration: 0.15 }}
-                        className="flex flex-col items-center gap-1"
-                    >
-                        <span className={`text-[15px] ${active ? "" : "lowercase opacity-60"}`}>
-                            {active?.name ?? "projects"}
-                        </span>
-                        {active && <span className="text-[11px] opacity-40">{active.year}</span>}
-                    </motion.div>
-                </AnimatePresence>
+        <main className="flex h-full flex-col justify-center pt-12">
+            {/* The padding lines the first and last tiles up with the 56rem column the project pages use. */}
+            <div
+                ref={stripRef}
+                className="flex gap-3 overflow-x-auto px-[max(1.5rem,calc((100vw-56rem)/2))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+                {projectsByDate.map((project, i) => (
+                    <StripTile key={project.slug} project={project} priority={i < 2} />
+                ))}
             </div>
-
-            <AnimatePresence>
-                {active && (
-                    <motion.div
-                        key={active.name}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="pointer-events-none absolute bottom-8 right-8 max-w-[26rem] font-geistSans text-[16px] leading-[1.55] [text-wrap:pretty]"
-                    >
-                        <p className="opacity-80">{active.description}</p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </main>
+    );
+}
+
+/** One project: its thumbnail, large, with the name, year and tagline under it. Hovering zooms in and says where it goes. */
+function StripTile({ project, priority }: { project: Project; priority: boolean }) {
+    const router = useRouter();
+    const href = projectHref(project);
+    const external = href !== undefined && isExternal(href);
+    const body = (
+        <>
+            <div
+                data-slug={project.slug}
+                className="relative aspect-[3/2] h-[min(62vh,42rem)] overflow-hidden bg-[color-mix(in_srgb,var(--foreground-color)_6%,transparent)]"
+            >
+                <Image
+                    src={project.thumb}
+                    alt=""
+                    fill
+                    priority={priority}
+                    sizes="(min-height: 1100px) 63rem, 93vh"
+                    quality={90}
+                    className={`object-cover transition-transform duration-700 ease-out ${href ? "group-hover:scale-[1.03]" : ""}`}
+                />
+                {href && (
+                    <span className="pointer-events-none absolute bottom-4 left-4 translate-y-1 rounded-full bg-[rgb(0_0_0/0.55)] px-3 py-1.5 font-geistMono text-[12px] text-dark-foreground opacity-0 backdrop-blur-md transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                        {external ? "visit site ↗" : "view project"}
+                    </span>
+                )}
+            </div>
+            <div className="mt-3 flex items-baseline gap-3">
+                <span className="whitespace-nowrap text-[15px]">{project.name}</span>
+                <span className="whitespace-nowrap font-geistMono text-[12px] text-[var(--muted-color)]">
+                    {project.year}
+                </span>
+            </div>
+            {project.page?.tagline && (
+                <p className="mt-1 text-[14px] leading-[1.5] text-[var(--muted-color)]">{project.page.tagline}</p>
+            )}
+        </>
+    );
+    // As wide as the thumbnail, so a long tagline wraps instead of pushing the next tile along.
+    const className = "group block w-min shrink-0 outline-none focus-visible:underline";
+
+    if (!href) return <div className={className}>{body}</div>;
+    if (external) {
+        return (
+            <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${project.name}, opens in a new tab`}
+                className={className}
+            >
+                {body}
+            </a>
+        );
+    }
+    return (
+        <Link
+            href={href}
+            aria-label={project.name}
+            className={className}
+            onClick={(e) => {
+                // Let modified clicks open a new tab as usual.
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                e.preventDefault();
+                // The strip slides off to the left and the project page slides in after it (see globals.css).
+                pushWithTransition(router, href);
+            }}
+        >
+            {body}
+        </Link>
     );
 }
 

@@ -53,3 +53,50 @@
         border-radius: 2px;
     }
 }
+
+/* Opening a project from the strip carries on its sideways motion: the strip drifts left while the project page slides
+   in over it from the right. Neither half fades, so the canvas behind never shows through. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    mix-blend-mode: normal;
+    animation-duration: 0.65s;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+    animation-fill-mode: both;
+}
+::view-transition-old(root) {
+    animation-name: vt-drift-left;
+}
+::view-transition-new(root) {
+    animation-name: vt-slide-in;
+    box-shadow: -24px 0 48px rgb(0 0 0 / 0.3);
+}
+/* Going back plays it in reverse: the project page slides off to the right, on top, uncovering the strip. */
+:root[data-transition="back"]::view-transition-old(root) {
+    z-index: 1;
+    animation-name: vt-slide-out;
+    box-shadow: -24px 0 48px rgb(0 0 0 / 0.3);
+}
+:root[data-transition="back"]::view-transition-new(root) {
+    animation-name: vt-drift-in;
+    box-shadow: none;
+}
+@keyframes vt-drift-left {
+    to {
+        transform: translateX(-30%);
+    }
+}
+@keyframes vt-slide-in {
+    from {
+        transform: translateX(100%);
+    }
+}
+@keyframes vt-slide-out {
+    to {
+        transform: translateX(100%);
+    }
+}
+@keyframes vt-drift-in {
+    from {
+        transform: translateX(-30%);
+    }
+}

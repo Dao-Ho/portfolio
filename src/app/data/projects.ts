@@ -645,6 +645,19 @@ export const projects: Project[] = [
     },
 ];
 
+const SEASONS = ["Winter", "Spring", "Summer", "Fall"];
+// "Fall 2026" sorts after "Spring 2026"; a bare year counts as the start of that year.
+const when = (p: Project) => {
+    const [season, year] = p.year.includes(" ") ? p.year.split(" ") : ["", p.year];
+    return Number(year) * 4 + Math.max(0, SEASONS.indexOf(season));
+};
+
+/** Newest first; projects from the same season keep their order above. */
+export const projectsByDate = [...projects].sort((a, b) => when(b) - when(a));
+
+/** sessionStorage key for the last project page viewed, so the strip can return to it. */
+export const LAST_PROJECT_KEY = "projects-last-viewed";
+
 /** Where a project's tile or button leads: its own page, its outside link, or nowhere. */
 export const projectHref = (p: Project) => (p.page ? `/projects/${p.slug}` : p.link);
 
