@@ -75,7 +75,7 @@ const fontGeistMono = localFont({
 
 export const metadata = {
     title: "Dao Ho",
-    description: "Design Portfolio by Dao Ho",
+    description: "expression of self",
 };
 
 export default function RootLayout({ children }) {
