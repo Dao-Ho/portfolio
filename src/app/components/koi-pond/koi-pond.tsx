@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import posthog from "posthog-js";
 import { cn } from "../../../lib/utils";
 import { KoiRenderer } from "./renderer";
 import { World, type Box } from "./world";
@@ -187,6 +188,7 @@ class PondEngine {
         const { x, y, inside } = this.toLocal(e);
         if (!inside) return;
         this.world.feed(x, y);
+        posthog.capture("koi_pond_fed", { pellet_count: this.world.pellets.length });
         this.report();
     };
 

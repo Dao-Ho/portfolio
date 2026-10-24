@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronRight, ArrowRight, IterationCw } from "lucide-react";
+import posthog from "posthog-js";
 import RadiusDial from "./radius-dial";
 
 interface ContributionDay {
@@ -193,6 +194,7 @@ const GitHubContributionGrid: React.FC<GitHubContributionGridProps> = ({ userNam
 
     const router = useRouter();
     const navigateToGitHub = () => {
+        posthog.capture("github_profile_opened");
         router.push("https://github.com/Dao-Ho");
     };
 
