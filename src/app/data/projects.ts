@@ -73,7 +73,7 @@ export const projects: Project[] = [
             ],
             poster: "/projects/selfserve/selfserve-hero.webp",
             cover: "/projects/selfserve/selfserve-header.webp",
-            share: "/projects/selfserve/selfserve-og.png",
+            share: "/projects/selfserve/selfserve-og.jpg",
             story: [
                 { kind: "heading", text: "One board for the entire property" },
                 {
@@ -184,7 +184,7 @@ export const projects: Project[] = [
             video: "/projects/dynami/dynami-demo.mp4",
             poster: "/projects/dynami/dynami-demo-poster.webp",
             cover: "/projects/dynami/dynami-header.webp",
-            share: "/projects/dynami/dynami-og.png",
+            share: "/projects/dynami/dynami-og.jpg",
             story: [
                 { kind: "heading", text: "Waiting on other people" },
                 {
@@ -332,7 +332,7 @@ export const projects: Project[] = [
             ],
             poster: "/projects/vetruly/vetruly-hero.webp",
             cover: "/projects/vetruly/vetruly-header.webp",
-            share: "/projects/vetruly/vetruly-og.png",
+            share: "/projects/vetruly/vetruly-og.jpg",
             story: [
                 { kind: "heading", text: "Finding care" },
                 {
@@ -441,7 +441,7 @@ export const projects: Project[] = [
             ],
             poster: "/projects/3-stones/3-stones-hero.webp",
             cover: "/projects/3-stones/3-stones-header.webp",
-            share: "/projects/3-stones/3-stones-og.png",
+            share: "/projects/3-stones/3-stones-og.jpg",
             story: [
                 { kind: "heading", text: "What I built" },
                 {
@@ -546,7 +546,7 @@ export const projects: Project[] = [
             ],
             poster: "/projects/kairos/kairos-hero.webp",
             cover: "/projects/kairos/kairos-header.webp",
-            share: "/projects/kairos/kairos-og.png",
+            share: "/projects/kairos/kairos-og.jpg",
             story: [
                 { kind: "heading", text: "From a link" },
                 {
