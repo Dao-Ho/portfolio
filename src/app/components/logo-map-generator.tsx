@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { Download } from "lucide-react";
+import posthog from "posthog-js";
 
 interface GeneratorProps {
     isLight: boolean;
@@ -144,6 +145,11 @@ const LogoMapGenerator: React.FC<GeneratorProps> = ({ isLight }) => {
                 const result = processImage(img, gridSize, threshold);
                 if (result) {
                     setConfig(result);
+                    posthog.capture("logo_image_processed", {
+                        grid_width: result.gridWidth,
+                        grid_height: result.gridHeight,
+                        uses_image_colors: useImageColors,
+                    });
                 }
                 setProcessing(false);
             };
@@ -208,6 +214,12 @@ const LogoMapGenerator: React.FC<GeneratorProps> = ({ isLight }) => {
     const downloadConfig = () => {
         if (!config) return;
 
+        posthog.capture("logo_map_downloaded", {
+            grid_width: config.gridWidth,
+            grid_height: config.gridHeight,
+            dot_count: config.dotPositions.flat().filter(Boolean).length,
+        });
+
         const jsonString = JSON.stringify(config, null, 2);
         const blob = new Blob([jsonString], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -226,6 +238,11 @@ const LogoMapGenerator: React.FC<GeneratorProps> = ({ isLight }) => {
         const code = `// Generated logo map configuration
 export const logoMap = ${JSON.stringify(config, null, 2)};`;
 
+        posthog.capture("logo_map_copied", {
+            grid_width: config.gridWidth,
+            grid_height: config.gridHeight,
+            dot_count: config.dotPositions.flat().filter(Boolean).length,
+        });
         navigator.clipboard.writeText(code);
         alert("Configuration copied to clipboard!");
     };

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import posthog from "posthog-js";
 import { useGlobal } from "../../context-providers/global-provider";
 import MobileNav from "../components/mobile-nav";
 import TopNav from "../components/top-nav";
@@ -117,7 +118,10 @@ export default function Gallery() {
                             >
                                 <button
                                     type="button"
-                                    onClick={() => setOpen(i)}
+                                    onClick={() => {
+                                        setOpen(i);
+                                        posthog.capture("gallery_work_opened", { work_position: i + 1 });
+                                    }}
                                     aria-label={`View ${work.title} larger`}
                                     className="block w-full overflow-hidden rounded-[3px] outline-none focus-visible:ring-1 focus-visible:ring-foreground"
                                 >
@@ -158,7 +162,12 @@ function Lightbox({
     const step = useCallback(
         (by: number) => {
             if (index === null) return;
-            onStep((index + by + WORKS.length) % WORKS.length);
+            const nextIndex = (index + by + WORKS.length) % WORKS.length;
+            onStep(nextIndex);
+            posthog.capture("gallery_work_navigated", {
+                direction: by > 0 ? "next" : "previous",
+                work_position: nextIndex + 1,
+            });
         },
         [index, onStep]
     );

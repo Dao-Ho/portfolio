@@ -12,6 +12,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { GlobalProvider } from "../context-providers/global-provider";
+import { PostHogInitializer } from "../context-providers/posthog-initializer";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -84,7 +85,9 @@ export default function RootLayout({ children }) {
             <body
                 className={`${inter.variable} ${fontbebas.variable} ${fontlibre.variable} ${fontroboto.variable} ${fontRobotoCondensed.variable} ${fontOswald.variable} ${fontSourceSansPro.variable} ${fontPlayfairDisplay.variable} ${fontGeistMono.variable} ${fontGeistSans.variable} scroll-smooth overflow-x-clip`}
             >
-                <GlobalProvider>{children}</GlobalProvider>
+                <PostHogInitializer>
+                    <GlobalProvider>{children}</GlobalProvider>
+                </PostHogInitializer>
             </body>
             <Analytics />
         </html>
