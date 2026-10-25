@@ -183,7 +183,12 @@ class PondEngine {
     // Clicks on empty space drop food; links, buttons, and text selection are left alone.
     private onClick = (e: MouseEvent) => {
         if (this.reducedMotion.matches) return;
-        if (e.target instanceof Element && e.target.closest(INTERACTIVE)) return;
+        // The path recorded at dispatch, not target.closest(): a control that re-renders as it's clicked (the theme
+        // toggle swaps its icon) can leave the target detached, with no ancestors left to find the button through.
+        if (e.composedPath().some((n) => n instanceof Element && n.matches(INTERACTIVE))) return;
+        // While a view transition plays (the theme reveal), its overlay takes every click, so a second press on the
+        // toggle lands on <html> instead of the button.
+        if (document.documentElement.dataset.transition) return;
         if (window.getSelection()?.toString()) return;
         const { x, y, inside } = this.toLocal(e);
         if (!inside) return;

@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Moon, Sun } from "lucide-react";
 import { switchThemeWithReveal } from "../../lib/view-transition";
+import ThemeIcon from "./theme-icon";
 
 const LINKS = [
     { label: "pond", href: "/" },
@@ -54,7 +54,7 @@ export default function TopNav({ isLight, toggleTheme, overCover = false }: TopN
                 aria-label={`Switch to ${isLight ? "dark" : "light"} mode`}
                 className={`${ITEM} opacity-50`}
             >
-                {isLight ? <Moon size={15} strokeWidth={1.5} /> : <Sun size={15} strokeWidth={1.5} />}
+                <ThemeIcon isLight={isLight} size={15} />
             </button>
         </nav>
     );
