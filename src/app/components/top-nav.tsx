@@ -45,17 +45,20 @@ export default function TopNav({ isLight, toggleTheme, overCover = false }: TopN
                     {label}
                 </Link>
             ))}
-            <button
-                type="button"
-                onClick={(e) => {
-                    const r = e.currentTarget.getBoundingClientRect();
-                    switchThemeWithReveal(toggleTheme, r.left + r.width / 2, r.top + r.height / 2);
-                }}
-                aria-label={`Switch to ${isLight ? "dark" : "light"} mode`}
-                className={`${ITEM} opacity-50`}
-            >
-                <ThemeIcon isLight={isLight} size={15} />
-            </button>
+            {/* A margin of dead space around the toggle, so a near miss doesn't drop food in the pond behind it. */}
+            <span data-koi-ignore className="-m-4 flex p-4">
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        const r = e.currentTarget.getBoundingClientRect();
+                        switchThemeWithReveal(toggleTheme, r.left + r.width / 2, r.top + r.height / 2);
+                    }}
+                    aria-label={`Switch to ${isLight ? "dark" : "light"} mode`}
+                    className={`${ITEM} opacity-50`}
+                >
+                    <ThemeIcon isLight={isLight} size={15} />
+                </button>
+            </span>
         </nav>
     );
 }
