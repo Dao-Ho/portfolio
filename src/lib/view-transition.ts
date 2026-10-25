@@ -1,3 +1,5 @@
+import { flushSync } from "react-dom";
+
 let finish: (() => void) | null = null;
 
 /**
@@ -34,4 +36,22 @@ export const isTransitioning = () => finish !== null;
 export function finishTransition() {
     finish?.();
     finish = null;
+}
+
+/** Switches the theme inside a view transition, revealing the new one as a circle spreading out from (x, y). */
+export function switchThemeWithReveal(toggle: () => void, x: number, y: number) {
+    if (!document.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        toggle();
+        return;
+    }
+    const root = document.documentElement;
+    // Big enough to reach the farthest corner of the window.
+    const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+    root.style.setProperty("--reveal-x", `${x}px`);
+    root.style.setProperty("--reveal-y", `${y}px`);
+    root.style.setProperty("--reveal-r", `${radius}px`);
+    root.dataset.transition = "theme";
+    // The new theme has to be on screen before the callback returns, so React renders it right away.
+    const transition = document.startViewTransition(() => flushSync(toggle));
+    transition.finished.finally(() => delete root.dataset.transition);
 }

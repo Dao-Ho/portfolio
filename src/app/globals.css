@@ -54,19 +54,26 @@
     }
 }
 
-/* Opening a project from the strip carries on its sideways motion: the strip drifts left while the project page slides
-   in over it from the right. Neither half fades, so the canvas behind never shows through. */
-::view-transition-old(root),
-::view-transition-new(root) {
+/* Every view transition sets data-transition on <html> to say which kind it is. */
+:root[data-transition]::view-transition-old(root),
+:root[data-transition]::view-transition-new(root) {
     mix-blend-mode: normal;
-    animation-duration: 0.65s;
-    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
     animation-fill-mode: both;
 }
-::view-transition-old(root) {
+
+/* Opening a project from the strip carries on its sideways motion: the strip drifts left while the project page slides
+   in over it from the right. Neither half fades, so the canvas behind never shows through. */
+:root[data-transition="forward"]::view-transition-old(root),
+:root[data-transition="forward"]::view-transition-new(root),
+:root[data-transition="back"]::view-transition-old(root),
+:root[data-transition="back"]::view-transition-new(root) {
+    animation-duration: 0.65s;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+:root[data-transition="forward"]::view-transition-old(root) {
     animation-name: vt-drift-left;
 }
-::view-transition-new(root) {
+:root[data-transition="forward"]::view-transition-new(root) {
     animation-name: vt-slide-in;
     box-shadow: -24px 0 48px rgb(0 0 0 / 0.3);
 }
@@ -98,5 +105,25 @@
 @keyframes vt-drift-in {
     from {
         transform: translateX(-30%);
+    }
+}
+
+/* Switching theme: the old theme stays put while the new one spreads out over it in a circle from the toggle. The nav
+   gives up its own name for this so it's revealed along with everything else instead of crossfading on its own. */
+:root[data-transition="theme"] nav[aria-label="Main"] {
+    view-transition-name: none;
+}
+:root[data-transition="theme"]::view-transition-old(root) {
+    animation: none;
+}
+:root[data-transition="theme"]::view-transition-new(root) {
+    animation: 0.7s cubic-bezier(0.4, 0, 0.2, 1) both vt-reveal;
+}
+@keyframes vt-reveal {
+    from {
+        clip-path: circle(0 at var(--reveal-x) var(--reveal-y));
+    }
+    to {
+        clip-path: circle(var(--reveal-r) at var(--reveal-x) var(--reveal-y));
     }
 }
