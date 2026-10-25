@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { switchThemeWithReveal } from "../../lib/view-transition";
 import ThemeIcon from "./theme-icon";
 
 const LINKS = [
@@ -49,10 +48,7 @@ export default function TopNav({ isLight, toggleTheme, overCover = false }: TopN
             <span data-koi-ignore className="-m-4 flex p-4">
                 <button
                     type="button"
-                    onClick={(e) => {
-                        const r = e.currentTarget.getBoundingClientRect();
-                        switchThemeWithReveal(toggleTheme, r.left + r.width / 2, r.top + r.height / 2);
-                    }}
+                    onClick={toggleTheme}
                     aria-label={`Switch to ${isLight ? "dark" : "light"} mode`}
                     className={`${ITEM} opacity-50`}
                 >

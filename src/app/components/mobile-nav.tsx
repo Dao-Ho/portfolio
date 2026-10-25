@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { ExternalLink, Github } from "lucide-react";
-import { switchThemeWithReveal } from "../../lib/view-transition";
 import ThemeIcon from "./theme-icon";
 
 const navLinks = [
@@ -126,10 +125,7 @@ export default function MobileNav({ isLight, toggleTheme }: MobileNavProps) {
                             ))}
                             {toggleTheme && (
                                 <button
-                                    onClick={(e) => {
-                                        const r = e.currentTarget.getBoundingClientRect();
-                                        switchThemeWithReveal(toggleTheme, r.left + r.width / 2, r.top + r.height / 2);
-                                    }}
+                                    onClick={toggleTheme}
                                     aria-label={`Switch to ${isLight ? "dark" : "light"} mode`}
                                     className="cursor-pointer"
                                     style={{ color: fgDim }}

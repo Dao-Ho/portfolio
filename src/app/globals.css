@@ -107,34 +107,3 @@
         transform: translateX(-30%);
     }
 }
-
-/* Switching theme: the old theme stays put while the new one spreads out over it in a circle from the toggle, with a
-   soft edge instead of a hard line. The nav gives up its own name for this so it's revealed along with everything else
-   instead of crossfading on its own. */
-:root[data-transition="theme"] nav[aria-label="Main"] {
-    view-transition-name: none;
-}
-:root[data-transition="theme"]::view-transition-old(root) {
-    animation: none;
-}
-/* Registered so the radius animates smoothly; an unregistered custom property would jump between keyframes. */
-@property --reveal-radius {
-    syntax: "<length>";
-    inherits: false;
-    initial-value: 0px;
-}
-:root[data-transition="theme"]::view-transition-new(root) {
-    --reveal-feather: 64px;
-    mask-image: radial-gradient(
-        circle at var(--reveal-x) var(--reveal-y),
-        #000 calc(var(--reveal-radius) - var(--reveal-feather)),
-        transparent var(--reveal-radius)
-    );
-    animation: 0.8s cubic-bezier(0.4, 0, 0.2, 1) both vt-reveal;
-}
-/* It overshoots the far corner by the feather, so the soft edge has passed the screen before the reveal ends. */
-@keyframes vt-reveal {
-    to {
-        --reveal-radius: calc(var(--reveal-r) + var(--reveal-feather));
-    }
-}
