@@ -117,6 +117,3 @@ export const SOURCES: Record<string, Source> = {
         href: "/gallery",
     },
 };
-
-/** Shared id scheme for the experience scroll targets. */
-export const entrySlug = (companyName: string) => companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
