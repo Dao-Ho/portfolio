@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import posthog from "posthog-js";
 import { useGlobal } from "../../context-providers/global-provider";
 import MobileNav from "../components/mobile-nav";

@@ -6,6 +6,8 @@ const nextConfig = {
         // Optimized images are cached for 31 days instead of the default 60 seconds, so repeat visits don't refetch.
         // Replacing an image means giving it a new filename.
         minimumCacheTTL: 2678400,
+        // Next 16 only serves listed qualities; project pages request 90.
+        qualities: [75, 90],
     },
     // Proxy PostHog through our own domain so ad blockers don't drop events.
     async rewrites() {

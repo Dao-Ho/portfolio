@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SOURCES, type Source } from "../data/sources";
@@ -56,8 +56,8 @@ const Cited = ({ source, children, isLight }: { source: string; children: React.
     const src = SOURCES[source];
     const router = useRouter();
     const [open, setOpen] = useState(false);
-    const openTimer = useRef<ReturnType<typeof setTimeout>>();
-    const closeTimer = useRef<ReturnType<typeof setTimeout>>();
+    const openTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+    const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
     const show = useCallback(() => {
         clearTimeout(closeTimer.current);

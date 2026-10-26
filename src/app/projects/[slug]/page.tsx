@@ -8,8 +8,11 @@ export function generateStaticParams() {
     return projects.filter((p) => p.page).map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-    const project = projects.find((p) => p.slug === params.slug);
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props) {
+    const { slug } = await params;
+    const project = projects.find((p) => p.slug === slug);
     if (!project?.page) return {};
     const { tagline, share } = project.page;
     return {
@@ -26,8 +29,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
     };
 }
 
-export default function Page({ params }: { params: { slug: string } }) {
-    const project = projects.find((p) => p.slug === params.slug && p.page);
+export default async function Page({ params }: Props) {
+    const { slug } = await params;
+    const project = projects.find((p) => p.slug === slug && p.page);
     if (!project) notFound();
     return <ProjectPage slug={project.slug} />;
 }

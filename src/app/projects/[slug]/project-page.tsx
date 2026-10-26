@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useGlobal } from "../../../context-providers/global-provider";
 import MobileNav from "../../components/mobile-nav";
@@ -412,7 +412,7 @@ function Gallery({ title, shots, start = 0 }: { title?: string; shots: Shot[]; s
     const [active, setActive] = useState(start);
     const current = shots[active];
     // Hover only opens a panel once the cursor settles, so sweeping past the row on the way down does nothing.
-    const intent = useRef<ReturnType<typeof setTimeout>>();
+    const intent = useRef<ReturnType<typeof setTimeout>>(undefined);
     const hoverOpen = (i: number) => {
         clearTimeout(intent.current);
         intent.current = setTimeout(() => setActive(i), HOVER_INTENT_MS);
