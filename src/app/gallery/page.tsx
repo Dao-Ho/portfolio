@@ -125,7 +125,7 @@ export default function Gallery() {
                                         placeholder="blur"
                                         sizes="(min-width: 1024px) 50vw, 100vw"
                                         className="h-auto w-full transition-transform duration-500 ease-out hover:scale-[1.02]"
-                                        priority={i < 2}
+                                        preload={i < 2}
                                     />
                                 </button>
                                 <figcaption className="mt-3 flex items-baseline justify-between gap-3 font-geistMono text-[12px]">

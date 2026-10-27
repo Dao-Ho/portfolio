@@ -119,7 +119,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
                             src={page.cover}
                             alt=""
                             fill
-                            priority
+                            preload
                             sizes="100vw"
                             quality={IMAGE_QUALITY}
                             className="object-cover object-[78%_top]"
@@ -183,7 +183,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
                             alt={`${project.name}, ${page.tagline}`}
                             width={1920}
                             height={1080}
-                            priority
+                            preload
                             sizes="(min-width: 1024px) 56rem, 100vw"
                             quality={IMAGE_QUALITY}
                             className={MEDIA}

@@ -116,7 +116,8 @@ function StripTile({ project, priority }: { project: Project; priority: boolean 
                     src={project.thumb}
                     alt=""
                     fill
-                    priority={priority}
+                    // fetchPriority, not preload: a preload would also download it on phones, where the strip is hidden.
+                    fetchPriority={priority ? "high" : undefined}
                     sizes="(min-height: 1100px) 63rem, 93vh"
                     quality={90}
                     className={`object-cover transition-transform duration-700 ease-out ${href ? "group-hover:scale-[1.03]" : ""}`}
@@ -188,7 +189,7 @@ function MobileLayout() {
                                 fill
                                 sizes="100vw"
                                 className="object-cover"
-                                priority={i === 0}
+                                fetchPriority={i === 0 ? "high" : undefined}
                             />
                         </div>
 
