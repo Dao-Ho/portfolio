@@ -12,6 +12,18 @@ import { isExternal, LAST_PROJECT_KEY, projectHref, projects, projectsByDate, ty
 
 const GLIDE = 0.18; // share of the remaining distance the strip covers each frame when scrolled with a wheel
 const DESKTOP_QUERY = "(min-width: 1024px)"; // Tailwind's `lg`, where the strip replaces the mobile list
+// How far each key moves the strip, as a share of its width.
+const KEY_STEPS: Record<string, number> = {
+    ArrowRight: 0.1,
+    ArrowDown: 0.1,
+    ArrowLeft: -0.1,
+    ArrowUp: -0.1,
+    PageDown: 0.8,
+    PageUp: -0.8,
+    " ": 0.8,
+    End: Infinity,
+    Home: -Infinity,
+};
 
 export default function ProjectsRoute() {
     // Coming back from a project, the slide plays once the page has rendered (and the strip has restored its place,
@@ -30,8 +42,8 @@ export default function ProjectsRoute() {
 }
 
 /**
- * Projects side by side in one strip that starts on the page's left column and runs off the right edge. Scrolling
- * anywhere on the page moves it sideways; trackpads can also swipe it directly.
+ * Projects side by side in one strip that starts on the page's left column and runs off the right edge. Scrolling,
+ * swiping or the page keys anywhere move it sideways; trackpads and touch can also swipe it directly.
  */
 function DesktopStrip() {
     const stripRef = useRef<HTMLDivElement>(null);
@@ -53,36 +65,103 @@ function DesktopStrip() {
         let raf = 0;
 
         const glide = () => {
-            const gap = target - strip.scrollLeft;
-            if (Math.abs(gap) < 0.5) {
+            const before = strip.scrollLeft;
+            strip.scrollLeft += (target - before) * GLIDE;
+            // Scroll positions round to whole pixels, so the last small steps stall short of the target.
+            if (strip.scrollLeft === before) {
                 strip.scrollLeft = target;
                 raf = 0;
                 return;
             }
-            strip.scrollLeft += gap * GLIDE;
             raf = requestAnimationFrame(glide);
         };
-
-        // Scrolling anywhere on the page moves the strip: a vertical wheel turns into a sideways glide. A sideways
-        // swipe over the strip is left to the browser; anywhere else it glides the strip too.
-        const onWheel = (e: WheelEvent) => {
-            // The strip is only shown on desktop; below that the mobile list scrolls normally.
-            if (!desktop.matches) return;
-            const sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY);
-            if (sideways && strip.contains(e.target as Node)) return;
-            e.preventDefault();
-            const delta = sideways ? e.deltaX : e.deltaY;
+        // A glide still running would pull the strip back from wherever the browser scrolls it.
+        const stop = () => {
+            cancelAnimationFrame(raf);
+            raf = 0;
+        };
+        // Moves the strip by `delta`, adding to a glide already under way.
+        const glideBy = (delta: number) => {
             const max = strip.scrollWidth - strip.clientWidth;
-            if (!raf) target = strip.scrollLeft;
-            target = Math.max(0, Math.min(max, target + (e.deltaMode === 1 ? delta * 16 : delta)));
+            target = Math.max(0, Math.min(max, (raf ? target : strip.scrollLeft) + delta));
             if (still) strip.scrollLeft = target;
             else if (!raf) raf = requestAnimationFrame(glide);
         };
 
+        // The strip is only shown on desktop; below that the mobile list scrolls normally.
+        // A vertical wheel turns into a sideways glide. A sideways swipe over the strip is left to the browser;
+        // anywhere else it glides the strip too.
+        const onWheel = (e: WheelEvent) => {
+            if (!desktop.matches) return;
+            const sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+            if (sideways && strip.contains(e.target as Node)) {
+                stop();
+                return;
+            }
+            e.preventDefault();
+            const delta = sideways ? e.deltaX : e.deltaY;
+            glideBy(e.deltaMode === 1 ? delta * 16 : delta);
+        };
+
+        // On touch screens a vertical swipe drags the strip sideways and keeps going at the speed it was let go.
+        // Sideways swipes stay with the browser.
+        let touch: { x: number; y: number; left: number; lastY: number; time: number; speed: number } | null = null;
+        let vertical: boolean | undefined;
+        const onTouchStart = (e: TouchEvent) => {
+            stop();
+            touch = null;
+            vertical = undefined;
+            if (!desktop.matches || e.touches.length !== 1) return;
+            const { clientX: x, clientY: y } = e.touches[0];
+            touch = { x, y, left: strip.scrollLeft, lastY: y, time: e.timeStamp, speed: 0 };
+        };
+        const onTouchMove = (e: TouchEvent) => {
+            if (!touch) return;
+            const { clientX: x, clientY: y } = e.touches[0];
+            if (vertical === undefined) {
+                // Wait for a few pixels of travel before deciding which way the swipe goes.
+                if (Math.hypot(x - touch.x, y - touch.y) < 6) return;
+                vertical = Math.abs(y - touch.y) > Math.abs(x - touch.x);
+            }
+            if (!vertical) return;
+            e.preventDefault();
+            strip.scrollLeft = touch.left + touch.y - y;
+            const dt = e.timeStamp - touch.time;
+            if (dt > 0) touch.speed = (touch.lastY - y) / dt;
+            touch.lastY = y;
+            touch.time = e.timeStamp;
+        };
+        const onTouchEnd = (e: TouchEvent) => {
+            // A finger that stopped before lifting shouldn't fling the strip.
+            if (touch && vertical && !still && e.timeStamp - touch.time < 100)
+                glideBy(touch.speed * (1000 / 60 / GLIDE));
+            touch = null;
+        };
+
+        const onKeyDown = (e: KeyboardEvent) => {
+            const step = KEY_STEPS[e.key];
+            if (!desktop.matches || step === undefined || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey)
+                return;
+            // Space on a button presses it.
+            if (e.key === " " && e.target instanceof HTMLButtonElement) return;
+            e.preventDefault();
+            glideBy((e.key === " " && e.shiftKey ? -step : step) * strip.clientWidth);
+        };
+
         window.addEventListener("wheel", onWheel, { passive: false });
+        window.addEventListener("touchstart", onTouchStart, { passive: true });
+        window.addEventListener("touchmove", onTouchMove, { passive: false });
+        window.addEventListener("touchend", onTouchEnd);
+        window.addEventListener("touchcancel", onTouchEnd);
+        window.addEventListener("keydown", onKeyDown);
         return () => {
-            cancelAnimationFrame(raf);
+            stop();
             window.removeEventListener("wheel", onWheel);
+            window.removeEventListener("touchstart", onTouchStart);
+            window.removeEventListener("touchmove", onTouchMove);
+            window.removeEventListener("touchend", onTouchEnd);
+            window.removeEventListener("touchcancel", onTouchEnd);
+            window.removeEventListener("keydown", onKeyDown);
         };
     }, []);
 
