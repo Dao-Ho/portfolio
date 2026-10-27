@@ -6,15 +6,15 @@ export default {
     darkMode: "selector",
     content: ["./src/**/*.{js,jsx,ts,tsx}"],
     theme: {
-        colors: {
-            "light-foreground": "#262523",
-            "light-background": "#f5f4f1",
-            "dark-foreground": "#fff7f0",
-            "dark-background": "#1a1917",
-            background: "var(--background-color)",
-            foreground: "var(--foreground-color)",
-        },
         extend: {
+            colors: {
+                "light-foreground": "#262523",
+                "light-background": "#f5f4f1",
+                "dark-foreground": "#fff7f0",
+                "dark-background": "#1a1917",
+                background: "var(--background-color)",
+                foreground: "var(--foreground-color)",
+            },
             keyframes: {
                 blink: {
                     "0%, 49%": { opacity: "1" },

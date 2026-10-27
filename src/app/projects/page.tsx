@@ -212,7 +212,7 @@ function MobileLayout() {
                                     target: "_blank",
                                     rel: "noopener noreferrer",
                                 })}
-                                className="mt-5 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-12/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
+                                className="mt-5 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
                                 style={{ background: "color-mix(in srgb, var(--foreground-color) 8%, transparent)" }}
                             >
                                 View project
