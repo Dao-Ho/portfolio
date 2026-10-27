@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -29,7 +30,7 @@ const fontGeistMono = localFont({
     variable: "--font-geist-mono",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
     // Share images need absolute URLs, so relative ones resolve against the live site.
     metadataBase: new URL("https://www.daoho.dev"),
     title: "Dao Ho",
@@ -37,7 +38,7 @@ export const metadata = {
     twitter: { card: "summary_large_image" },
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         // next-themes sets the theme class on <html> before React hydrates, which React would otherwise flag.
         <html lang="en" suppressHydrationWarning>
@@ -47,8 +48,8 @@ export default function RootLayout({ children }) {
                 <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="theme">
                     <PostHogInitializer>{children}</PostHogInitializer>
                 </ThemeProvider>
+                <Analytics />
             </body>
-            <Analytics />
         </html>
     );
 }

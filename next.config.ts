@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
     images: {
         // AVIF where the browser supports it (roughly 20–30% smaller than WebP for the same quality), WebP otherwise.
         formats: ["image/avif", "image/webp"],
@@ -19,4 +20,4 @@ const nextConfig = {
     skipTrailingSlashRedirect: true,
 };
 
-module.exports = nextConfig;
+export default nextConfig;
