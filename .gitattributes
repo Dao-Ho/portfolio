@@ -1,4 +1,0 @@
-haku[[:space:]]final[[:space:]]refined.jpg filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-# Site images are served straight from the repo, and deploys may not fetch LFS objects, so keep them as plain files.
-public/projects/**/*.jpg -filter -diff -merge
