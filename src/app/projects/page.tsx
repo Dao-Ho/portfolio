@@ -120,10 +120,10 @@ function StripTile({ project, priority }: { project: Project; priority: boolean 
                     fetchPriority={priority ? "high" : undefined}
                     sizes="(min-height: 1100px) 63rem, 93vh"
                     quality={90}
-                    className={`object-cover transition-transform duration-700 ease-out ${href ? "group-hover:scale-[1.03]" : ""}`}
+                    className={`object-cover transition-transform duration-700 ease-out ${href ? "group-hover:scale-[1.03] group-focus-visible:scale-[1.03]" : ""}`}
                 />
                 {href && (
-                    <span className="pointer-events-none absolute bottom-4 left-4 translate-y-1 rounded-full bg-[rgb(0_0_0/0.55)] px-3 py-1.5 font-geistMono text-[12px] text-dark-foreground opacity-0 backdrop-blur-md transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                    <span className="pointer-events-none absolute bottom-4 left-4 translate-y-1 rounded-full bg-[rgb(0_0_0/0.55)] px-3 py-1.5 font-geistMono text-[12px] text-dark-foreground opacity-0 backdrop-blur-md transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
                         {external ? "visit site ↗" : "view project"}
                     </span>
                 )}
@@ -212,7 +212,7 @@ function MobileLayout() {
                                     target: "_blank",
                                     rel: "noopener noreferrer",
                                 })}
-                                className="mt-5 self-start inline-flex items-center justify-center gap-5 whitespace-nowrap font-small text-15 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-15 [&_svg]:shrink-0 active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
+                                className="mt-5 self-start inline-flex items-center justify-center whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground active:scale-95 transition-all text-foreground py-1 px-4 rounded-full"
                                 style={{ background: "color-mix(in srgb, var(--foreground-color) 8%, transparent)" }}
                             >
                                 View project
