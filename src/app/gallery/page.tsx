@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import posthog from "posthog-js";
@@ -49,19 +49,25 @@ const WORKS: Work[] = [
     { title: "Engulfed", src: engulfed, year: "2022" },
 ];
 
-/**
- * A salon hang on a 12-column wall: each piece gets its own column span and a drop from the row above,
- * so sizes and gaps vary the way works hang in a show. Ink and colour alternate down the wall.
- */
-const HANG: { work: number; col: string; drop: string }[] = [
-    { work: 0, col: "1 / span 7", drop: "0" },
-    { work: 1, col: "9 / span 4", drop: "7rem" },
-    { work: 2, col: "3 / span 6", drop: "2rem" },
-    { work: 4, col: "10 / span 3", drop: "9rem" },
-    { work: 5, col: "1 / span 4", drop: "4rem" },
-    { work: 6, col: "6 / span 7", drop: "11rem" },
-    { work: 3, col: "8 / span 4", drop: "4rem" },
+/** Works by column on desktop, top to bottom, picked so the columns come out close in height. */
+const COLUMNS = [
+    [0, 2, 6],
+    [3, 5],
+    [1, 4],
 ];
+/** The order the works read in, and step through in the lightbox. */
+const HANG = COLUMNS.flat();
+const GAP_REM = 1; // matches lg:gap-4 between and within columns
+const MOST = Math.max(...COLUMNS.map((c) => c.length));
+
+/**
+ * Sizes a column so every column ends at the same height: width grows with 1/(sum of height/width), and the basis
+ * makes up for columns with fewer gaps.
+ */
+function columnFlex(works: number[]) {
+    const ratio = works.reduce((sum, i) => sum + WORKS[i].src.height / WORKS[i].src.width, 0);
+    return `${1 / ratio} 1 ${((MOST - works.length) * GAP_REM) / ratio}rem`;
+}
 
 const UNDERLINE =
     "underline decoration-[color-mix(in_srgb,var(--foreground-color)_35%,transparent)] decoration-1 underline-offset-[5px] outline-none transition-opacity duration-150 hover:decoration-foreground focus-visible:decoration-foreground";
@@ -100,41 +106,48 @@ export default function Gallery() {
                     </a>
                 </header>
 
-                <section aria-label="Works" className="grid grid-cols-1 gap-y-16 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-0">
-                    {HANG.map(({ work: i, col, drop }) => {
-                        const work = WORKS[i];
-                        return (
-                            <figure
-                                key={work.title}
-                                // The hang only applies on the 12-column desktop grid.
-                                className="min-w-0 lg:[grid-column:var(--col)] lg:[margin-top:var(--drop)]"
-                                style={{ "--col": col, "--drop": drop } as CSSProperties}
-                            >
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setOpen(i);
-                                        posthog.capture("gallery_work_opened", { work_position: i + 1 });
-                                    }}
-                                    aria-label={`View ${work.title} larger`}
-                                    className="block w-full overflow-hidden rounded-[3px] outline-none focus-visible:ring-1 focus-visible:ring-foreground"
-                                >
-                                    <Image
-                                        src={work.src}
-                                        alt={work.title}
-                                        placeholder="blur"
-                                        sizes="(min-width: 1024px) 50vw, 100vw"
-                                        className="h-auto w-full transition-transform duration-500 ease-out hover:scale-[1.02]"
-                                        preload={i < 2}
-                                    />
-                                </button>
-                                <figcaption className="mt-3 flex items-baseline justify-between gap-3 font-geistMono text-[12px]">
-                                    <span className="truncate">{work.title}</span>
-                                    <span className="shrink-0 tabular-nums opacity-40">{details(work)}</span>
-                                </figcaption>
-                            </figure>
-                        );
-                    })}
+                <section aria-label="Works" className="flex flex-col gap-y-16 lg:flex-row lg:items-start lg:gap-4">
+                    {COLUMNS.map((column) => (
+                        // On phones the columns drop away and the works stack in one list.
+                        <div
+                            key={column[0]}
+                            className="contents lg:flex lg:min-w-0 lg:flex-col lg:gap-4"
+                            style={{ flex: columnFlex(column) }}
+                        >
+                            {column.map((i) => {
+                                const work = WORKS[i];
+                                return (
+                                    <figure key={work.title} className="group relative min-w-0">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setOpen(i);
+                                                posthog.capture("gallery_work_opened", { work_position: i + 1 });
+                                            }}
+                                            aria-label={`View ${work.title} larger`}
+                                            className="block w-full overflow-hidden rounded-[3px] outline-none focus-visible:ring-1 focus-visible:ring-foreground"
+                                        >
+                                            <Image
+                                                src={work.src}
+                                                alt={work.title}
+                                                placeholder="blur"
+                                                sizes="(min-width: 1024px) 40vw, 100vw"
+                                                className="h-auto w-full transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                                                preload={i === HANG[0]}
+                                            />
+                                        </button>
+                                        {/* Under the work on phones; on desktop it shows over the corner on hover, so the tiles sit flush. */}
+                                        <figcaption className="mt-3 flex items-baseline justify-between gap-3 font-geistMono text-[12px] lg:pointer-events-none lg:absolute lg:bottom-3 lg:left-3 lg:mt-0 lg:max-w-[calc(100%-1.5rem)] lg:rounded-full lg:bg-[rgb(0_0_0/0.55)] lg:px-3 lg:py-1.5 lg:text-dark-foreground lg:opacity-0 lg:backdrop-blur-md lg:transition-opacity lg:duration-300 lg:group-focus-within:opacity-100 lg:group-hover:opacity-100">
+                                            <span className="truncate">{work.title}</span>
+                                            <span className="shrink-0 tabular-nums opacity-40 lg:opacity-60">
+                                                {details(work)}
+                                            </span>
+                                        </figcaption>
+                                    </figure>
+                                );
+                            })}
+                        </div>
+                    ))}
                 </section>
             </main>
 
@@ -156,7 +169,7 @@ function Lightbox({
     const step = useCallback(
         (by: number) => {
             if (index === null) return;
-            const nextIndex = (index + by + WORKS.length) % WORKS.length;
+            const nextIndex = HANG[(HANG.indexOf(index) + by + HANG.length) % HANG.length];
             onStep(nextIndex);
             posthog.capture("gallery_work_navigated", {
                 direction: by > 0 ? "next" : "previous",
@@ -236,7 +249,7 @@ function Lightbox({
                                     ←
                                 </button>
                                 <span className="opacity-40">
-                                    {index + 1} / {WORKS.length}
+                                    {HANG.indexOf(index) + 1} / {HANG.length}
                                 </span>
                                 <button
                                     type="button"
