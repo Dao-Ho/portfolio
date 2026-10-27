@@ -14,7 +14,7 @@ import { isExternal, LAST_PROJECT_KEY, projectHref, projects, projectsByDate, ty
 const GLIDE = 0.18; // share of the remaining distance the strip covers each frame when scrolled with a wheel
 
 export default function ProjectsRoute() {
-    const { isLight, isMobile, toggleTheme } = useGlobal();
+    const { isMobile } = useGlobal();
 
     // Coming back from a project, the slide plays once the page has rendered (and the strip has restored its place,
     // since a child's effects run before this one).
@@ -25,12 +25,12 @@ export default function ProjectsRoute() {
     if (isMobile === null) return null;
 
     return (
-        <div className={`h-screen w-full overflow-hidden bg-background text-foreground ${isLight ? "light" : "dark"}`}>
+        <div className="h-screen w-full overflow-hidden bg-background text-foreground">
             {isMobile ? (
-                <MobileLayout isLight={isLight} toggleTheme={toggleTheme} />
+                <MobileLayout />
             ) : (
                 <>
-                    <TopNav isLight={isLight} toggleTheme={toggleTheme} />
+                    <TopNav />
                     <DesktopStrip />
                 </>
             )}
@@ -179,10 +179,10 @@ function StripTile({ project, priority }: { project: Project; priority: boolean 
     );
 }
 
-function MobileLayout({ isLight, toggleTheme }: { isLight: boolean; toggleTheme: () => void }) {
+function MobileLayout() {
     return (
         <div className="w-full h-full overflow-y-auto bg-background">
-            <MobileNav isLight={isLight} toggleTheme={toggleTheme} />
+            <MobileNav />
             <Container as="main" className="flex flex-col pt-[20vw] pb-[12vh]">
                 {projects.map((project, i) => (
                     <article key={project.index} className="flex flex-col pb-[16vw]">

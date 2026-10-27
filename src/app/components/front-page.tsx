@@ -45,14 +45,14 @@ const Socials = ({ className }: { className?: string }) => (
     </p>
 );
 
-const FrontPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats }) => {
+const FrontPage = ({ stats }: { stats: PondStats }) => {
     const { isMobile } = useGlobal();
 
     if (isMobile === null) return null;
-    return isMobile ? mobilePage() : desktopPage({ isLight, stats });
+    return isMobile ? mobilePage() : desktopPage({ stats });
 };
 
-const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats }) => {
+const desktopPage = ({ stats }: { stats: PondStats }) => {
     return (
         <Container
             as="header"
@@ -94,37 +94,16 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
             >
                 <h1>Xin chào, I&apos;m Dao.</h1>
                 <p>
-                    Software Engineer @{" "}
-                    <Cited source="googleIncoming" isLight={isLight}>
-                        Google
-                    </Cited>
-                    , passionate about building the future.
+                    Software Engineer @ <Cited source="googleIncoming">Google</Cited>, passionate about building the
+                    future.
                 </p>
                 <p>
-                    Before that,{" "}
-                    <Cited source="google" isLight={isLight}>
-                        Google
-                    </Cited>{" "}
-                    (intern),{" "}
-                    <Cited source="agency" isLight={isLight}>
-                        Agency
-                    </Cited>
-                    , and a few{" "}
-                    <Cited source="startups" isLight={isLight}>
-                        early-stage startups
-                    </Cited>
-                    .
+                    Before that, <Cited source="google">Google</Cited> (intern), <Cited source="agency">Agency</Cited>,
+                    and a few <Cited source="startups">early-stage startups</Cited>.
                 </p>
                 <p>
-                    Currently, building @{" "}
-                    <Cited source="generate" isLight={isLight}>
-                        Generate
-                    </Cited>
-                    , researching @{" "}
-                    <Cited source="parcs" isLight={isLight}>
-                        PARCS Lab
-                    </Cited>
-                    .
+                    Currently, building @ <Cited source="generate">Generate</Cited>, researching @{" "}
+                    <Cited source="parcs">PARCS Lab</Cited>.
                 </p>
                 <Socials className="mt-[1.5vh]" />
             </motion.div>

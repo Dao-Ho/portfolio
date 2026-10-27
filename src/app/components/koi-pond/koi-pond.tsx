@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef } from "react";
+import { useTheme } from "next-themes";
 import posthog from "posthog-js";
 import { cn } from "../../../lib/utils";
 import { KoiRenderer } from "./renderer";
@@ -198,9 +199,10 @@ class PondEngine {
     };
 }
 
-type KoiPondProps = { isLight: boolean; className?: string; onStats?: (stats: PondStats) => void };
+type KoiPondProps = { className?: string; onStats?: (stats: PondStats) => void };
 
-export default function KoiPond({ isLight, className, onStats }: KoiPondProps) {
+export default function KoiPond({ className, onStats }: KoiPondProps) {
+    const isLight = useTheme().resolvedTheme === "light";
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<PondEngine | null>(null);
     // An Effect Event, so a new callback doesn't tear down the engine.

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { SOURCES, type Source } from "../data/sources";
 
 const OPEN_DELAY = 55;
@@ -52,7 +53,9 @@ const Mark = ({
 );
 
 /** An underlined @-mention whose hover card reads source / role / one line; clicking opens the source. */
-const Cited = ({ source, children, isLight }: { source: string; children: React.ReactNode; isLight: boolean }) => {
+const Cited = ({ source, children }: { source: string; children: React.ReactNode }) => {
+    // The card only renders after a hover, so the theme is always known by then.
+    const isLight = useTheme().resolvedTheme === "light";
     const src = SOURCES[source];
     const router = useRouter();
     const [open, setOpen] = useState(false);

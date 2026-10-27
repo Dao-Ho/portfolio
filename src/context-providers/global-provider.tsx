@@ -1,11 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, useLayoutEffect, useEffect } from "react";
+import React, { createContext, useContext, useState, useLayoutEffect } from "react";
 
 interface GlobalContextType {
     isMobile: boolean | null;
-    isLight: boolean;
-    toggleTheme: () => void;
 }
 
 /*
@@ -20,21 +18,6 @@ const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [isMobile, setIsMobile] = useState<boolean | null>(null);
-    const [isLight, setIsLight] = useState<boolean>(false);
-
-    useEffect(() => {
-        const stored = localStorage.getItem("theme");
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- the next-themes switch replaces this
-        if (stored === "light") setIsLight(true);
-    }, []);
-
-    const toggleTheme = () => {
-        setIsLight((v) => {
-            const next = !v;
-            localStorage.setItem("theme", next ? "light" : "dark");
-            return next;
-        });
-    };
 
     useLayoutEffect(() => {
         const query = window.matchMedia(MOBILE_QUERY);
@@ -48,7 +31,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, []);
 
-    return <GlobalContext.Provider value={{ isMobile, isLight, toggleTheme }}>{children}</GlobalContext.Provider>;
+    return <GlobalContext.Provider value={{ isMobile }}>{children}</GlobalContext.Provider>;
 };
 
 export const useGlobal = () => {

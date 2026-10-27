@@ -31,7 +31,7 @@ const MEDIA =
     "block aspect-video h-auto w-full rounded-[6px] bg-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--foreground-color)_8%,transparent)]";
 
 export default function ProjectPage({ slug }: { slug: string }) {
-    const { isLight, isMobile, toggleTheme } = useGlobal();
+    const { isMobile } = useGlobal();
     const router = useRouter();
     const project = projects.find((p) => p.slug === slug);
     const still = useReducedMotion() ?? false;
@@ -109,12 +109,8 @@ export default function ProjectPage({ slug }: { slug: string }) {
     const { page } = project;
 
     return (
-        <div className={`min-h-screen w-full bg-background text-foreground ${isLight ? "light" : "dark"}`}>
-            {isMobile ? (
-                <MobileNav isLight={isLight} toggleTheme={toggleTheme} />
-            ) : (
-                <TopNav isLight={isLight} toggleTheme={toggleTheme} overCover={overCover} />
-            )}
+        <div className="min-h-screen w-full bg-background text-foreground">
+            {isMobile ? <MobileNav /> : <TopNav overCover={overCover} />}
             {page.cover && (
                 // Full-bleed cover. On desktop it runs to the top edge with the nav over it; on mobile it sits under the
                 // nav pill (padding, not margin, so the page colour shows above it). The lower edge fades into the page.

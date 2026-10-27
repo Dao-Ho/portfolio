@@ -5,17 +5,13 @@ import MobileNav from "../components/mobile-nav";
 import TopNav from "../components/top-nav";
 
 export default function Blog() {
-    const { isLight, isMobile, toggleTheme } = useGlobal();
+    const { isMobile } = useGlobal();
 
     if (isMobile === null) return null;
 
     return (
-        <div className={`min-h-screen w-full bg-background text-foreground ${isLight ? "light" : "dark"}`}>
-            {isMobile ? (
-                <MobileNav isLight={isLight} toggleTheme={toggleTheme} />
-            ) : (
-                <TopNav isLight={isLight} toggleTheme={toggleTheme} />
-            )}
+        <div className="min-h-screen w-full bg-background text-foreground">
+            {isMobile ? <MobileNav /> : <TopNav />}
             <main className="flex min-h-screen items-center justify-center px-6 font-geistMono">
                 <p className="text-[14px] lowercase tracking-[0.02em] opacity-60">
                     coming soon.

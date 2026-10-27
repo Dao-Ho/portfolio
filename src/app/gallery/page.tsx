@@ -70,18 +70,14 @@ const UNDERLINE =
 const details = (work: Work) => [work.size, work.year].filter(Boolean).join(" · ");
 
 export default function Gallery() {
-    const { isLight, isMobile, toggleTheme } = useGlobal();
+    const { isMobile } = useGlobal();
     const [open, setOpen] = useState<number | null>(null);
 
     if (isMobile === null) return null;
 
     return (
-        <div className={`min-h-screen w-full bg-background text-foreground ${isLight ? "light" : "dark"}`}>
-            {isMobile ? (
-                <MobileNav isLight={isLight} toggleTheme={toggleTheme} />
-            ) : (
-                <TopNav isLight={isLight} toggleTheme={toggleTheme} />
-            )}
+        <div className="min-h-screen w-full bg-background text-foreground">
+            {isMobile ? <MobileNav /> : <TopNav />}
             <main className="mx-auto flex w-full max-w-[1280px] flex-col gap-14 px-6 pb-24 pt-28 lg:gap-20 lg:px-[6vw] lg:pt-36">
                 <header className="flex flex-col gap-6 font-geistMono lg:flex-row lg:items-end lg:justify-between">
                     <div className="flex flex-col gap-4">

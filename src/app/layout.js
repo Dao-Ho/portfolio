@@ -2,6 +2,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
+import { ThemeProvider } from "next-themes";
 import { GlobalProvider } from "../context-providers/global-provider";
 import { PostHogInitializer } from "../context-providers/posthog-initializer";
 
@@ -39,13 +40,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en">
+        // next-themes sets the theme class on <html> before React hydrates, which React would otherwise flag.
+        <html lang="en" suppressHydrationWarning>
             <body
-                className={`${inter.variable} ${fontPlayfairDisplay.variable} ${fontGeistMono.variable} ${fontGeistSans.variable} scroll-smooth overflow-x-clip`}
+                className={`${inter.variable} ${fontPlayfairDisplay.variable} ${fontGeistMono.variable} ${fontGeistSans.variable} scroll-smooth overflow-x-clip bg-background text-foreground`}
             >
-                <PostHogInitializer>
-                    <GlobalProvider>{children}</GlobalProvider>
-                </PostHogInitializer>
+                <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="theme">
+                    <PostHogInitializer>
+                        <GlobalProvider>{children}</GlobalProvider>
+                    </PostHogInitializer>
+                </ThemeProvider>
             </body>
             <Analytics />
         </html>
