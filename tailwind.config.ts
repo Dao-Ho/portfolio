@@ -1,6 +1,8 @@
-/** @type {import('tailwindcss').Config} */
+import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
+import plugin from "tailwindcss/plugin";
 
-module.exports = {
+export default {
     darkMode: ["class"],
     content: [
         "./pages/**/*.{js,jsx,ts,tsx}",
@@ -57,8 +59,8 @@ module.exports = {
         },
     },
     plugins: [
-        require("tailwindcss-animate"),
-        function ({ addBase, theme }: { addBase: any; theme: any }) {
+        animate,
+        plugin(({ addBase, theme }) => {
             addBase({
                 // Dark text on a light page needs a heavier mix to read as clearly (both land near 4.5:1).
                 ":root": {
@@ -72,6 +74,6 @@ module.exports = {
                     "--muted-color": "color-mix(in srgb, var(--foreground-color) 50%, transparent)",
                 },
             });
-        },
+        }),
     ],
-};
+} satisfies Config;

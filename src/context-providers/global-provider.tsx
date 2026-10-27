@@ -24,6 +24,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const stored = localStorage.getItem("theme");
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- the next-themes switch replaces this
         if (stored === "light") setIsLight(true);
     }, []);
 

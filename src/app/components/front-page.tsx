@@ -92,7 +92,7 @@ const desktopPage = ({ isLight, stats }: { isLight: boolean; stats: PondStats })
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
             >
-                <h1>Xin chào, I'm Dao.</h1>
+                <h1>Xin chào, I&apos;m Dao.</h1>
                 <p>
                     Software Engineer @{" "}
                     <Cited source="googleIncoming" isLight={isLight}>

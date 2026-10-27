@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent, useRef } from "react";
 import posthog from "posthog-js";
 import { cn } from "../../../lib/utils";
 import { KoiRenderer } from "./renderer";
@@ -55,11 +55,9 @@ class PondEngine {
 
     constructor(
         private canvas: HTMLCanvasElement,
-        isLight: boolean,
         private onStats: (stats: PondStats) => void
     ) {
         this.renderer = new KoiRenderer(canvas);
-        this.renderer.setTheme(isLight);
         this.resizeObserver.observe(canvas);
         this.intersectionObserver.observe(canvas);
         this.reducedMotion.addEventListener("change", this.schedule);
@@ -205,14 +203,13 @@ type KoiPondProps = { isLight: boolean; className?: string; onStats?: (stats: Po
 export default function KoiPond({ isLight, className, onStats }: KoiPondProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const engineRef = useRef<PondEngine | null>(null);
-    // Read through a ref so a new callback doesn't tear down the engine.
-    const onStatsRef = useRef(onStats);
-    onStatsRef.current = onStats;
+    // An Effect Event, so a new callback doesn't tear down the engine.
+    const emitStats = useEffectEvent((stats: PondStats) => onStats?.(stats));
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const engine = new PondEngine(canvas, isLight, (stats) => onStatsRef.current?.(stats));
+        const engine = new PondEngine(canvas, (stats) => emitStats(stats));
         engineRef.current = engine;
         return () => {
             engine.destroy();
@@ -220,6 +217,7 @@ export default function KoiPond({ isLight, className, onStats }: KoiPondProps) {
         };
     }, []);
 
+    // Also sets the first theme: it runs right after the engine is created, before any frame is drawn.
     useEffect(() => {
         engineRef.current?.setTheme(isLight);
     }, [isLight]);

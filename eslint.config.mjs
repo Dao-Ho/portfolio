@@ -1,37 +1,11 @@
-import js from "@eslint/js";
-import prettierConfig from "eslint-config-prettier";
-import prettierPlugin from "eslint-plugin-prettier";
-import reactPlugin from "eslint-plugin-react";
-import globals from "globals";
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+import prettier from "eslint-config-prettier/flat";
 
-export default [
-    js.configs.recommended,
-    {
-        languageOptions: {
-            globals: {
-                ...globals.browser,
-                ...globals.node,
-            },
-            parserOptions: {
-                ecmaFeatures: { jsx: true },
-                ecmaVersion: "latest",
-                sourceType: "module",
-            },
-        },
-        plugins: {
-            prettier: prettierPlugin,
-            react: reactPlugin,
-        },
-        rules: {
-            ...prettierConfig.rules,
-            "prettier/prettier": "error",
-            "arrow-body-style": "off",
-            "prefer-arrow-callback": "off",
-            "react/jsx-uses-vars": "error",
-            "react/jsx-uses-react": "off",
-        },
-    },
-    {
-        ignores: [".next/**", "node_modules/**", "out/**"],
-    },
-];
+export default defineConfig([
+    ...nextVitals,
+    ...nextTs,
+    prettier,
+    globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+]);

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useGlobal } from "../../../context-providers/global-provider";
 import MobileNav from "../../components/mobile-nav";
@@ -34,11 +34,7 @@ export default function ProjectPage({ slug }: { slug: string }) {
     const { isLight, isMobile, toggleTheme } = useGlobal();
     const router = useRouter();
     const project = projects.find((p) => p.slug === slug);
-    const [still, setStill] = useState(false);
-
-    useEffect(() => {
-        setStill(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    }, []);
+    const still = useReducedMotion() ?? false;
 
     // Wheel scrolling glides to where it's headed instead of stepping, the same feel as the projects strip.
     useEffect(() => {
