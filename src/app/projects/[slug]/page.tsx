@@ -16,8 +16,6 @@ export async function generateMetadata({ params }: Props) {
     if (!project?.page) return {};
     const { tagline, share } = project.page;
     return {
-        // Share images need an absolute URL, so this page resolves them against the live site.
-        metadataBase: new URL("https://www.daoho.dev"),
         title: project.name,
         description: tagline,
         openGraph: {

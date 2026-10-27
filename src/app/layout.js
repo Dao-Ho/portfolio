@@ -30,8 +30,11 @@ const fontGeistMono = localFont({
 });
 
 export const metadata = {
+    // Share images need absolute URLs, so relative ones resolve against the live site.
+    metadataBase: new URL("https://www.daoho.dev"),
     title: "Dao Ho",
     description: "expression of self",
+    twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }) {
