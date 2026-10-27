@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { useGlobal } from "../../../context-providers/global-provider";
 import MobileNav from "../../components/mobile-nav";
 import TopNav from "../../components/top-nav";
 import InlineLink from "../../components/inline-link";
@@ -31,7 +30,6 @@ const MEDIA =
     "block aspect-video h-auto w-full rounded-[6px] bg-black shadow-[0_0_0_1px_color-mix(in_srgb,var(--foreground-color)_8%,transparent)]";
 
 export default function ProjectPage({ slug }: { slug: string }) {
-    const { isMobile } = useGlobal();
     const router = useRouter();
     const project = projects.find((p) => p.slug === slug);
     const still = useReducedMotion() ?? false;
@@ -88,13 +86,13 @@ export default function ProjectPage({ slug }: { slug: string }) {
             window.removeEventListener("scroll", update);
             window.removeEventListener("resize", update);
         };
-    }, [hasCover, isMobile]);
+    }, [hasCover]);
 
     // Arriving with a slide (from the strip or a neighbouring project), the page slides in as soon as it has rendered.
     const [arrivedSliding] = useState(() => typeof window !== "undefined" && isTransitioning());
     useEffect(() => {
-        if (isMobile !== null) finishTransition();
-    }, [isMobile]);
+        finishTransition();
+    }, []);
     useEffect(() => {
         sessionStorage.setItem(LAST_PROJECT_KEY, slug);
     }, [slug]);
@@ -105,12 +103,13 @@ export default function ProjectPage({ slug }: { slug: string }) {
     const prev = pages[(at - 1 + pages.length) % pages.length];
     const next = pages[(at + 1) % pages.length];
 
-    if (isMobile === null || !project?.page) return null;
+    if (!project?.page) return null;
     const { page } = project;
 
     return (
         <div className="min-h-screen w-full bg-background text-foreground">
-            {isMobile ? <MobileNav /> : <TopNav overCover={overCover} />}
+            <MobileNav />
+            <TopNav overCover={overCover} />
             {page.cover && (
                 // Full-bleed cover. On desktop it runs to the top edge with the nav over it; on mobile it sits under the
                 // nav pill (padding, not margin, so the page colour shows above it). The lower edge fades into the page.

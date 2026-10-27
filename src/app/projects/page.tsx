@@ -5,35 +5,26 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { finishTransition, isTransitioning, pushWithTransition } from "../../lib/view-transition";
-import { useGlobal } from "../../context-providers/global-provider";
 import MobileNav from "../components/mobile-nav";
 import TopNav from "../components/top-nav";
 import Container from "../components/container";
 import { isExternal, LAST_PROJECT_KEY, projectHref, projects, projectsByDate, type Project } from "../data/projects";
 
 const GLIDE = 0.18; // share of the remaining distance the strip covers each frame when scrolled with a wheel
+const DESKTOP_QUERY = "(min-width: 1024px)"; // Tailwind's `lg`, where the strip replaces the mobile list
 
 export default function ProjectsRoute() {
-    const { isMobile } = useGlobal();
-
     // Coming back from a project, the slide plays once the page has rendered (and the strip has restored its place,
     // since a child's effects run before this one).
     useEffect(() => {
-        if (isMobile !== null) finishTransition();
-    }, [isMobile]);
-
-    if (isMobile === null) return null;
+        finishTransition();
+    }, []);
 
     return (
         <div className="h-screen w-full overflow-hidden bg-background text-foreground">
-            {isMobile ? (
-                <MobileLayout />
-            ) : (
-                <>
-                    <TopNav />
-                    <DesktopStrip />
-                </>
-            )}
+            <MobileLayout />
+            <TopNav />
+            <DesktopStrip />
         </div>
     );
 }
@@ -49,6 +40,7 @@ function DesktopStrip() {
         const strip = stripRef.current;
         if (!strip) return;
         const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const desktop = window.matchMedia(DESKTOP_QUERY);
         // Back from a project, the strip opens on the last one viewed (lined up with the column's left edge), so the
         // slide lands on it even after stepping through others with previous and next.
         const last =
@@ -74,6 +66,8 @@ function DesktopStrip() {
         // Scrolling anywhere on the page moves the strip: a vertical wheel turns into a sideways glide. A sideways
         // swipe over the strip is left to the browser; anywhere else it glides the strip too.
         const onWheel = (e: WheelEvent) => {
+            // The strip is only shown on desktop; below that the mobile list scrolls normally.
+            if (!desktop.matches) return;
             const sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY);
             if (sideways && strip.contains(e.target as Node)) return;
             e.preventDefault();
@@ -93,7 +87,7 @@ function DesktopStrip() {
     }, []);
 
     return (
-        <main className="flex h-full flex-col justify-center pt-12">
+        <main className="flex h-full flex-col justify-center pt-12 max-lg:hidden">
             {/* The padding lines the first and last tiles up with the 56rem column the project pages use. */}
             <div
                 ref={stripRef}
@@ -181,7 +175,7 @@ function StripTile({ project, priority }: { project: Project; priority: boolean 
 
 function MobileLayout() {
     return (
-        <div className="w-full h-full overflow-y-auto bg-background">
+        <div className="w-full h-full overflow-y-auto bg-background lg:hidden">
             <MobileNav />
             <Container as="main" className="flex flex-col pt-[20vw] pb-[12vh]">
                 {projects.map((project, i) => (

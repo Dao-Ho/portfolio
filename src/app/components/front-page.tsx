@@ -1,6 +1,5 @@
 "use client";
 import { motion } from "motion/react";
-import { useGlobal } from "../../context-providers/global-provider";
 import Cited from "./citation";
 import Container from "./container";
 import type { PondStats } from "./koi-pond/koi-pond";
@@ -45,18 +44,18 @@ const Socials = ({ className }: { className?: string }) => (
     </p>
 );
 
-const FrontPage = ({ stats }: { stats: PondStats }) => {
-    const { isMobile } = useGlobal();
-
-    if (isMobile === null) return null;
-    return isMobile ? mobilePage() : desktopPage({ stats });
-};
+const FrontPage = ({ stats }: { stats: PondStats }) => (
+    <>
+        {mobilePage()}
+        {desktopPage({ stats })}
+    </>
+);
 
 const desktopPage = ({ stats }: { stats: PondStats }) => {
     return (
         <Container
             as="header"
-            className="relative flex h-full flex-col justify-end gap-10 bg-transparent pb-32 pt-32 text-foreground [@media(max-height:720px)]:gap-6 [@media(max-height:720px)]:pb-12 [@media(max-height:720px)]:pt-20"
+            className="relative flex h-full flex-col justify-end gap-10 max-lg:hidden bg-transparent pb-32 pt-32 text-foreground [@media(max-height:720px)]:gap-6 [@media(max-height:720px)]:pb-12 [@media(max-height:720px)]:pt-20"
         >
             {stats.koi > 0 && (
                 <div
@@ -123,7 +122,7 @@ const mobilePage = () => {
         // Top padding clears the floating nav pill.
         <Container
             as="header"
-            className="flex h-full flex-col justify-end gap-8 bg-transparent pb-12 pt-28 font-geistMono text-foreground [@media(max-height:640px)]:gap-5 [@media(max-height:640px)]:pb-8"
+            className="flex h-full flex-col justify-end gap-8 lg:hidden bg-transparent pb-12 pt-28 font-geistMono text-foreground [@media(max-height:640px)]:gap-5 [@media(max-height:640px)]:pb-8"
         >
             <motion.blockquote
                 data-koi-avoid

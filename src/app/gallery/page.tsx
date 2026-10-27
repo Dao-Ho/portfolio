@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import posthog from "posthog-js";
-import { useGlobal } from "../../context-providers/global-provider";
 import MobileNav from "../components/mobile-nav";
 import TopNav from "../components/top-nav";
 import transaction from "../../../public/gallery/the-transaction.webp";
@@ -70,14 +69,12 @@ const UNDERLINE =
 const details = (work: Work) => [work.size, work.year].filter(Boolean).join(" · ");
 
 export default function Gallery() {
-    const { isMobile } = useGlobal();
     const [open, setOpen] = useState<number | null>(null);
-
-    if (isMobile === null) return null;
 
     return (
         <div className="min-h-screen w-full bg-background text-foreground">
-            {isMobile ? <MobileNav /> : <TopNav />}
+            <MobileNav />
+            <TopNav />
             <main className="mx-auto flex w-full max-w-[1280px] flex-col gap-14 px-6 pb-24 pt-28 lg:gap-20 lg:px-[6vw] lg:pt-36">
                 <header className="flex flex-col gap-6 font-geistMono lg:flex-row lg:items-end lg:justify-between">
                     <div className="flex flex-col gap-4">
@@ -109,8 +106,9 @@ export default function Gallery() {
                         return (
                             <figure
                                 key={work.title}
-                                className="min-w-0"
-                                style={isMobile ? undefined : { gridColumn: col, marginTop: drop }}
+                                // The hang only applies on the 12-column desktop grid.
+                                className="min-w-0 lg:[grid-column:var(--col)] lg:[margin-top:var(--drop)]"
+                                style={{ "--col": col, "--drop": drop } as CSSProperties}
                             >
                                 <button
                                     type="button"

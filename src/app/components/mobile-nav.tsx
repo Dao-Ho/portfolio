@@ -32,7 +32,7 @@ export default function MobileNav() {
     return (
         <>
             {/* Single persistent pill — always on top */}
-            <div className="fixed top-[3vw] left-[3vw] right-[3vw] z-50">
+            <div className="fixed top-[3vw] left-[3vw] right-[3vw] z-50 lg:hidden">
                 <button
                     onClick={() => setOpen((v) => !v)}
                     className="w-full flex items-center justify-between px-[5vw] py-[3.5vw] rounded-full cursor-pointer"
@@ -79,7 +79,7 @@ export default function MobileNav() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed inset-0 z-40 flex flex-col"
+                        className="fixed inset-0 z-40 flex flex-col lg:hidden"
                         style={{ backgroundColor: bg }}
                     >
                         <div className="flex-1 flex flex-col items-center justify-center gap-[0.5vh]">

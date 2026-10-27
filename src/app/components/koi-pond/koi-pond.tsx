@@ -119,15 +119,15 @@ class PondEngine {
 
     private measureContent() {
         const origin = this.canvas.getBoundingClientRect();
-        const measured = Array.from(document.querySelectorAll(AVOID_TARGETS), (el) => {
-            const b = el.getBoundingClientRect();
-            return {
+        const measured = Array.from(document.querySelectorAll(AVOID_TARGETS), (el) => el.getBoundingClientRect())
+            // The layout for the other screen size is display: none and measures as an empty box.
+            .filter((b) => b.width > 0 && b.height > 0)
+            .map((b) => ({
                 left: b.left - origin.left,
                 top: b.top - origin.top,
                 right: b.right - origin.left,
                 bottom: b.bottom - origin.top,
-            };
-        });
+            }));
         const boxes = mergeNearby(measured);
         this.renderer.setDimBoxes(boxes);
         this.world.avoid = boxes;

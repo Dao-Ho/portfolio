@@ -30,7 +30,7 @@ export default function TopNav({ overCover = false }: TopNavProps) {
             data-koi-avoid
             aria-label="Main"
             // Named for view transitions, so the nav stays in place instead of fading out with the rest of the page.
-            className={`fixed inset-x-0 top-0 z-30 flex items-center justify-center gap-8 pt-8 font-geistMono text-[13px] lowercase transition-colors duration-200 [view-transition-name:site-nav] ${
+            className={`fixed inset-x-0 top-0 z-30 flex max-lg:hidden items-center justify-center gap-8 pt-8 font-geistMono text-[13px] lowercase transition-colors duration-200 [view-transition-name:site-nav] ${
                 overCover ? "text-dark-foreground" : "text-foreground"
             }`}
         >

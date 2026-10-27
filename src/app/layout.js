@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "next-themes";
-import { GlobalProvider } from "../context-providers/global-provider";
 import { PostHogInitializer } from "../context-providers/posthog-initializer";
 
 const inter = Inter({
@@ -46,9 +45,7 @@ export default function RootLayout({ children }) {
                 className={`${inter.variable} ${fontPlayfairDisplay.variable} ${fontGeistMono.variable} ${fontGeistSans.variable} scroll-smooth overflow-x-clip bg-background text-foreground`}
             >
                 <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="theme">
-                    <PostHogInitializer>
-                        <GlobalProvider>{children}</GlobalProvider>
-                    </PostHogInitializer>
+                    <PostHogInitializer>{children}</PostHogInitializer>
                 </ThemeProvider>
             </body>
             <Analytics />
