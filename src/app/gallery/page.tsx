@@ -52,7 +52,7 @@ const WORKS: Work[] = [
 /** Works by column on desktop, top to bottom, picked so the columns come out close in height. */
 const COLUMNS = [
     [0, 2, 6],
-    [3, 5],
+    [5, 3],
     [1, 4],
 ];
 /** The order the works read in, and step through in the lightbox. */
