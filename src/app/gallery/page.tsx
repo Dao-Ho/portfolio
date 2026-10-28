@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { motion, AnimatePresence } from "motion/react";
 import posthog from "posthog-js";
 import MobileNav from "../components/mobile-nav";
 import TopNav from "../components/top-nav";
@@ -156,7 +155,11 @@ export default function Gallery() {
     );
 }
 
-/** Full-screen view of one piece; arrow keys step through the works and Escape closes. */
+const SIDE_BUTTON =
+    "w-[6vw] shrink-0 text-[22px] opacity-40 outline-none transition-opacity hover:opacity-100 focus-visible:opacity-100 max-lg:hidden";
+const SMALL_BUTTON = "opacity-50 outline-none transition-opacity hover:opacity-100 focus-visible:opacity-100 lg:hidden";
+
+/** One piece on its own, as large as fits. Arrow keys or a swipe step through the works and Escape closes. */
 function Lightbox({
     index,
     onClose,
@@ -166,6 +169,10 @@ function Lightbox({
     onClose: () => void;
     onStep: (i: number) => void;
 }) {
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    const swipeStart = useRef<{ x: number; y: number } | null>(null);
+    const isOpen = index !== null;
+
     const step = useCallback(
         (by: number) => {
             if (index === null) return;
@@ -179,94 +186,118 @@ function Lightbox({
         [index, onStep]
     );
 
+    // A modal <dialog> keeps focus inside it and hands focus back to the work that opened it on close.
     useEffect(() => {
-        if (index === null) return;
-        const onKey = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
-            else if (e.key === "ArrowRight") step(1);
-            else if (e.key === "ArrowLeft") step(-1);
-        };
-        window.addEventListener("keydown", onKey);
+        const dialog = dialogRef.current;
+        if (!dialog || !isOpen) return;
+        dialog.showModal();
         const overflow = document.body.style.overflow;
         document.body.style.overflow = "hidden";
         return () => {
-            window.removeEventListener("keydown", onKey);
+            dialog.close();
             document.body.style.overflow = overflow;
         };
-    }, [index, onClose, step]);
+    }, [isOpen]);
 
     const work = index === null ? null : WORKS[index];
 
     return (
-        <AnimatePresence>
+        <dialog
+            ref={dialogRef}
+            aria-label={work?.title}
+            onCancel={(e) => {
+                e.preventDefault();
+                onClose();
+            }}
+            onKeyDown={(e) => {
+                if (e.key === "ArrowRight") step(1);
+                else if (e.key === "ArrowLeft") step(-1);
+            }}
+            className="m-0 size-full max-h-none max-w-none bg-background p-0 font-geistMono text-foreground"
+        >
             {work && index !== null && (
-                <motion.div
-                    role="dialog"
-                    aria-modal="true"
-                    aria-label={work.title}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    onClick={onClose}
-                    className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-[color-mix(in_srgb,var(--background-color)_94%,transparent)] px-6 font-geistMono text-foreground backdrop-blur-sm"
-                >
-                    <motion.div
-                        key={work.title}
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex flex-col gap-5"
+                <div className="flex h-full flex-col">
+                    <div className="flex items-center justify-between px-6 py-5 text-[13px] lg:px-[6vw]">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className={`${UNDERLINE} opacity-60 hover:opacity-100 focus-visible:opacity-100`}
+                        >
+                            close
+                        </button>
+                        <span className="flex items-center gap-4 tabular-nums">
+                            <button
+                                type="button"
+                                aria-label="Previous work"
+                                onClick={() => step(-1)}
+                                className={SMALL_BUTTON}
+                            >
+                                ←
+                            </button>
+                            <span className="opacity-40">
+                                {HANG.indexOf(index) + 1} / {HANG.length}
+                            </span>
+                            <button
+                                type="button"
+                                aria-label="Next work"
+                                onClick={() => step(1)}
+                                className={SMALL_BUTTON}
+                            >
+                                →
+                            </button>
+                        </span>
+                    </div>
+
+                    <div
+                        className="flex min-h-0 flex-1 px-6 lg:px-0"
+                        onTouchStart={(e) => {
+                            const { clientX: x, clientY: y } = e.touches[0];
+                            swipeStart.current = { x, y };
+                        }}
+                        onTouchEnd={(e) => {
+                            const start = swipeStart.current;
+                            const { clientX: x, clientY: y } = e.changedTouches[0];
+                            if (start && Math.abs(x - start.x) > 50 && Math.abs(x - start.x) > Math.abs(y - start.y))
+                                step(x < start.x ? 1 : -1);
+                            swipeStart.current = null;
+                        }}
                     >
-                        <Image
-                            src={work.src}
-                            alt={work.title}
-                            placeholder="blur"
-                            sizes="90vw"
-                            className="h-auto max-h-[72vh] w-auto max-w-[90vw] rounded-[4px] object-contain"
-                        />
-                        <div className="flex w-full items-start justify-between gap-6 text-[13px]">
-                            <span className="flex flex-col gap-1">
-                                <span>
-                                    {work.title} <span className="opacity-40">{details(work)}</span>
-                                </span>
-                                {work.honours?.map((h) => (
-                                    <span key={h} className="font-geistSans text-[12px] opacity-60">
-                                        {h}
-                                    </span>
-                                ))}
-                            </span>
-                            <span className="flex items-center gap-4 tabular-nums">
-                                <button
-                                    type="button"
-                                    aria-label="Previous work"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        step(-1);
-                                    }}
-                                    className="opacity-50 outline-none transition-opacity hover:opacity-100 focus-visible:opacity-100"
-                                >
-                                    ←
-                                </button>
-                                <span className="opacity-40">
-                                    {HANG.indexOf(index) + 1} / {HANG.length}
-                                </span>
-                                <button
-                                    type="button"
-                                    aria-label="Next work"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        step(1);
-                                    }}
-                                    className="opacity-50 outline-none transition-opacity hover:opacity-100 focus-visible:opacity-100"
-                                >
-                                    →
-                                </button>
-                            </span>
+                        <button
+                            type="button"
+                            aria-label="Previous work"
+                            onClick={() => step(-1)}
+                            className={SIDE_BUTTON}
+                        >
+                            ‹
+                        </button>
+                        <div className="relative flex-1">
+                            <Image
+                                src={work.src}
+                                alt={work.title}
+                                placeholder="blur"
+                                fill
+                                sizes="(min-width: 1024px) 88vw, 100vw"
+                                // Inline so the blur placeholder is contained the same way as the image.
+                                style={{ objectFit: "contain" }}
+                            />
                         </div>
-                    </motion.div>
-                </motion.div>
+                        <button type="button" aria-label="Next work" onClick={() => step(1)} className={SIDE_BUTTON}>
+                            ›
+                        </button>
+                    </div>
+
+                    <div className="flex flex-col gap-1 px-6 pb-6 pt-5 text-[13px] lg:px-[6vw]">
+                        <span>
+                            {work.title} <span className="opacity-40">{details(work)}</span>
+                        </span>
+                        {work.honours?.map((h) => (
+                            <span key={h} className="font-geistSans text-[12px] opacity-60">
+                                {h}
+                            </span>
+                        ))}
+                    </div>
+                </div>
             )}
-        </AnimatePresence>
+        </dialog>
     );
 }
