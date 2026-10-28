@@ -130,7 +130,7 @@ export default function Gallery() {
                                                 src={work.src}
                                                 alt={work.title}
                                                 placeholder="blur"
-                                                sizes="(min-width: 1024px) 40vw, 100vw"
+                                                sizes="(min-width: 1024px) 33vw, 100vw"
                                                 className="h-auto w-full transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                                                 preload={i === HANG[0]}
                                             />
@@ -156,7 +156,9 @@ export default function Gallery() {
 }
 
 const SIDE_BUTTON =
-    "w-[6vw] shrink-0 text-[22px] opacity-40 outline-none transition-opacity hover:opacity-100 focus-visible:opacity-100 max-lg:hidden";
+    "h-24 w-[6vw] shrink-0 text-[22px] opacity-40 outline-none transition-opacity hover:opacity-100 focus-visible:opacity-100 max-lg:hidden";
+// Clicks anywhere else in the viewer close it.
+const STAY_OPEN = "img, button, [data-stay-open]";
 const SMALL_BUTTON = "opacity-50 outline-none transition-opacity hover:opacity-100 focus-visible:opacity-100 lg:hidden";
 
 /** One piece on its own, as large as fits. Arrow keys or a swipe step through the works and Escape closes. */
@@ -199,6 +201,17 @@ function Lightbox({
         };
     }, [isOpen]);
 
+    // On the window, since clicking the work or its label can leave focus outside the dialog.
+    useEffect(() => {
+        if (!isOpen) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "ArrowRight") step(1);
+            else if (e.key === "ArrowLeft") step(-1);
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [isOpen, step]);
+
     const work = index === null ? null : WORKS[index];
 
     return (
@@ -209,14 +222,17 @@ function Lightbox({
                 e.preventDefault();
                 onClose();
             }}
-            onKeyDown={(e) => {
-                if (e.key === "ArrowRight") step(1);
-                else if (e.key === "ArrowLeft") step(-1);
-            }}
+            // Browsers can still close it themselves (e.g. Android back), so keep the state in step.
+            onClose={onClose}
             className="m-0 size-full max-h-none max-w-none bg-background p-0 font-geistMono text-foreground"
         >
             {work && index !== null && (
-                <div className="flex h-full flex-col">
+                <div
+                    className="flex h-full cursor-zoom-out flex-col"
+                    onClick={(e) => {
+                        if (!(e.target as Element).closest(STAY_OPEN)) onClose();
+                    }}
+                >
                     <div className="flex items-center justify-between px-6 py-5 text-[13px] lg:px-[6vw]">
                         <button
                             type="button"
@@ -234,7 +250,7 @@ function Lightbox({
                             >
                                 ←
                             </button>
-                            <span className="opacity-40">
+                            <span aria-live="polite" className="opacity-40">
                                 {HANG.indexOf(index) + 1} / {HANG.length}
                             </span>
                             <button
@@ -249,7 +265,7 @@ function Lightbox({
                     </div>
 
                     <div
-                        className="flex min-h-0 flex-1 px-6 lg:px-0"
+                        className="flex min-h-0 flex-1 items-center px-6 lg:px-0"
                         onTouchStart={(e) => {
                             const { clientX: x, clientY: y } = e.touches[0];
                             swipeStart.current = { x, y };
@@ -270,15 +286,14 @@ function Lightbox({
                         >
                             ‹
                         </button>
-                        <div className="relative flex-1">
+                        <div className="flex h-full min-w-0 flex-1 items-center justify-center">
+                            {/* Sized to the work itself, so a click beside it lands on the background and closes. */}
                             <Image
                                 src={work.src}
                                 alt={work.title}
                                 placeholder="blur"
-                                fill
                                 sizes="(min-width: 1024px) 88vw, 100vw"
-                                // Inline so the blur placeholder is contained the same way as the image.
-                                style={{ objectFit: "contain" }}
+                                className="h-auto max-h-full w-auto max-w-full cursor-auto"
                             />
                         </div>
                         <button type="button" aria-label="Next work" onClick={() => step(1)} className={SIDE_BUTTON}>
@@ -286,14 +301,22 @@ function Lightbox({
                         </button>
                     </div>
 
-                    <div className="flex flex-col gap-1 px-6 pb-6 pt-5 text-[13px] lg:px-[6vw]">
-                        <span>
-                            {work.title} <span className="opacity-40">{details(work)}</span>
-                        </span>
-                        {work.honours?.map((h) => (
-                            <span key={h} className="font-geistSans text-[12px] opacity-60">
-                                {h}
-                            </span>
+                    {/* Every label shares one cell, so the row keeps the tallest one's height and the work never jumps. */}
+                    <div data-stay-open className="grid cursor-auto self-start px-6 pb-6 pt-5 text-[13px] lg:px-[6vw]">
+                        {WORKS.map((w, i) => (
+                            <div
+                                key={w.title}
+                                className={`flex flex-col gap-1 [grid-area:1/1] ${i === index ? "" : "invisible"}`}
+                            >
+                                <span>
+                                    {w.title} <span className="opacity-40">{details(w)}</span>
+                                </span>
+                                {w.honours?.map((h) => (
+                                    <span key={h} className="font-geistSans text-[12px] opacity-60">
+                                        {h}
+                                    </span>
+                                ))}
+                            </div>
                         ))}
                     </div>
                 </div>
